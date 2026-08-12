@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMC Sales Copilot - Inteligência Comercial</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-color: #080b10;
+            --card-bg: rgba(17, 22, 32, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #f3f4f6;
+            --text-secondary: #9ca3af;
+            --primary-accent: #00ff88; /* Verde Néon Ambev/Heineken */
+            --secondary-accent: #00e5ff; /* Azul Elétrico Tech */
+            --accent-glow: rgba(0, 255, 136, 0.2);
+            --error-color: #ef4444;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Plus Jakarta Sans', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: var(--font-body);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(0, 229, 255, 0.05) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(0, 255, 136, 0.05) 0px, transparent 50%);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Header */
+        header {
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--card-border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(8, 11, 16, 0.8);
+            backdrop-filter: blur(12px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 2.5rem;
+            height: 2.5rem;
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: #080b10;
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .logo-text h1 {
+            font-family: var(--font-display);
+            font-size: 1.25rem;
+            font-weight: 700;
+            letter-spacing: -0.025em;
+            background: linear-gradient(to right, var(--text-primary), #d1d5db);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-text p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            font-weight: 600;
+        }
+
+        .badge {
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            color: var(--primary-accent);
+            padding: 0.35rem 0.75rem;
+            border-radius: 2rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.05em;
+        }
+
+        /* Main Layout */
+        main {
+            flex: 1;
+            max-width: 1300px;
+            width: 100%;
+            margin: 2rem auto;
+            padding: 0 1.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 2rem;
+        }
+
+        @media (max-width: 1024px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Cards */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 1.25rem;
+            padding: 2rem;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(0, 255, 136, 0.2);
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-title svg {
+            color: var(--primary-accent);
+        }
+
+        /* Form styling */
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        input, select {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--card-border);
+            border-radius: 0.75rem;
+            padding: 0.85rem 1rem;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            outline: none;
+            width: 100%;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--primary-accent);
+            background: rgba(255, 255, 255, 0.05);
+            box-shadow: 0 0 10px rgba(0, 255, 136, 0.1);
+        }
+
+        select option {
+            background: var(--bg-color);
+            color: var(--text-primary);
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--primary-accent), var(--secondary-accent));
+            color: #080b10;
+            border: none;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Results Area */
+        .results-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: 100%;
+        }
+
+        .output-box {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            flex: 1;
+            min-height: 250px;
+            max-height: 400px;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .output-placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--text-secondary);
+            text-align: center;
+            gap: 0.75rem;
+        }
+
+        .output-placeholder svg {
+            color: var(--text-secondary);
+            opacity: 0.5;
+            animation: pulse 2s infinite ease-in-out;
+        }
+
+        .step-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        .script-step {
+            border-left: 3px solid var(--primary-accent);
+            padding-left: 1rem;
+            animation: slideIn 0.4s ease forwards;
+            opacity: 0;
+            transform: translateX(-10px);
+        }
+
+        .script-step h4 {
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            color: var(--primary-accent);
+            margin-bottom: 0.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .script-step p {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            font-style: italic;
+        }
+
+        /* Copy Button */
+        .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: none;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary-accent);
+            border-color: var(--primary-accent);
+        }
+
+        /* Prompt Blueprint (Educational Section) */
+        .blueprint-card {
+            background: rgba(10, 15, 26, 0.9);
+            border: 1px dashed rgba(0, 229, 255, 0.3);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+        }
+
+        .blueprint-title {
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: var(--secondary-accent);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .blueprint-code {
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.85rem;
+            color: #a7f3d0;
+            white-space: pre-wrap;
+            line-height: 1.4;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.85rem;
+            border-radius: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            overflow-x: auto;
+        }
+
+        .highlight-variable {
+            color: var(--secondary-accent);
+            font-weight: 700;
+        }
+
+        /* Loading Animation */
+        .loading-pulse {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            height: 100%;
+        }
+
+        .dot {
+            width: 0.75rem;
+            height: 0.75rem;
+            background: var(--primary-accent);
+            border-radius: 50%;
+            animation: bounce 0.6s infinite alternate;
+        }
+
+        .dot:nth-child(2) {
+            background: var(--secondary-accent);
+            animation-delay: 0.2s;
+        }
+
+        .dot:nth-child(3) {
+            background: var(--primary-accent);
+            animation-delay: 0.4s;
+        }
+
+        /* Footer */
+        footer {
+            padding: 1.5rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            border-top: 1px solid var(--card-border);
+            margin-top: auto;
+            background: rgba(8, 11, 16, 0.9);
+        }
+
+        footer a {
+            color: var(--primary-accent);
+            text-decoration: none;
+        }
+
+        /* Keyframes */
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            50% { opacity: 0.8; transform: scale(1.05); }
+        }
+
+        @keyframes bounce {
+            to { transform: translateY(-10px); }
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-container">
+            <div class="logo-icon">DMC</div>
+            <div class="logo-text">
+                <h1>DMC Sales Copilot</h1>
+                <p>Inteligência Comercial</p>
+            </div>
+        </div>
+        <div class="badge">PROTOTYPE: DIO BOOTCAMP</div>
+    </header>
+
+    <main>
+        <!-- Coluna da Esquerda: Configurações e Inputs -->
+        <section class="card">
+            <div class="card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+                Configurar o Cenário
+            </div>
+            
+            <div class="form-group">
+                <label for="vendedor">Nome do Vendedor</label>
+                <input type="text" id="vendedor" placeholder="Ex: João" value="João">
+            </div>
+
+            <div class="form-group">
+                <label for="cliente">Nome do Cliente (PDV)</label>
+                <input type="text" id="cliente" placeholder="Ex: Bar do Zé" value="Bar do Zé">
+            </div>
+
+            <div class="form-group">
+                <label for="produto">Produto em Foco</label>
+                <select id="produto">
+                    <optgroup label="Cervejas Premium">
+                        <option value="Spaten" data-category="cerveja-premium">Spaten</option>
+                        <option value="Corona" data-category="cerveja-premium">Corona</option>
+                        <option value="Stella Artois" data-category="cerveja-premium">Stella Artois</option>
+                        <option value="Budweiser" data-category="cerveja-premium">Budweiser</option>
+                        <option value="Beck's" data-category="cerveja-premium">Beck's</option>
+                        <option value="Antarctica Original" data-category="cerveja-premium">Antarctica Original</option>
+                        <option value="Colorado" data-category="cerveja-premium">Colorado (Artesanal)</option>
+                    </optgroup>
+                    <optgroup label="Cervejas Core / Dia a Dia">
+                        <option value="Brahma Duplo Malte" data-category="cerveja-mainstream">Brahma Duplo Malte</option>
+                        <option value="Skol" data-category="cerveja-mainstream">Skol</option>
+                        <option value="Antarctica Pilsen" data-category="cerveja-mainstream">Antarctica Pilsen</option>
+                    </optgroup>
+                    <optgroup label="Refrigerantes Tradicionais">
+                        <option value="Guaraná Antarctica" data-category="refrigerante">Guaraná Antarctica</option>
+                        <option value="Pepsi" data-category="refrigerante">Pepsi Cola</option>
+                        <option value="Sukita" data-category="refrigerante">Sukita Laranja</option>
+                        <option value="Soda Antarctica" data-category="refrigerante">Soda Antarctica</option>
+                        <option value="Tônica Antarctica" data-category="refrigerante">Tônica Antarctica</option>
+                    </optgroup>
+                    <optgroup label="Refrigerantes Zero / Light">
+                        <option value="Guaraná Antarctica Zero" data-category="refrigerante-zero">Guaraná Antarctica Zero</option>
+                        <option value="Pepsi Black" data-category="refrigerante-zero">Pepsi Black</option>
+                        <option value="H2OH!" data-category="refrigerante-zero">H2OH!</option>
+                    </optgroup>
+                    <optgroup label="Cervejas Zero Álcool">
+                        <option value="Brahma Zero" data-category="cerveja-zero">Brahma Zero</option>
+                        <option value="Corona Cero" data-category="cerveja-zero">Corona Cero</option>
+                    </optgroup>
+                    <optgroup label="Bebidas não Alcoólicas / Funcionais">
+                        <option value="Água Ama" data-category="bebidas-nao-alcoolicas">Água Ama (Sustentável)</option>
+                        <option value="Gatorade" data-category="bebidas-nao-alcoolicas">Gatorade</option>
+                        <option value="Lipton Ice Tea" data-category="bebidas-nao-alcoolicas">Lipton Ice Tea</option>
+                        <option value="Sucos Do Bem" data-category="bebidas-nao-alcoolicas">Sucos Do Bem</option>
+                    </optgroup>
+                    <optgroup label="Drinks Prontos (RTD)">
+                        <option value="Beats" data-category="drinks-prontos">Beats (Senses/GT)</option>
+                        <option value="Mike's Hard Lemonade" data-category="drinks-prontos">Mike's Hard Lemonade</option>
+                    </optgroup>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="objecao">Principal Objeção do Cliente</label>
+                <select id="objecao">
+                    <option value="giro">"Essa marca premium não vai girar no meu ponto de venda"</option>
+                    <option value="preco">"Esse produto é muito caro para o meu cliente final"</option>
+                    <option value="espaco">"Meu freezer já está cheio de outras marcas"</option>
+                    <option value="concorrente">"O concorrente me dá desconto e bonificação"</option>
+                    <option value="custom">"Outra objeção (Digitar texto livre)..."</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="custom-objecao-group" style="display: none;">
+                <label for="custom-objecao">Descreva o que o cliente disse</label>
+                <input type="text" id="custom-objecao" placeholder="Ex: O cliente falou que a cerveja concorrente vende mais no bar dele.">
+            </div>
+
+            <button class="btn" id="generate-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                Gerar Roteiro Inteligente
+            </button>
+        </section>
+
+        <!-- Coluna da Direita: Copiloto de Vendas / Output -->
+        <section class="card results-container">
+            <div class="card-title">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 16-4 4-4-4"/><path d="M17 20V4"/><path d="m3 8 4-4 4 4"/><path d="M7 4v16"/></svg>
+                Copiloto de Vendas
+            </div>
+
+            <!-- Caixa de Saída dos Roteiros -->
+            <div class="output-box" id="output-box">
+                <button class="copy-btn" id="copy-btn" title="Copiar Roteiro">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+                </button>
+
+                <div class="output-placeholder" id="placeholder">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8"/><path d="M12 18h.01"/><path d="M10 22h4"/></svg>
+                    <p>Preencha os campos do cenário e clique em "Gerar Roteiro Inteligente" para gerar o roteiro comercial de contorno de objeções.</p>
+                </div>
+
+                <div class="loading-pulse" id="loading">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+
+                <div class="step-container" id="script-container" style="display: none;">
+                    <!-- Preenchido via JS -->
+                </div>
+            </div>
+
+            <!-- Bastidores do Prompt (Parte Educativa) -->
+            <div class="blueprint-card">
+                <div class="blueprint-title">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                    Engenharia de Prompt: O Blueprint da IA
+                </div>
+                <div class="blueprint-code" id="blueprint-code">
+                    <!-- Preenchido dinamicamente via JS -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        Desenvolvido como Protótipo de Aprendizado no Bootcamp de IA Aplicada a Vendas &copy; 2026. <a href="https://dio.me" target="_blank">Digital Innovation One</a>.
+    </footer>
+
+    <!-- Lógica de Simulação de IA Comercial -->
+    <script>
+        const vendedorInput = document.getElementById('vendedor');
+        const clienteInput = document.getElementById('cliente');
+        const produtoSelect = document.getElementById('produto');
+        const objecaoSelect = document.getElementById('objecao');
+        const customObjecaoGroup = document.getElementById('custom-objecao-group');
+        const customObjecaoInput = document.getElementById('custom-objecao');
+        const generateBtn = document.getElementById('generate-btn');
+        const copyBtn = document.getElementById('copy-btn');
+        const placeholder = document.getElementById('placeholder');
+        const loading = document.getElementById('loading');
+        const scriptContainer = document.getElementById('script-container');
+        const blueprintCode = document.getElementById('blueprint-code');
+
+        // Estrutura de dados de simulação com base em vendas Ambev/Heineken
+        const database = {
+            giro: {
+                "cerveja-premium": [
+                    { title: "Passo 1: Despertar o Gatilho da Perda (Prova Social)", text: '"{cliente}, o senhor já percebeu que o consumidor de cerveja está mais exigente? A {produto} é a marca que mais cresce na nossa região hoje. O cliente que chega procurando ela e não encontra simplesmente levanta da mesa e vai beber no seu concorrente. Não ter a marca hoje é dar dinheiro de graça pro vizinho."' },
+                    { title: "Passo 2: A Matemática do Bar (Giro vs Margem)", text: '"Cerveja comum traz volume de caixas, mas a {produto} traz lucro real. A sua margem de lucro por garrafa vendida é X% maior. Contas simples: você precisa vender muito menos garrafas para colocar o mesmo dinheiro no bolso ao final do dia."' },
+                    { title: "Passo 3: Parceria de Risco Zero (Garantia)", text: '"Para você não ficar preocupado com estoque parado, vamos fazer o seguinte: coloco apenas 2 caixas no local de maior visibilidade da sua geladeira. Se em 7 dias ela não vender tudo, eu mesmo passo aqui, compro de volta ou troco por Brahma Duplo Malte. Risco zero para o seu caixa."' },
+                    { title: "Passo 4: Fechamento Comercial (Alternativa)", text: '"Para a gente testar essa mina de ouro e aumentar o seu tíquete já neste final de semana, prefere que eu lance no pedido 2 ou 3 caixas de {produto}?"' }
+                ],
+                "cerveja-mainstream": [
+                    { title: "Passo 1: Foco no Fluxo de Caixa (Líder de Categoria)", text: '"{cliente}, a {produto} é o pulmão da sua operação comercial. O cliente do dia a dia não quer explicações, ele quer a marca de confiança dele trincando na mesa. Ela é o produto que garante o fluxo de pessoas na sua casa."' },
+                    { title: "Passo 2: Venda Casada (Giro Geral)", text: '"Cerveja core não se paga apenas na garrafa, ela puxa o consumo de petiscos, salgados e porções. Se o cliente desiste de entrar porque você não tem a cerveja dele, você perde todo o resto do faturamento da mesa."' },
+                    { title: "Passo 3: Gatilho da Escassez (Urgência)", text: '"Nosso estoque de {produto} está no limite nesta semana devido à alta demanda. Se eu não garantir o seu faturamento de final de semana agora no sistema, a revenda pode cortar o seu pedido por falta de grade."' },
+                    { title: "Passo 4: Fechamento por Assunção (Diretivo)", text: '"Vou garantir a sua segurança: vou lançar a sua média padrão de 15 caixas mais 5 de reserva de {produto} para garantir que você não perca venda no domingo à noite. Lançado?"' }
+                ],
+                "refrigerante": [
+                    { title: "Passo 1: Venda de Impulso (Inquestionável)", text: '"{cliente}, ninguém almoça ou come um salgado seco, com copo de água. O {produto} é a compra por impulso mais forte do seu balcão. Não oferecer ele gelado de forma ativa é cortar o faturamento do almoço pela metade."' },
+                    { title: "Passo 2: Velocidade de Retorno (Capital de Giro)", text: '"Refrigerante tem giro diário garantido. O dinheiro que você investe de manhã na compra do fardo volta para o seu caixa antes do final do dia. É o retorno mais rápido de toda a sua operação."' },
+                    { title: "Passo 3: Visibilidade de Alto Impacto", text: '"Vou organizar o seu refrigerador agora para colocar as latas de {produto} na prateleira do meio, exatamente na altura dos olhos de quem chega para pagar."' },
+                    { title: "Passo 4: Fechamento Comercial", text: '"Vou deixar 4 fardos de lata para garantir o movimento do almoço desta semana. Fechado?"' }
+                ],
+                "refrigerante-zero": [
+                    { title: "Passo 1: Tendência de Mercado Inevitável", text: '"{cliente}, o consumidor de refrigerante zero cresce mais de 25% ao ano. Quem bebe Pepsi Black ou Guaraná Zero não aceita a versão comum de jeito nenhum. Se você não tiver o produto dele, ele simplesmente vai embora sem consumir nada."' },
+                    { title: "Passo 2: Fidelização do Cliente Premium", text: '"O cliente do produto zero costuma ser o decisor da mesa de amigos ou da família. Ter a opção dele trincando na geladeira garante que ele traga todo o grupo para consumir aqui toda semana."' },
+                    { title: "Passo 3: Ação Promocional Rápida", text: '"Vamos colocar uma fita promocional no cardápio vinculando o seu prato feito à lata de {produto}. O giro no almoço vai te surpreender."' },
+                    { title: "Passo 4: Fechamento por Alternativa", text: '"Para iniciarmos esse teste amanhã, prefere que eu lance 2 fardos de Guaraná Zero ou 2 de Pepsi Black?"' }
+                ],
+                "cerveja-zero": [
+                    { title: "Passo 1: Captura de Faturamento Novo", text: '"{cliente}, a {produto} atrai o cliente que hoje consome apenas água ou refrigerante no seu bar (o motorista da vez, quem está de dieta ou trabalhando). Você está deixando de ganhar dinheiro com um público que já está sentado na sua mesa!"' },
+                    { title: "Passo 2: Equilíbrio de Margem", text: '"A margem da cerveja zero é muito superior à de sucos e refrigerantes de marcas concorrentes. Você rentabiliza muito mais o mesmo cliente sem nenhum esforço extra de estrutura."' },
+                    { title: "Passo 3: Sugestão Ativa", text: '"Instrua o seu garçom a oferecer a {produto} bem gelada para a primeira mesa que pedir refrigerante no almoço. O sabor puro malte vai surpreendê-los."' },
+                    { title: "Passo 4: Fechamento Diretivo", text: '"Vou colocar apenas 1 caixa de Long Neck no pedido para você fazer esse teste de aceitação no final de semana. Posso faturar?"' }
+                ],
+                "bebidas-nao-alcoolicas": [
+                    { title: "Passo 1: Consumo Diurno (Gargalo de Horário)", text: '"{cliente}, o gatorade/suco atrai o público que frequenta a região durante a manhã e a tarde para fazer exercícios ou almoçar. É uma forma de fazer o seu ponto de venda faturar em horários de pouco movimento de cerveja."' },
+                    { title: "Passo 2: Tíquete Médio Premium", text: '"São produtos saudáveis e de hidratação que possuem excelente valor agregado e trazem um lucro líquido unitário muito acima das bebidas de baixo custo."' },
+                    { title: "Passo 3: Ponto Quente de Balcão", text: '"Vamos posicionar os fardos de {produto} ao lado do caixa. O cliente vê na hora de pagar e leva por impulso para o caminho."' },
+                    { title: "Passo 4: Fechamento Comercial", text: '"Lançamos 2 fardos de {produto} para testar esse giro rápido essa semana?"' }
+                ],
+                "drinks-prontos": [
+                    { title: "Passo 1: Conquistar o Público Jovem/Feminino", text: '"{cliente}, a {produto} é a sensação do momento e atrai o público que não consome cerveja por causa do amargor. Ter esse mix na sua geladeira garante que você atenda 100% dos perfis de clientes que entram aqui."' },
+                    { title: "Passo 2: Custo Zero de Preparação", text: '"Ao contrário de um drink tradicional, com a {produto} você não tem desperdício com frutas que estragam, hortelã velha, gelo ou tempo do garçom preparando. É só abrir a lata gelada e servir. Lucro limpo."' },
+                    { title: "Passo 3: Exposição de Destaque", text: '"Vou colocar um display colorido de mesa exclusivo para promover os sabores. O apelo visual vende sozinho nas noites de calor."' },
+                    { title: "Passo 4: Fechamento Comercial", text: '"Vamos fechar 2 fardos de latas de {produto} para colocar esse display em prática no sábado?"' }
+                ]
+            },
+            preco: {
+                "cerveja-premium": [
+                    { title: "Passo 1: Ancoragem de Valor (Prestígio)", text: '"{cliente}, cerveja cara é a que fica parada no estoque. A {produto} tem valor percebido alto. O seu cliente paga R$ 2 ou R$ 3 a mais rindo para ter o prestígio de beber uma puro malte de peso na mesa com os amigos. Ele quer valorizar o momento dele."' },
+                    { title: "Passo 2: Lucratividade Unitária", text: '"A margem líquida da {produto} é tão alta que o lucro de duas garrafas vendidas equivale ao de quatro cervejas comerciais. Você trabalha menos, gasta menos energia resfriando e lucra muito mais no final do mês."' },
+                    { title: "Passo 3: Experiência Premium", text: '"Vamos servir a {produto} com copos ou taças personalizadas da marca. O cliente vê o valor do serviço e não cria barreira com o preço."' },
+                    { title: "Passo 4: Fechamento de Venda", text: '"Vou incluir 3 caixas de {produto} no faturamento de hoje para cobrirmos as mesas premium do final de semana, combinado?"' }
+                ],
+                "cerveja-mainstream": [
+                    { title: "Passo 1: A Cerveja do Bolso do Cliente", text: '"{cliente}, a {produto} tem o preço perfeito que cabe no orçamento do trabalhador no final do dia. Ela é o produto ideal para quem busca confraternização sem gastar muito."' },
+                    { title: "Passo 2: Ganho na Escala (Volumetria)", text: '"Enquanto um cliente consome uma cerveja artesanal devagar, a mesa consome 4 ou 5 garrafas de {produto} pelo preço acessível. O seu caixa gira rápido e o volume de vendas compensa a margem unitária."' },
+                    { title: "Passo 3: Combo Fidelidade (Ancoragem)", text: '"Vamos criar um preço promocional na compra do balde com 5 garrafas de {produto}. O cliente vê vantagem imediata e compra em grupo."' },
+                    { title: "Passo 4: Fechamento por Volume", text: '"Para garantirmos o preço promocional de atacado da revenda, posso fechar o lote com 15 caixas hoje?"' }
+                ],
+                "refrigerante": [
+                    { title: "Passo 1: Segurança de Marca Líder", text: '"{cliente}, o consumidor de refrigerante é fiel ao sabor. Ele prefere não beber se tiver que tomar uma marca barata de segunda linha. A {produto} é a garantia de que o cliente vai ficar satisfeito com a refeição."' },
+                    { title: "Passo 2: Markup Imbatível", text: '"O refrigerante tem uma das maiores margens de lucro percentual (markup) do seu cardápio, muitas vezes ultrapassando 120% sobre o custo da lata. É receita limpa para o seu caixa."' },
+                    { title: "Passo 3: Integração no Prato Feito", text: '"Vamos precificar a {produto} dentro de um combo promocional com o prato principal. O cliente compra pela conveniência do preço único."' },
+                    { title: "Passo 4: Fechamento", text: '"Vou colocar 4 fardos de lata no pedido para mantermos o seu estoque de giro abastecido."' }
+                ],
+                "refrigerante-zero": [
+                    { title: "Passo 1: Percepção de Valor pela Saúde", text: '"{cliente}, o público da linha zero não compra por preço baixo, compra por estilo de vida. Quem bebe {produto} valoriza o bem-estar e paga o valor de tabela sem reclamar porque precisa e quer esse produto."' },
+                    { title: "Passo 2: Salvar a Conta da Mesa", text: '"Se uma mesa com 4 pessoas não consome porque você não tem o refrigerante zero do decisor, você perde a conta inteira do grupo. A {produto} protege o faturamento geral do seu bar."' },
+                    { title: "Passo 3: Exposição de Contraste", text: '"Vamos colocar a versão zero colada na versão normal com o mesmo preço. A facilidade de escolha elimina qualquer objeção."' },
+                    { title: "Passo 4: Fechamento Comercial", text: '"Vou lançar 2 fardos de lata de {produto} para garantir que você atenda essa demanda. Fechado?"' }
+                ],
+                "cerveja-zero": [
+                    { title: "Passo 1: A Cerveja do Motorista (Raciocínio Lógico)", text: '"{cliente}, a {produto} custa o mesmo que a versão tradicional porque entrega a mesma qualidade de lúpulo e malte. O cliente que está dirigindo paga esse valor com prazer porque valoriza a segurança e a socialização com os amigos."' },
+                    { title: "Passo 2: Margem de Categoria Premium", text: '"O lucro líquido da {produto} por garrafa é muito superior ao de sucos ou refrigerantes de marcas baratas. É faturamento qualificado para o seu caixa."' },
+                    { title: "Passo 3: Sinalização Promocional", text: '"Deixamos as garrafas expostas no topo do refrigerador com um pequeno selo informativo de opção sem álcool gelada."' },
+                    { title: "Passo 4: Fechamento", text: '"Vou incluir apenas 1 caixa de Long Neck de {produto} para vermos a reação do público esta semana."' }
+                ],
+                "bebidas-nao-alcoolicas": [
+                    { title: "Passo 1: Foco na Necessidade de Hidratação", text: '"{cliente}, o gatorade ou suco premium {produto} atende a uma necessidade imediata de hidratação ou saúde. O cliente com sede ou após atividade física não pesquisa preço, ele quer o benefício da marca líder."' },
+                    { title: "Passo 2: Alta Rentabilidade de Espaço", text: '"Produtos de nicho rentabilizam o seu ponto de venda muito mais do que os produtos comuns, gerando excelente margem unitária."' },
+                    { title: "Passo 3: Destaque na Área Nobre", text: '"Colocamos o expositor de {produto} bem visível ao lado dos lanches saudáveis."' },
+                    { title: "Passo 4: Fechamento", text: '"Vamos colocar 2 fardos de {produto} para testar a saída rápido essa semana?"' }
+                ],
+                "drinks-prontos": [
+                    { title: "Passo 1: Custo de Preparação vs. Praticidade", text: '"{cliente}, o custo de uma lata de {produto} é menor do que o custo de comprar destilado, frutas, gelo e copos para montar um drink do zero no bar. Sem contar o risco de desperdício de insumos."' },
+                    { title: "Passo 2: Margem Líquida Excepcional", text: '"Você tem um produto pronto para servir, com sabor padronizado internacionalmente e margem de lucro garantida e sem perdas."' },
+                    { title: "Passo 3: Exposição Próxima ao Caixa", text: '"Colocamos os cartazes promocionais nas mesas para incentivar o consumo no início do atendimento."' },
+                    { title: "Passo 4: Fechamento Comercial", text: '"Vou lançar 2 fardos de latas de {produto} para iniciarmos esse projeto hoje."' }
+                ]
+            },
+            espaco: {
+                "cerveja-premium": [
+                    { title: "Passo 1: Gestão de Espaço Inteligente", text: '"{cliente}, espaço no freezer é dinheiro. Por isso, faz mais sentido dar o espaço nobre para as marcas de maior margem, como a {produto}, do que para cervejas baratas de baixo retorno."' },
+                    { title: "Passo 2: Substituição com Lucro", text: '"Podemos reduzir apenas uma fileira das marcas que estão encalhadas e colocar a {produto}. No mesmo centímetro de geladeira, seu lucro dobra."' },
+                    { title: "Passo 3: Organização do Planograma", text: '"Eu mesmo organizo a sua geladeira agora. Aplico o planograma padrão da Ambev para deixar a {produto} em destaque sem atrapalhar o seu mix."' },
+                    { title: "Passo 4: Fechamento Comercial", text: '"Vou faturar 2 caixas de {produto} para fazermos essa arrumação hoje mesmo, combinado?"' }
+                ],
+                "cerveja-mainstream": [
+                    { title: "Passo 1: A Cerveja que Paga as Contas", text: '"{cliente}, a {produto} precisa de espaço porque o giro dela é violento. Se faltar cerveja gelada na hora do pico, o prejuízo é gigantesco."' },
+                    { title: "Passo 2: Logística de Abastecimento", text: '"Otimizamos o espaço da geladeira abastecendo em turnos. Mantemos a maior parte do estoque no depósito seco e reabastecemos as prateleiras no início de cada turno."' },
+                    { title: "Passo 3: Layout Dedicado", text: '"Vamos organizar a prateleira inferior de forma compacta para aproveitar ao máximo a profundidade do freezer com a {produto}."' },
+                    { title: "Passo 4: Fechamento", text: '"Lançamos a quantidade necessária de caixas para garantir esse abastecimento?"' }
+                ],
+                "refrigerante": [
+                    { title: "Passo 1: Compactação das Latas", text: '"{cliente}, as latas de {produto} ocupam menos da metade do espaço de garrafas pet ou de vidro, liberando área útil na geladeira comercial."' },
+                    { title: "Passo 2: Gela Rápido", text: '"A lata de alumínio resfria três vezes mais rápido que o vidro. Você pode manter poucas latas geladas e repor o estoque seco rapidamente."' },
+                    { title: "Passo 3: Organização de canaletas", text: '"Instalamos organizadores de canaletas finas na lateral da geladeira para expor o {produto} sem bagunçar."' },
+                    { title: "Passo 4: Fechamento", text: '"Posso incluir 3 fardos de lata de {produto} no pedido?"' }
+                ],
+                "refrigerante-zero": [
+                    { title: "Passo 1: Sortimento Sem Freezer Extra", text: '"{cliente}, não precisamos de outra geladeira. Vamos apenas organizar a prateleira de refrigerantes normais e colocar o {produto} dividindo o espaço."' },
+                    { title: "Passo 2: Atender Todo Mundo", text: '"Dessa forma, no mesmo espaço de geladeira, você garante a venda para quem quer açúcar e para quem quer a opção zero."' },
+                    { title: "Passo 3: Exposição de Dupla", text: '"Colocamos a versão normal e a zero de {produto} lado a lado na mesma canaleta."' },
+                    { title: "Passo 4: Fechamento", text: '"Vou lançar 1 fardo de {produto} para testarmos esse layout hoje."' }
+                ],
+                "cerveja-zero": [
+                    { title: "Passo 1: Espaço Mínimo, Retorno Máximo", text: '"{cliente}, a {produto} Long Neck é pequena e cabe em qualquer nicho morto da parte superior da geladeira comercial."' },
+                    { title: "Passo 2: Prevenir Perda de Vendas", text: '"Esse cantinho reservado vai evitar que um cliente que não pode beber álcool force toda a mesa a ir consumir em outro estabelecimento."' },
+                    { title: "Passo 3: Giro de Estoque Seco", text: '"Deixamos apenas 6 garrafas geladas de {produto} na prateleira nobre e o restante guardado no depósito seco."' },
+                    { title: "Passo 4: Fechamento", text: '"Fechamos 1 caixa de Long Neck de {produto} para garantir essa segurança?"' }
+                ],
+                "bebidas-nao-alcoolicas": [
+                    { title: "Passo 1: Abastecimento Dinâmico", text: '"{cliente}, as garrafas de {produto} não precisam ocupar a geladeira principal. A maior parte do estoque pode ficar seca, e colocamos apenas algumas unidades para gelar nos horários de pico."' },
+                    { title: "Passo 2: Poupar Espaço Frio", text: '"Isso poupa a área fria do freezer para as cervejas de alto giro e grande volume de vendas da DMC."' },
+                    { title: "Passo 3: Exposição de Prateleira Seca", text: '"Montamos um display de mesa ou gôndola seca com o {produto} próximo ao balcão."' },
+                    { title: "Passo 4: Fechamento", text: '"Adicionamos 2 fardos no pedido de hoje?"' }
+                ],
+                "drinks-prontos": [
+                    { title: "Passo 1: Aproveitamento de Frentes", text: '"{cliente}, as latas de {produto} ocupam pouquíssimo espaço vertical e podem ser empilhadas facilmente no canto da geladeira."' },
+                    { title: "Passo 2: Otimizar o Mix", text: '"Vamos retirar marcas de baixo giro que estão acumuladas ocupando espaço para dar lugar à novidade lucrativa de {produto}."' },
+                    { title: "Passo 3: Destaque no Planograma", text: '"Colocamos {produto} na prateleira central, na área nobre de visualização rápida do cliente."' },
+                    { title: "Passo 4: Fechamento", text: '"Fechamos 1 fardo de latas para iniciar esse teste?"' }
+                ]
+            },
+            concorrente: {
+                "cerveja-premium": [
+                    { title: "Passo 1: Giro Espontâneo vs. Desconto do Concorrente", text: '"{cliente}, o concorrente pode oferecer descontos, mas ele não entrega a demanda espontânea que a {produto} tem hoje nos bares de todo o Brasil. Cerveja barata parada no estoque não dá lucro, dá prejuízo. A {produto} vende sozinha."' },
+                    { title: "Passo 2: Atração de Público Qualificado", text: '"A {produto} traz para o seu bar um cliente de maior poder aquisitivo que consome pratos e porções mais caras, elevando a lucratividade média de todo o seu cardápio."' },
+                    { title: "Passo 3: Suporte Exclusivo DMC", text: '"Como parceiros da DMC Ambev, apoiamos você com ativações promocionais e materiais de PDV exclusivos de {produto} para destacar o seu bar na região."' },
+                    { title: "Passo 4: Fechamento Comercial", text: '"Posso colocar 3 caixas de {produto} para iniciarmos essa parceria forte com foco em margem?"' }
+                ],
+                "cerveja-mainstream": [
+                    { title: "Passo 1: Fidelidade ao Sabor Original", text: '"{cliente}, o concorrente pode tentar queimar o preço, mas o cliente fiel não troca o sabor tradicional da {produto} por nenhuma outra marca. Servir a cerveja líder garante a satisfação imediata do seu público."' },
+                    { title: "Passo 2: Marca que Consolida o PDV", text: '"Ter a {produto} gelada sinaliza confiança e qualidade na sua operação comercial, atraindo o giro diário do bairro."' },
+                    { title: "Passo 3: Campanhas e Metas", text: '"Podemos estruturar campanhas promocionais de combos de {produto} para bater de frente com a concorrência na sua região."' },
+                    { title: "Passo 4: Fechamento", text: '"Vou lançar a sua carga cheia de {produto} no faturamento de hoje para garantirmos a entrega?"' }
+                ],
+                "refrigerante": [
+                    { title: "Passo 1: Preferência Inquestionável de Marca", text: '"{cliente}, a preferência do consumidor por {produto} é gigante. O concorrente barato fica parado na geladeira porque as pessoas exigem o sabor original na hora de comer."' },
+                    { title: "Passo 2: Valorização do Estabelecimento", text: '"Servir a marca líder {produto} valoriza o seu próprio prato ou lanche, transmitindo cuidado e qualidade para o cliente final."' },
+                    { title: "Passo 3: Preço de Mix Completo", text: '"Trabalhamos com condições comerciais especiais para compras em volume que batem o custo do concorrente no final da conta."' },
+                    { title: "Passo 4: Fechamento", text: '"Adicionamos 4 fardos para garantir o preço especial de {produto} hoje?"' }
+                ],
+                "refrigerante-zero": [
+                    { title: "Passo 1: Qualidade Sensorial Superior", text: '"{cliente}, o sabor de {produto} é o preferido de quem busca zero açúcar. O concorrente tem gosto residual de adoçante que afasta o consumidor exigente."' },
+                    { title: "Passo 2: Fidelidade de Consumo", text: '"Oferecer as melhores opções sem açúcar da Ambev garante a recorrência do cliente qualificado que consome no seu bar."' },
+                    { title: "Passo 3: Campanhas de Alimentação Saudável", text: '"Estruturamos combos de almoço executivo integrando a lata de {produto} para impulsionar as vendas."' },
+                    { title: "Passo 4: Fechamento", text: '"Vou incluir 2 fardos de {produto} no faturamento de hoje para testarmos esse giro?"' }
+                ],
+                "cerveja-zero": [
+                    { title: "Passo 1: Sabor Real Puro Malte", text: '"{cliente}, a {produto} possui a tecnologia mais moderna de remoção de álcool do mercado, mantendo o sabor puro malte real. O concorrente tem sabor adocicado desagradável que afasta o bebedor de cerveja."' },
+                    { title: "Passo 2: Credibilidade das Marcas Líderes", text: '"Como a marca principal de {produto} é líder de vendas, o cliente consome a versão zero delas com muito mais confiança do que as marcas secundárias do concorrente."' },
+                    { title: "Passo 3: Materiais Exclusivos de PDV", text: '"Oferecemos displays promocionais e baldes de mesa de {produto} para destacar a melhor cerveja sem álcool no seu bar."' },
+                    { title: "Passo 4: Fechamento", text: '"Adicionamos 1 caixa de Long Neck no pedido para batermos de frente com o concorrente?"' }
+                ],
+                "bebidas-nao-alcoolicas": [
+                    { title: "Passo 1: Autoridade e Liderança de Categoria", text: '"{cliente}, a {produto} é referência absoluta na mente do consumidor. O concorrente genérico não tem a mesma confiança e aceitação do público esportivo ou saudável."' },
+                    { title: "Passo 2: Credibilidade Inabalável", text: '"O giro de {produto} é garantido pela credibilidade que a marca construiu ao longo de anos com campanhas nacionais de publicidade."' },
+                    { title: "Passo 3: Distribuição Garantida DMC", text: '"Garantimos a regularidade na entrega pela DMC e o suporte de comunicação visual de {produto} no seu estabelecimento."' },
+                    { title: "Passo 4: Fechamento", text: '"Fechamos 2 fardos de {produto} para consolidar essa parceria comercial?"' }
+                ],
+                "drinks-prontos": [
+                    { title: "Passo 1: Força de Marca RTD", text: '"{cliente}, a {produto} lidera o mercado de drinks prontos no Brasil. O sabor é natural e a aceitação do cliente jovem é imbatível comparado ao concorrente."' },
+                    { title: "Passo 2: Padrão Internacional de Qualidade", text: '"O concorrente não possui a força de marca e a qualidade de ingredientes que a {produto} entrega em cada lata comercializada."' },
+                    { title: "Passo 3: Condições Comerciais DMC", text: '"Oferecemos condições de faturamento especiais e displays de balcão de {produto} para destacar o produto no ponto de venda."' },
+                    { title: "Passo 4: Fechamento", text: '"Fechamos 1 fardo de latas de {produto} hoje?"' }
+                ]
+            }
+        // Função para gerar o texto do prompt de engenharia de prompts
+        function updatePromptBlueprint() {
+            const vendedor = vendedorInput.value || "[Vendedor]";
+            const cliente = clienteInput.value || "[Cliente]";
+            const produto = produtoSelect.value;
+            
+            let objecaoText = "";
+            if (objecaoSelect.value === 'custom') {
+                objecaoText = customObjecaoInput.value || "[Descreva a objeção do cliente]";
+            } else {
+                objecaoText = objecaoSelect.options[objecaoSelect.selectedIndex].text;
+            }
+
+            const blueprint = `SYSTEM PROMPT:
+Você é um copiloto especialista em vendas de cervejas e bebidas da Ambev para a revenda DMC. Seu objetivo é ajudar vendedores na ponta a contornarem objeções comerciais com abordagens altamente eficazes e persuasivas.
+
+INPUT VARIABLES:
+- Vendedor: <span class="highlight-variable">${vendedor}</span>
+- Cliente (PDV): <span class="highlight-variable">${cliente}</span>
+- Produto em Foco: <span class="highlight-variable">${produto}</span>
+- Objeção Identificada: <span class="highlight-variable">"${objecaoText}"</span>
+
+PROMPT GENERATED:
+"Você é o copiloto de vendas do <span class="highlight-variable">${vendedor}</span>. Escreva uma abordagem em 4 passos para convencer o cliente <span class="highlight-variable">${cliente}</span> a comprar <span class="highlight-variable">${produto}</span>, contornando a objeção de que <span class="highlight-variable">${objecaoText}</span>.
+Forneça os passos no seguinte padrão:
+Passo 1: Validar e Conectar (Linguagem coloquial de vendas)
+Passo 2: Justificativa de Negócio/Financeira
+Passo 3: Proposta Sem Risco / Teste
+Passo 4: Fechamento Comercial Diretivo e Rápido"`;
+
+            blueprintCode.innerHTML = blueprint;
+        }
+
+        // Executar inicialização do blueprint
+        updatePromptBlueprint();
+
+        // Listeners para atualizar o blueprint em tempo real conforme digita/muda
+        vendedorInput.addEventListener('input', updatePromptBlueprint);
+        clienteInput.addEventListener('input', updatePromptBlueprint);
+        produtoSelect.addEventListener('change', updatePromptBlueprint);
+        
+        // Listener de controle de exibição do input customizado
+        objecaoSelect.addEventListener('change', () => {
+            if (objecaoSelect.value === 'custom') {
+                customObjecaoGroup.style.display = 'flex';
+            } else {
+                customObjecaoGroup.style.display = 'none';
+            }
+            updatePromptBlueprint();
+        });
+        
+        customObjecaoInput.addEventListener('input', updatePromptBlueprint);
+
+        // Ação de geração de roteiro simulando a IA
+        generateBtn.addEventListener('click', () => {
+            // Efeito visual no botão
+            generateBtn.disabled = true;
+            generateBtn.innerText = "IA Processando Roteiro...";
+
+            // Esconder placeholder e exibir loading
+            placeholder.style.display = 'none';
+            scriptContainer.style.display = 'none';
+            copyBtn.style.display = 'none';
+            loading.style.display = 'flex';
+
+            // Simular tempo de resposta da rede/IA (1.2 segundos)
+            setTimeout(() => {
+                const produtoSelectElement = produtoSelect.options[produtoSelect.selectedIndex];
+                const produto = produtoSelectElement.value;
+                const categoria = produtoSelectElement.getAttribute('data-category');
+                const objecao = objecaoSelect.value;
+                const cliente = clienteInput.value || "Cliente";
+
+                // Obter dados correspondentes da simulação
+                let scriptSteps = [];
+                if (objecao === 'custom') {
+                    const customText = customObjecaoInput.value || "a concorrência ou o preço";
+                    scriptSteps = [
+                        { 
+                            title: "Passo 1: Validar e Conectar", 
+                            text: `"{cliente}, eu compreendo o seu ponto de vista quando diz que '${customText}'. É super natural pensar assim."` 
+                        },
+                        { 
+                            title: "Passo 2: Justificativa de Negócio", 
+                            text: `"${vendedorInput.value || "João"}, foque na rentabilidade de trabalhar com o portfólio líder da DMC Ambev. Trazer marcas como ${produto} atrai um cliente que gasta muito mais na mesa, compensando esse receio inicial."` 
+                        },
+                        { 
+                            title: "Passo 3: Proposta Sem Risco", 
+                            text: `"Para provarmos o giro disso sem risco pro seu caixa, vamos colocar apenas uma quantidade de teste reduzida. Eu me comprometo a passar aqui no meio da semana para acompanhar com você."` 
+                        },
+                        { 
+                            title: "Passo 4: Fechamento Comercial", 
+                            text: `"Podemos fechar essa carga menor experimental no seu pedido de hoje para ver como o seu público reage no final de semana?"` 
+                        }
+                    ];
+                } else {
+                    scriptSteps = database[objecao][categoria];
+                }
+                
+                // Limpar e preencher container de roteiros
+                scriptContainer.innerHTML = '';
+                
+                scriptSteps.forEach((step, index) => {
+                    const stepDiv = document.createElement('div');
+                    stepDiv.className = 'script-step';
+                    // Aplicar animação em cascata
+                    stepDiv.style.animationDelay = `${index * 0.25}s`;
+                    
+                    // Substituir as variáveis no texto simulado
+                    let textProcessed = step.text.replace(/{cliente}/g, cliente);
+                    textProcessed = textProcessed.replace(/{produto}/g, produto);
+
+                    stepDiv.innerHTML = `
+                        <h4>${step.title}</h4>
+                        <p>${textProcessed}</p>
+                    `;
+                    scriptContainer.appendChild(stepDiv);
+                });
+
+                // Alternar exibições
+                loading.style.display = 'none';
+                scriptContainer.style.display = 'flex';
+                copyBtn.style.display = 'block';
+
+                // Resetar botão
+                generateBtn.disabled = false;
+                generateBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                    Gerar Roteiro Inteligente
+                `;
+            }, 1200);
+        });
+
+        // Funcionalidade de cópia do roteiro gerado
+        copyBtn.addEventListener('click', () => {
+            const steps = scriptContainer.querySelectorAll('.script-step');
+            let textToCopy = `DMC Sales Copilot - Roteiro de Vendas Gerado\n\n`;
+            
+            steps.forEach(step => {
+                const title = step.querySelector('h4').innerText;
+                const text = step.querySelector('p').innerText;
+                textToCopy += `📌 ${title}\n${text}\n\n`;
+            });
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                const originalContent = copyBtn.innerHTML;
+                copyBtn.innerHTML = `
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00ff88" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                `;
+                copyBtn.title = "Copiado!";
+                
+                setTimeout(() => {
+                    copyBtn.innerHTML = originalContent;
+                    copyBtn.title = "Copiar Roteiro";
+                }, 2000);
+            }).catch(err => {
+                alert("Erro ao copiar: " + err);
+            });
+        });
+    </script>
+</body>
+</html>
