@@ -1,0 +1,10 @@
+{
+  "name": "copiloto-vendas",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Sales Copilot front‑end + serverless Gemini API",
+  "scripts": {
+    "dev": "echo 'no dev server needed'"
+  }
+}

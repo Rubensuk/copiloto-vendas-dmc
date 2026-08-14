@@ -411,6 +411,88 @@
                 transform: translateX(0);
             }
         }
+
+        /* Toggle Switch Style */
+        .toggle-group {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--card-border);
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .toggle-label {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+            max-width: 80%;
+        }
+
+        .toggle-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .toggle-desc {
+            font-size: 0.72rem;
+            color: var(--text-secondary);
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(255, 255, 255, 0.1);
+            transition: .3s;
+            border-radius: 22px;
+            border: 1px solid var(--card-border);
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 14px;
+            width: 14px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-accent);
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 8px var(--accent-glow);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+            background-color: #080b10;
+        }
     </style>
 </head>
 <body>
@@ -445,47 +527,96 @@
             </div>
 
             <div class="form-group">
+                <label for="perfil-cliente">Perfil Comportamental do Cliente</label>
+                <select id="perfil-cliente">
+                    <option value="preco">Focado em Preço (Busca menor custo/economia)</option>
+                    <option value="sem-tempo">Sem Tempo (Direto ao ponto, pragmático)</option>
+                    <option value="inovador">Inovador (Interessado em tendências e novidades)</option>
+                    <option value="tradicional" selected>Tradicional (Conservador, resistente a mudanças)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="estilo-vendedor">Estilo de Abordagem do Vendedor</label>
+                <select id="estilo-vendedor">
+                    <option value="amigavel" selected>Parceiro e Coloquial (Amigável e informal)</option>
+                    <option value="tecnico">Consultivo/Técnico (Focado em margens, números e giro)</option>
+                    <option value="direto">Direto e Assertivo (Focado em fechamento rápido)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
                 <label for="produto">Produto em Foco</label>
                 <select id="produto">
-                    <optgroup label="Cervejas Premium">
-                        <option value="Spaten" data-category="cerveja-premium">Spaten</option>
-                        <option value="Corona" data-category="cerveja-premium">Corona</option>
-                        <option value="Stella Artois" data-category="cerveja-premium">Stella Artois</option>
-                        <option value="Budweiser" data-category="cerveja-premium">Budweiser</option>
-                        <option value="Beck's" data-category="cerveja-premium">Beck's</option>
-                        <option value="Antarctica Original" data-category="cerveja-premium">Antarctica Original</option>
-                        <option value="Colorado" data-category="cerveja-premium">Colorado (Artesanal)</option>
-                    </optgroup>
-                    <optgroup label="Cervejas Core / Dia a Dia">
-                        <option value="Brahma Duplo Malte" data-category="cerveja-mainstream">Brahma Duplo Malte</option>
-                        <option value="Skol" data-category="cerveja-mainstream">Skol</option>
+                    <optgroup label="1. Cervejas Core & Mainstream (Alto Giro / Volume)">
+                        <option value="Brahma Chopp" data-category="cerveja-mainstream">Brahma Chopp</option>
+                        <option value="Brahma Duplo Malte" data-category="cerveja-mainstream" selected>Brahma Duplo Malte</option>
+                        <option value="Brahma Chopp Black" data-category="cerveja-mainstream">Brahma Chopp Black</option>
+                        <option value="Brahma Malzbier" data-category="cerveja-mainstream">Brahma Malzbier</option>
+                        <option value="Skol Pilsen" data-category="cerveja-mainstream">Skol Pilsen</option>
+                        <option value="Skol Puro Malte" data-category="cerveja-mainstream">Skol Puro Malte</option>
                         <option value="Antarctica Pilsen" data-category="cerveja-mainstream">Antarctica Pilsen</option>
+                        <option value="Antarctica Sub Zero" data-category="cerveja-mainstream">Antarctica Sub Zero</option>
+                        <option value="Bohemia Puro Malte" data-category="cerveja-mainstream">Bohemia Puro Malte</option>
                     </optgroup>
-                    <optgroup label="Refrigerantes Tradicionais">
-                        <option value="Guaraná Antarctica" data-category="refrigerante">Guaraná Antarctica</option>
-                        <option value="Pepsi" data-category="refrigerante">Pepsi Cola</option>
-                        <option value="Sukita" data-category="refrigerante">Sukita Laranja</option>
-                        <option value="Soda Antarctica" data-category="refrigerante">Soda Antarctica</option>
-                        <option value="Tônica Antarctica" data-category="refrigerante">Tônica Antarctica</option>
+                    <optgroup label="1. Cervejas Premium & Super Premium">
+                        <option value="Spaten (Munich Helles)" data-category="cerveja-premium">Spaten (Munich Helles)</option>
+                        <option value="Corona Extra" data-category="cerveja-premium">Corona Extra</option>
+                        <option value="Corona Sunbrew" data-category="cerveja-premium">Corona Sunbrew</option>
+                        <option value="Stella Artois Tradicional" data-category="cerveja-premium">Stella Artois Tradicional</option>
+                        <option value="Stella Artois Pure Gold (Sem Glúten)" data-category="cerveja-premium">Stella Artois Pure Gold (Sem Glúten)</option>
+                        <option value="Budweiser Tradicional" data-category="cerveja-premium">Budweiser Tradicional</option>
+                        <option value="Budweiser Supreme" data-category="cerveja-premium">Budweiser Supreme</option>
+                        <option value="Beck's (German Pilsener)" data-category="cerveja-premium">Beck's (German Pilsener)</option>
+                        <option value="Michelob Ultra" data-category="cerveja-premium">Michelob Ultra (Baixo Carboidrato)</option>
+                        <option value="Antarctica Original" data-category="cerveja-premium">Antarctica Original</option>
                     </optgroup>
-                    <optgroup label="Refrigerantes Zero / Light">
+                    <optgroup label="1. Cervejas Zero Álcool (0.0%)">
+                        <option value="Brahma 0.0%" data-category="cerveja-zero">Brahma 0.0%</option>
+                        <option value="Skol 0.0% (Zero Zero)" data-category="cerveja-zero">Skol 0.0% (Zero Zero)</option>
+                        <option value="Bud Zero (0.0%)" data-category="cerveja-zero">Bud Zero (0.0%)</option>
+                        <option value="Corona Cero (0.0%)" data-category="cerveja-zero">Corona Cero (0.0%)</option>
+                    </optgroup>
+                    <optgroup label="2. Não-Alcoólicos - Refrigerantes & Gaseificados">
+                        <option value="Guaraná Antarctica Tradicional" data-category="refrigerante">Guaraná Antarctica Tradicional</option>
                         <option value="Guaraná Antarctica Zero" data-category="refrigerante-zero">Guaraná Antarctica Zero</option>
                         <option value="Pepsi Black" data-category="refrigerante-zero">Pepsi Black</option>
-                        <option value="H2OH!" data-category="refrigerante-zero">H2OH!</option>
+                        <option value="Pepsi Tradicional" data-category="refrigerante">Pepsi Tradicional</option>
+                        <option value="Pepsi Twist" data-category="refrigerante">Pepsi Twist</option>
+                        <option value="H2OH! Limão" data-category="refrigerante-zero">H2OH! Limão</option>
+                        <option value="H2OH! Limoneto" data-category="refrigerante-zero">H2OH! Limoneto</option>
+                        <option value="Baré Tradicional" data-category="refrigerante">Baré Tradicional</option>
+                        <option value="Baré Tutti-Frutti" data-category="refrigerante">Baré Tutti-Frutti</option>
+                        <option value="Sukita Laranja" data-category="refrigerante">Sukita Laranja</option>
+                        <option value="Sukita Uva" data-category="refrigerante">Sukita Uva</option>
+                        <option value="Soda Antarctica Limonada" data-category="refrigerante">Soda Antarctica Limonada</option>
+                        <option value="Soda Antarctica Zero" data-category="refrigerante-zero">Soda Antarctica Zero</option>
+                        <option value="Tônica Antarctica Tradicional" data-category="refrigerante">Tônica Antarctica Tradicional</option>
+                        <option value="Tônica Antarctica Zero" data-category="refrigerante-zero">Tônica Antarctica Zero</option>
+                        <option value="Tônica Antarctica Citrus" data-category="refrigerante">Tônica Antarctica Citrus</option>
                     </optgroup>
-                    <optgroup label="Cervejas Zero Álcool">
-                        <option value="Brahma Zero" data-category="cerveja-zero">Brahma Zero</option>
-                        <option value="Corona Cero" data-category="cerveja-zero">Corona Cero</option>
+                    <optgroup label="2. Não-Alcoólicos - Águas, Chás, Energéticos & Isotônicos">
+                        <option value="Água Mineral Lebrinha (Com/Sem Gás)" data-category="bebidas-nao-alcoolicas">Água Mineral Lebrinha (Com/Sem Gás)</option>
+                        <option value="Lipton Ice Tea (Limão/Pêssego)" data-category="bebidas-nao-alcoolicas">Lipton Ice Tea (Limão/Pêssego)</option>
+                        <option value="Fusion Energy Drink" data-category="bebidas-nao-alcoolicas">Fusion Energy Drink (Tradicional/Sabores)</option>
+                        <option value="Red Bull Energy Drink" data-category="bebidas-nao-alcoolicas">Red Bull (Energy Drink/Zero/Editions)</option>
+                        <option value="Gatorade (Isotônico)" data-category="bebidas-nao-alcoolicas">Gatorade (Isotônico PepsiCo)</option>
                     </optgroup>
-                    <optgroup label="Bebidas não Alcoólicas / Funcionais">
-                        <option value="Água Ama" data-category="bebidas-nao-alcoolicas">Água Ama (Sustentável)</option>
-                        <option value="Gatorade" data-category="bebidas-nao-alcoolicas">Gatorade</option>
-                        <option value="Lipton Ice Tea" data-category="bebidas-nao-alcoolicas">Lipton Ice Tea</option>
-                        <option value="Sucos Do Bem" data-category="bebidas-nao-alcoolicas">Sucos Do Bem</option>
+                    <optgroup label="3. Ready to Drink (RTD / Bebidas Mistas)">
+                        <option value="Flying Fish Pressed Lemon" data-category="drinks-prontos">Flying Fish Pressed Lemon</option>
+                        <option value="Skol Beats (Senses/GT/Tropical/150 BPM)" data-category="drinks-prontos">Skol Beats (Senses, GT, Tropical, Caipi)</option>
+                        <option value="Mike's Hard Lemonade (Limão/Pitaia/Tangerina)" data-category="drinks-prontos">Mike's Hard Lemonade (Limão/Pitaia/Tangerina)</option>
                     </optgroup>
-                    <optgroup label="Drinks Prontos (RTD)">
-                        <option value="Beats" data-category="drinks-prontos">Beats (Senses/GT)</option>
-                        <option value="Mike's Hard Lemonade" data-category="drinks-prontos">Mike's Hard Lemonade</option>
+                    <optgroup label="4. Destilados e Vinhos (Marketplace BEES)">
+                        <option value="Whisky Johnnie Walker (Red/Black)" data-category="cerveja-premium">Whisky Johnnie Walker (Red, Black, White Horse, Buchanan's)</option>
+                        <option value="Vodka (Smirnoff/Absolut/Cîroc)" data-category="cerveja-premium">Vodka (Smirnoff, Absolut, Cîroc)</option>
+                        <option value="Gin (Tanqueray/Gordon's)" data-category="cerveja-premium">Gin (Tanqueray, Gordon's)</option>
+                        <option value="Cachaça & Rum (Ypióca/Captain Morgan)" data-category="cerveja-mainstream">Cachaça & Rum (Ypióca, Captain Morgan)</option>
+                        <option value="Vinhos e Espumantes BEES" data-category="cerveja-premium">Vinhos e Espumantes (Catálogo BEES)</option>
+                    </optgroup>
+                    <optgroup label="5. Mercearia e B2B Marketplace (BEES Marketplace)">
+                        <option value="Snacks Elma Chips (Lay's/Doritos/Ruffles/Cheetos)" data-category="bebidas-nao-alcoolicas">Snacks Elma Chips (Lay's, Doritos, Ruffles, Cheetos, Torcida)</option>
+                        <option value="Conveniência & Descartáveis BEES" data-category="bebidas-nao-alcoolicas">Conveniência, Descartáveis e Gelo BEES</option>
                     </optgroup>
                 </select>
             </div>
@@ -504,6 +635,18 @@
             <div class="form-group" id="custom-objecao-group" style="display: none;">
                 <label for="custom-objecao">Descreva o que o cliente disse</label>
                 <input type="text" id="custom-objecao" placeholder="Ex: O cliente falou que a cerveja concorrente vende mais no bar dele.">
+            </div>
+
+            <!-- Toggle switch para modo IA Real -->
+            <div class="toggle-group">
+                <div class="toggle-label">
+                    <span class="toggle-title">Inteligência Artificial Real (Gemini)</span>
+                    <span class="toggle-desc">Chama o modelo de IA real em vez de simular localmente</span>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="ai-mode-toggle">
+                    <span class="slider"></span>
+                </label>
             </div>
 
             <button class="btn" id="generate-btn">
@@ -562,6 +705,8 @@
     <script>
         const vendedorInput = document.getElementById('vendedor');
         const clienteInput = document.getElementById('cliente');
+        const perfilClienteSelect = document.getElementById('perfil-cliente');
+        const estiloVendedorSelect = document.getElementById('estilo-vendedor');
         const produtoSelect = document.getElementById('produto');
         const objecaoSelect = document.getElementById('objecao');
         const customObjecaoGroup = document.getElementById('custom-objecao-group');
@@ -751,10 +896,13 @@
                     { title: "Passo 4: Fechamento", text: '"Fechamos 1 fardo de latas de {produto} hoje?"' }
                 ]
             }
+        };
         // Função para gerar o texto do prompt de engenharia de prompts
         function updatePromptBlueprint() {
             const vendedor = vendedorInput.value || "[Vendedor]";
             const cliente = clienteInput.value || "[Cliente]";
+            const perfil = perfilClienteSelect.options[perfilClienteSelect.selectedIndex].text;
+            const estilo = estiloVendedorSelect.options[estiloVendedorSelect.selectedIndex].text;
             const produto = produtoSelect.value;
             
             let objecaoText = "";
@@ -764,22 +912,19 @@
                 objecaoText = objecaoSelect.options[objecaoSelect.selectedIndex].text;
             }
 
-            const blueprint = `SYSTEM PROMPT:
-Você é um copiloto especialista em vendas de cervejas e bebidas da Ambev para a revenda DMC. Seu objetivo é ajudar vendedores na ponta a contornarem objeções comerciais com abordagens altamente eficazes e persuasivas.
+            const blueprint = `PAPEL E OBJETIVO:
+Você é o Copiloto de Vendas Ambev, um assistente especialista em negociação B2B, execução de mercado (PDV) e contorno de objeções em campo para Representantes de Negócios (RNs) e vendedores.
 
-INPUT VARIABLES:
-- Vendedor: <span class="highlight-variable">${vendedor}</span>
-- Cliente (PDV): <span class="highlight-variable">${cliente}</span>
+VARIÁVEIS DO CENÁRIO:
+- Vendedor: <span class="highlight-variable">${vendedor}</span> (Estilo: <span class="highlight-variable">${estilo}</span>)
+- Cliente: <span class="highlight-variable">${cliente}</span> (Perfil: <span class="highlight-variable">${perfil}</span>)
 - Produto em Foco: <span class="highlight-variable">${produto}</span>
 - Objeção Identificada: <span class="highlight-variable">"${objecaoText}"</span>
 
-PROMPT GENERATED:
-"Você é o copiloto de vendas do <span class="highlight-variable">${vendedor}</span>. Escreva uma abordagem em 4 passos para convencer o cliente <span class="highlight-variable">${cliente}</span> a comprar <span class="highlight-variable">${produto}</span>, contornando a objeção de que <span class="highlight-variable">${objecaoText}</span>.
-Forneça os passos no seguinte padrão:
-Passo 1: Validar e Conectar (Linguagem coloquial de vendas)
-Passo 2: Justificativa de Negócio/Financeira
-Passo 3: Proposta Sem Risco / Teste
-Passo 4: Fechamento Comercial Diretivo e Rápido"`;
+ESTRUTURA DE RESPOSTA OBRIGATÓRIA:
+1. Diagnóstico Rápido: A real dor/intenção do cliente em 1 linha.
+2. O Que Falar (Script de Campo): Texto pronto e falado para contornar a objeção usando os pilares Ambev (Giro vs Margem, Ecossistema BEES, Mix/Ocasião e Evitar Ruptura).
+3. Pergunta de Fechamento (CTA): Pergunta comercial para puxar o fechamento imediato do pedido.`;
 
             blueprintCode.innerHTML = blueprint;
         }
@@ -790,6 +935,8 @@ Passo 4: Fechamento Comercial Diretivo e Rápido"`;
         // Listeners para atualizar o blueprint em tempo real conforme digita/muda
         vendedorInput.addEventListener('input', updatePromptBlueprint);
         clienteInput.addEventListener('input', updatePromptBlueprint);
+        perfilClienteSelect.addEventListener('change', updatePromptBlueprint);
+        estiloVendedorSelect.addEventListener('change', updatePromptBlueprint);
         produtoSelect.addEventListener('change', updatePromptBlueprint);
         
         // Listener de controle de exibição do input customizado
@@ -804,11 +951,173 @@ Passo 4: Fechamento Comercial Diretivo e Rápido"`;
         
         customObjecaoInput.addEventListener('input', updatePromptBlueprint);
 
-        // Ação de geração de roteiro simulando a IA
-        generateBtn.addEventListener('click', () => {
+        const aiModeToggle = document.getElementById('ai-mode-toggle');
+
+        function getRawPrompt() {
+            const vendedor = vendedorInput.value || "Vendedor";
+            const cliente = clienteInput.value || "Cliente";
+            const perfil = perfilClienteSelect.options[perfilClienteSelect.selectedIndex].text;
+            const estilo = estiloVendedorSelect.options[estiloVendedorSelect.selectedIndex].text;
+            const produto = produtoSelect.value;
+            const produtoSelectElement = produtoSelect.options[produtoSelect.selectedIndex];
+            const categoria = produtoSelectElement.getAttribute('data-category') || "cerveja";
+            
+            let objecaoText = "";
+            if (objecaoSelect.value === 'custom') {
+                objecaoText = customObjecaoInput.value || "a concorrência ou o preço";
+            } else {
+                objecaoText = objecaoSelect.options[objecaoSelect.selectedIndex].text;
+            }
+
+            return `# PAPEL E OBJETIVO
+Você é o Copiloto de Vendas Ambev, um assistente especialista em negociação B2B, execução de mercado (PDV) e contorno de objeções em campo. Seu objetivo é fornecer respostas rápidas, práticas e persuasivas para Representantes de Negócios (RNs) e vendedores que enfrentam objeções de donos de PDVs (bares, restaurantes, mercadinhos, conveniências e adegas).
+
+---
+
+# CENÁRIO DA VISITA / NEGOCIAÇÃO
+- Vendedor / RN: ${vendedor} (Estilo de fala: ${estilo})
+- Cliente / PDV: ${cliente} (Perfil de comportamento: ${perfil})
+- Produto em Foco: ${produto} (Categoria: ${categoria})
+- Objeção do Cliente: "${objecaoText}"
+
+---
+
+# DIRETRIZES GERAIS DE RESPOSTA
+1. Tom de Voz: Direto, assertivo, comercial e parceiro do cliente. Adapte a linguagem ao estilo "${estilo}" do vendedor e ao perfil "${perfil}" do cliente.
+2. Pilares de Argumentação Obrigatórios:
+   - Giro vs. Margem: Priorizar sempre o lucro total no bolso (R$) pelo giro rápido em vez de margem percentual parada.
+   - Ecossistema BEES: Alavancar pontuação (Clube Bees), prazo, segurança fiscal, entrega garantida e autonomia.
+   - Mix e Ocasião de Consumo: Defender não-alcoólicos (refrigerantes, tônicas, energéticos, isotônicos, águas) e inovações como complementares à cerveja para elevar a cesta média.
+   - Evitar Ruptura: Mostrar o custo financeiro de ficar sem produto no pico de movimento (sexta a domingo).
+
+---
+
+# BASE DE CONHECIMENTO: MATRIZ DE OBJEÇÕES E RESPOSTAS
+
+## 1. PREÇO, MARGEM E CONCORRÊNCIA
+- Objeção: "A cerveja/refrigerante do concorrente me dá mais margem."
+  -> Foco: Lucro real no bolso por giro x margem estagnada.
+  -> Argumento base: "Margem alta em produto que fica 20 dias parado na prateleira não paga conta. Nosso produto gira 3 a 4 vezes mais rápido no mesmo período, gerando muito mais dinheiro líquido no seu caixa."
+
+- Objeção: "No atacarejo/distribuidor clandestino está alguns centavos mais barato."
+  -> Foco: Custo oculto, frete, prazo, pontos BEES e risco fiscal.
+  -> Argumento base: "Lá você gasta frete, perde seu tempo, paga à vista e não ganha pontos no Clube Bees para abater em dinheiro no próximo pedido. Aqui você tem prazo, entrega na porta e nota 100% garantida."
+
+- Objeção: "Vou esperar entrar uma promoção melhor no app/próxima semana."
+  -> Foco: Risco de ruptura no final de semana e perda de cliente.
+  -> Argumento base: "Esperar uma semana pode te custar o estoque zerado no sábado à noite. Cliente que não acha a marca que quer vai embora pro vizinho. Vamos garantir o volume de segurança agora."
+
+## 2. ESTOQUE, ESPAÇO E PORTFÓLIO (MIX)
+- Objeção: "Meu estoque está cheio / Não tenho espaço para guardar."
+  -> Foco: Auditoria do estoque e reposição seletiva do que tem alto giro.
+  -> Argumento base: "Seu estoque pode estar cheio do que vende devagar. Vamos olhar as caixas do que realmente gira todo dia (linhas principais e não-alcoólicos). Repomos só o essencial para não faltar no pico."
+
+- Objeção: "Essa inovação/lançamento não vende aqui no meu bairro."
+  -> Foco: Teste de baixo risco + material de visibilidade (merchandising).
+  -> Argumento base: "Todo produto novo precisa de visibilidade para começar a girar. Eu monto o material de ponto de venda no balcão e deixamos apenas 1 ou 2 caixas para teste. Se colocar na temperatura certa, gira rápido."
+
+- Objeção: "Aqui eu só vendo cerveja, não vendo não-alcoólico (refrigerante/água/energético)."
+  -> Foco: Cesta média e ocasiões de consumo (almoço, motorista, família).
+  -> Argumento base: "O cliente que vem comprar cerveja no final de semana quase sempre precisa levar o refrigerante da família ou a água. Se você não tem, ele compra a cerveja aqui e o resto no seu concorrente."
+
+## 3. ECOSSISTEMA DIGITAL (BEES) E OPERAÇÃO
+- Objeção: "Não gosto de pedir pelo aplicativo Bees, prefiro que você tire o pedido."
+  -> Foco: Parceria contínua + autonomia no final de semana/urgência.
+  -> Argumento base: "Eu continuo sendo seu consultor e acompanhando sua loja toda semana. O app serve para você ter autonomia quando acabar um produto no meio do domingo. Vamos fazer o pedido juntos agora para você ver como é simples e acumular seus pontos?"
+
+- Objeção: "Tive problema na entrega anterior (atraso/falta/avaria)."
+  -> Foco: Resolução imediata e acompanhamento de rota.
+  -> Argumento base: "Entendo a frustração e peço desculpas. Já verifiquei a ocorrência anterior para regularização. Eu mesmo vou acompanhar a liberação e entrega desse pedido para garantir que chegue 100% correto."
+
+## 4. EQUIPAMENTOS E COMODATO (GELADEIRAS/FREEZERS)
+- Objeção: "Só compro esse volume se me liberarem outra geladeira/freezer."
+  -> Foco: Metas de volume e pureza como critério técnico de aprovação.
+  -> Argumento base: "A liberação de novos equipamentos depende da pontuação de volume e ocupação do mix da loja. Cumprindo essa grade de volume nas próximas semanas, tenho os dados exatos para abrir e justificar a solicitação do comodato junto à supervisão."
+
+---
+
+# FORMATO OBRIGATÓRIO DA RESPOSTA
+Responda EXATAMENTE seguindo estes 3 blocos (mantenha os cabeçalhos das seções em negrito):
+
+**Diagnóstico Rápido:**
+[A real dor/intenção do cliente em 1 linha]
+
+**O Que Falar (Script de Campo):**
+[Texto pronto em linguagem falada, direta e natural para o vendedor dizer ao cliente, adaptado ao estilo do vendedor e perfil do cliente]
+
+**Pergunta de Fechamento (CTA):**
+[Uma pergunta que encerra a objeção e puxa o fechamento do pedido]
+
+Não adicione saudações ou explicações fora dessa estrutura.`;
+        }
+
+        function parseAIScript(text) {
+            const steps = [];
+            
+            // 1. Tenta identificar a nova estrutura com marcadores (Diagnóstico Rápido, O Que Falar, Pergunta de Fechamento)
+            const sectionRegex = /(?:###?\s*|\*\*|#\s*)?(Diagnóstico Rápido|O Que Falar \(Script de Campo\)|O Que Falar|Script de Campo|Pergunta de Fechamento \(CTA\)|Pergunta de Fechamento|Fechamento)(?:\*\*|:|\s*-)?\s*([\s\S]*?)(?=(?:###?\s*|\*\*|#\s*)?(?:Diagnóstico Rápido|O Que Falar|Script de Campo|Pergunta de Fechamento|Fechamento|$))/gi;
+            
+            let match;
+            while ((match = sectionRegex.exec(text)) !== null) {
+                const rawTitle = match[1].trim();
+                let body = match[2].trim();
+                // Limpa marcadores de markdown residuais no início/fim
+                body = body.replace(/^[:\-\*]+\s*/, '').trim();
+                if (body) {
+                    let iconTitle = rawTitle;
+                    if (/diagnóstico/i.test(rawTitle)) iconTitle = "🎯 Diagnóstico Rápido";
+                    else if (/falar|script/i.test(rawTitle)) iconTitle = "🗣️ O Que Falar (Script de Campo)";
+                    else if (/fechamento|cta/i.test(rawTitle)) iconTitle = "🤝 Pergunta de Fechamento (CTA)";
+                    
+                    steps.push({
+                        title: iconTitle,
+                        text: body
+                    });
+                }
+            }
+            
+            // 2. Se não encontrou as 3 seções completas, tenta capturar "Passo X: Nome do Passo"
+            if (steps.length === 0) {
+                const regex = /(Passo \d+:[^\n]+)\n([^]*?)(?=(Passo \d+:|$))/gi;
+                while ((match = regex.exec(text)) !== null) {
+                    steps.push({
+                        title: match[1].trim(),
+                        text: match[2].trim()
+                    });
+                }
+            }
+            
+            if (steps.length === 0) {
+                // Tenta sem os dois pontos
+                const alternateRegex = /(Passo \d+[^\n]*)\n([^]*?)(?=(Passo \d+|$))/gi;
+                while ((match = alternateRegex.exec(text)) !== null) {
+                    steps.push({
+                        title: match[1].trim(),
+                        text: match[2].trim()
+                    });
+                }
+            }
+            
+            if (steps.length === 0) {
+                // Fallback: divide o texto em blocos de quebras de linha duplas
+                const blocks = text.split(/\n{2,}/);
+                blocks.forEach((block, index) => {
+                    if (block.trim() && index < 4) {
+                        steps.push({
+                            title: `Bloco ${index + 1}`,
+                            text: block.trim()
+                        });
+                    }
+                });
+            }
+            return steps;
+        }
+
+        // Ação de geração de roteiro
+        generateBtn.addEventListener('click', async () => {
             // Efeito visual no botão
             generateBtn.disabled = true;
-            generateBtn.innerText = "IA Processando Roteiro...";
+            generateBtn.innerText = aiModeToggle.checked ? "IA Consultando Gemini..." : "IA Processando Roteiro...";
 
             // Esconder placeholder e exibir loading
             placeholder.style.display = 'none';
@@ -816,64 +1125,87 @@ Passo 4: Fechamento Comercial Diretivo e Rápido"`;
             copyBtn.style.display = 'none';
             loading.style.display = 'flex';
 
-            // Simular tempo de resposta da rede/IA (1.2 segundos)
-            setTimeout(() => {
-                const produtoSelectElement = produtoSelect.options[produtoSelect.selectedIndex];
-                const produto = produtoSelectElement.value;
-                const categoria = produtoSelectElement.getAttribute('data-category');
-                const objecao = objecaoSelect.value;
-                const cliente = clienteInput.value || "Cliente";
+            if (aiModeToggle.checked) {
+                // MODO IA REAL
+                const prompt = getRawPrompt();
+                try {
+                    let endpoint = "/api/generate";
+                    if (window.location.protocol === 'file:') {
+                        // Se estiver rodando como arquivo local (duplo clique), aponta para a API implantada na Vercel
+                        endpoint = "https://copiloto-vendas-omega.vercel.app/api/generate";
+                    }
 
-                // Obter dados correspondentes da simulação
-                let scriptSteps = [];
-                if (objecao === 'custom') {
-                    const customText = customObjecaoInput.value || "a concorrência ou o preço";
-                    scriptSteps = [
-                        { 
-                            title: "Passo 1: Validar e Conectar", 
-                            text: `"{cliente}, eu compreendo o seu ponto de vista quando diz que '${customText}'. É super natural pensar assim."` 
+                    const response = await fetch(endpoint, {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
                         },
-                        { 
-                            title: "Passo 2: Justificativa de Negócio", 
-                            text: `"${vendedorInput.value || "João"}, foque na rentabilidade de trabalhar com o portfólio líder da DMC Ambev. Trazer marcas como ${produto} atrai um cliente que gasta muito mais na mesa, compensando esse receio inicial."` 
-                        },
-                        { 
-                            title: "Passo 3: Proposta Sem Risco", 
-                            text: `"Para provarmos o giro disso sem risco pro seu caixa, vamos colocar apenas uma quantidade de teste reduzida. Eu me comprometo a passar aqui no meio da semana para acompanhar com você."` 
-                        },
-                        { 
-                            title: "Passo 4: Fechamento Comercial", 
-                            text: `"Podemos fechar essa carga menor experimental no seu pedido de hoje para ver como o seu público reage no final de semana?"` 
-                        }
-                    ];
-                } else {
-                    scriptSteps = database[objecao][categoria];
-                }
-                
-                // Limpar e preencher container de roteiros
-                scriptContainer.innerHTML = '';
-                
-                scriptSteps.forEach((step, index) => {
-                    const stepDiv = document.createElement('div');
-                    stepDiv.className = 'script-step';
-                    // Aplicar animação em cascata
-                    stepDiv.style.animationDelay = `${index * 0.25}s`;
+                        body: JSON.stringify({ prompt }),
+                    });
+
+                    if (!response.ok) {
+                        const errText = await response.text();
+                        throw new Error(errText || `Erro HTTP ${response.status}`);
+                    }
+
+                    const data = await response.json();
+                    if (data.error) {
+                        throw new Error(data.error);
+                    }
+
+                    const aiText = data.result;
+                    const scriptSteps = parseAIScript(aiText);
+
+                    // Limpar e preencher container de roteiros
+                    scriptContainer.innerHTML = '';
                     
-                    // Substituir as variáveis no texto simulado
-                    let textProcessed = step.text.replace(/{cliente}/g, cliente);
-                    textProcessed = textProcessed.replace(/{produto}/g, produto);
+                    if (scriptSteps.length === 0) {
+                        // Caso a resposta venha como bloco simples, apenas exibe ela inteira
+                        const stepDiv = document.createElement('div');
+                        stepDiv.className = 'script-step';
+                        stepDiv.innerHTML = `
+                            <h4>Roteiro Gerado pela IA</h4>
+                            <p>${aiText.replace(/\n/g, '<br>')}</p>
+                        `;
+                        scriptContainer.appendChild(stepDiv);
+                    } else {
+                        scriptSteps.forEach((step, index) => {
+                            const stepDiv = document.createElement('div');
+                            stepDiv.className = 'script-step';
+                            stepDiv.style.animationDelay = `${index * 0.25}s`;
+                            
+                            stepDiv.innerHTML = `
+                                <h4>${step.title}</h4>
+                                <p>${step.text}</p>
+                            `;
+                            scriptContainer.appendChild(stepDiv);
+                        });
+                    }
 
-                    stepDiv.innerHTML = `
-                        <h4>${step.title}</h4>
-                        <p>${textProcessed}</p>
+                    // Alternar exibições
+                    loading.style.display = 'none';
+                    scriptContainer.style.display = 'flex';
+                    copyBtn.style.display = 'block';
+
+                } catch (error) {
+                    console.error("Erro ao chamar IA:", error);
+                    // Exibir erro amigável na tela
+                    scriptContainer.innerHTML = `
+                        <div style="color: #ff5252; padding: 1.5rem; text-align: center; border: 1px solid rgba(255, 82, 82, 0.2); border-radius: 8px; background: rgba(255, 82, 82, 0.05); display: flex; flex-direction: column; gap: 1rem; align-items: center; width: 100%;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                            <div>
+                                <h4 style="margin-bottom: 0.5rem; color: #ff5252;">Ops! Falha ao conectar com a IA do Gemini</h4>
+                                <p style="font-size: 0.9rem; line-height: 1.4; color: var(--text-secondary);">
+                                    Não conseguimos falar com o backend da IA.<br>
+                                    <strong>Detalhe:</strong> ${error.message}<br><br>
+                                    <em>Dica: Certifique-se de configurar a variável de ambiente <code>AI_API_KEY</code> com sua chave da Gemini API no painel da Vercel.</em>
+                                </p>
+                            </div>
+                        </div>
                     `;
-                    scriptContainer.appendChild(stepDiv);
-                });
-
-                // Alternar exibições
-                loading.style.display = 'none';
-                scriptContainer.style.display = 'flex';
-                copyBtn.style.display = 'block';
+                    loading.style.display = 'none';
+                    scriptContainer.style.display = 'flex';
+                }
 
                 // Resetar botão
                 generateBtn.disabled = false;
@@ -881,7 +1213,73 @@ Passo 4: Fechamento Comercial Diretivo e Rápido"`;
                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
                     Gerar Roteiro Inteligente
                 `;
-            }, 1200);
+
+            } else {
+                // MODO SIMULADO ORIGINAL
+                setTimeout(() => {
+                    const produtoSelectElement = produtoSelect.options[produtoSelect.selectedIndex];
+                    const produto = produtoSelectElement.value;
+                    const categoria = produtoSelectElement.getAttribute('data-category');
+                    const objecao = objecaoSelect.value;
+                    const cliente = clienteInput.value || "Cliente";
+
+                    // Obter dados correspondentes da simulação
+                    let scriptSteps = [];
+                    if (objecao === 'custom') {
+                        const customText = customObjecaoInput.value || "a concorrência ou o preço";
+                        scriptSteps = [
+                            { 
+                                title: "Passo 1: Validar e Conectar", 
+                                text: `"{cliente}, eu compreendo o seu ponto de vista quando diz que '${customText}'. É super natural pensar assim."` 
+                            },
+                            { 
+                                title: "Passo 2: Justificativa de Negócio", 
+                                text: `"${vendedorInput.value || "João"}, foque na rentabilidade de trabalhar com o portfólio líder da DMC Ambev. Trazer marcas como ${produto} atrai um cliente que gasta muito mais na mesa, compensando esse receio inicial."` 
+                            },
+                            { 
+                                title: "Passo 3: Proposta Sem Risco", 
+                                text: `"Para provarmos o giro disso sem risco pro seu caixa, vamos colocar apenas uma quantidade de teste reduzida. Eu me comprometo a passar aqui no meio da semana para acompanhar com você."` 
+                            },
+                            { 
+                                title: "Passo 4: Fechamento Comercial", 
+                                text: `"Podemos fechar essa carga menor experimental no seu pedido de hoje para ver como o seu público reage no final de semana?"` 
+                            }
+                        ];
+                    } else {
+                        scriptSteps = database[objecao][categoria];
+                    }
+                    
+                    // Limpar e preencher container de roteiros
+                    scriptContainer.innerHTML = '';
+                    
+                    scriptSteps.forEach((step, index) => {
+                        const stepDiv = document.createElement('div');
+                        stepDiv.className = 'script-step';
+                        stepDiv.style.animationDelay = `${index * 0.25}s`;
+                        
+                        let textProcessed = step.text.replace(/{cliente}/g, cliente);
+                        textProcessed = textProcessed.replace(/{produto}/g, produto);
+
+                        stepDiv.innerHTML = `
+                            <h4>${step.title}</h4>
+                            <p>${textProcessed}</p>
+                        `;
+                        scriptContainer.appendChild(stepDiv);
+                    });
+
+                    // Alternar exibições
+                    loading.style.display = 'none';
+                    scriptContainer.style.display = 'flex';
+                    copyBtn.style.display = 'block';
+
+                    // Resetar botão
+                    generateBtn.disabled = false;
+                    generateBtn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"/></svg>
+                        Gerar Roteiro Inteligente
+                    `;
+                }, 1200);
+            }
         });
 
         // Funcionalidade de cópia do roteiro gerado
