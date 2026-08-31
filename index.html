@@ -107,6 +107,38 @@
             letter-spacing: 0.05em;
         }
 
+        .btn-limpar-campos {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-family: var(--font-display);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            outline: none;
+        }
+
+        .btn-limpar-campos svg {
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn-limpar-campos:hover {
+            background: rgba(255, 82, 82, 0.1);
+            border-color: #ff5252;
+            color: #ff5252;
+            box-shadow: 0 0 12px rgba(255, 82, 82, 0.2);
+        }
+
+        .btn-limpar-campos:hover svg {
+            transform: rotate(-180deg);
+        }
+
         /* Main Layout */
         main {
             flex: 1;
@@ -280,16 +312,65 @@
             font-family: var(--font-display);
             font-size: 0.95rem;
             color: var(--primary-accent);
-            margin-bottom: 0.25rem;
+            margin-bottom: 0.5rem;
             text-transform: uppercase;
             letter-spacing: 0.05em;
         }
 
         .script-step p {
-            font-size: 1rem;
+            font-size: 0.95rem;
             line-height: 1.5;
             color: var(--text-primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .step-content {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: var(--text-primary);
+        }
+
+        .option-title {
+            color: #ffffff;
+            font-family: var(--font-display);
+            font-size: 1rem;
+            font-weight: 700;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            letter-spacing: 0.02em;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.4rem 0.75rem;
+            border-radius: 0.375rem;
+            border-left: 3px solid var(--primary-accent);
+        }
+
+        .option-bullet {
+            margin-left: 0.5rem;
+            margin-bottom: 0.4rem;
+            font-size: 0.93rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+        }
+
+        .option-bullet strong {
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .fala-pronta {
+            color: #5cf4b5;
             font-style: italic;
+            font-weight: 500;
+        }
+
+        .script-divider {
+            border: none;
+            border-top: 1px dashed rgba(255, 255, 255, 0.15);
+            margin: 1.25rem 0;
+            width: 100%;
         }
 
         /* Copy Button */
@@ -313,43 +394,165 @@
             border-color: var(--primary-accent);
         }
 
-        /* Prompt Blueprint (Educational Section) */
-        .blueprint-card {
-            background: rgba(10, 15, 26, 0.9);
-            border: 1px dashed rgba(0, 229, 255, 0.3);
-            border-radius: 0.75rem;
-            padding: 1.25rem;
+        /* Calculadoras Comerciais */
+        .calculator-card {
+            background: rgba(10, 15, 26, 0.95);
+            border: 1px solid var(--card-border);
+            border-radius: 1.25rem;
+            padding: 1.5rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
         }
 
-        .blueprint-title {
+        .calculator-tabs {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
             font-family: var(--font-display);
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--secondary-accent);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin-bottom: 0.75rem;
+            font-size: 0.9rem;
+            font-weight: 600;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
         }
 
-        .blueprint-code {
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 0.85rem;
-            color: #a7f3d0;
-            white-space: pre-wrap;
-            line-height: 1.4;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 0.85rem;
-            border-radius: 0.5rem;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            overflow-x: auto;
+        .tab-btn:hover {
+            color: var(--text-primary);
         }
 
-        .highlight-variable {
-            color: var(--secondary-accent);
+        .tab-btn.active {
+            color: var(--primary-accent);
+            border-bottom-color: var(--primary-accent);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .calc-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .calc-grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        @media (max-width: 480px) {
+            .calc-grid, .calc-grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .calc-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .calc-input-group label {
+            font-size: 0.75rem;
             font-weight: 700;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+        }
+
+        .calc-input-group input, .calc-input-group select {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            border-radius: 0.5rem;
+            padding: 0.6rem 0.75rem;
+            color: var(--text-primary);
+            font-size: 0.9rem;
+            outline: none;
+            width: 100%;
+        }
+
+        .calc-input-group input:focus, .calc-input-group select:focus {
+            border-color: var(--primary-accent);
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .calc-results {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .result-row strong {
+            color: var(--text-primary);
+        }
+
+        .result-row.highlighted {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 0.75rem;
+            font-weight: 700;
+        }
+
+        .result-row.highlighted strong {
+            color: var(--secondary-accent);
+            font-size: 1.1rem;
+        }
+
+        .calc-badge {
+            background: rgba(0, 255, 136, 0.08);
+            border: 1px solid rgba(0, 255, 136, 0.2);
+            color: #81f5b1;
+            padding: 0.75rem 1rem;
+            border-radius: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.4;
+            margin-top: 0.75rem;
+        }
+
+        .btn-clear {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 0.5rem;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.5rem 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .btn-clear:hover {
+            background: rgba(255, 82, 82, 0.1);
+            color: #ff5252;
+            border-color: rgba(255, 82, 82, 0.2);
         }
 
         /* Loading Animation */
@@ -505,7 +708,85 @@
                 <p>Inteligência Comercial</p>
             </div>
         </div>
-        <div class="badge">PROTOTYPE: DIO BOOTCAMP</div>
+        <button id="btn-limpar-campos" type="button" class="btn-limpar-campos" title="Limpar todos os campos">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                <path d="M3 3v5h5"/>
+            </svg>
+            <span>Limpar Campos</span>
+        </button>
+
+        <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('btn-limpar-campos')?.addEventListener('click', function(e) {
+                if (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                }
+
+                // 1. Força a seleção do placeholder neutro (índice 0) em todos os selects
+                document.querySelectorAll('select').forEach(sel => {
+                    sel.selectedIndex = 0;
+                    sel.value = "";
+                    sel.dispatchEvent(new Event('change', { bubbles: true }));
+                    sel.dispatchEvent(new Event('input', { bubbles: true }));
+                });
+
+                // 2. Limpa todos os inputs e textareas
+                document.querySelectorAll('input, textarea').forEach(el => {
+                    if (el.type === 'checkbox' || el.type === 'radio') {
+                        el.checked = false;
+                    } else {
+                        el.value = '';
+                    }
+                    el.dispatchEvent(new Event('input', { bubbles: true }));
+                    el.dispatchEvent(new Event('change', { bubbles: true }));
+                });
+
+                // 3. Reseta saídas de roteiro e calculadoras
+                const outputRoteiro = document.querySelector('.copilot-output') || document.querySelector('#output') || document.querySelector('.output-content');
+                if (outputRoteiro) {
+                    outputRoteiro.innerHTML = '<p class="placeholder-text" style="color: #64748b; font-style: italic;">Selecione os dados do cenário acima para gerar o roteiro comercial.</p>';
+                }
+
+                document.querySelectorAll('.calc-result, #resultado-conversao, #resultado-incremento').forEach(el => {
+                    el.innerHTML = '<span style="color: #64748b; font-size: 13px;">R$ 0,00</span>';
+                });
+
+                // 4. Limpeza específica de controle dos elementos do Copiloto de Vendas
+                const placeholder = document.getElementById('placeholder');
+                const scriptContainer = document.getElementById('script-container');
+                const copyBtn = document.getElementById('copy-btn');
+                const loading = document.getElementById('loading');
+                const generateBtn = document.getElementById('generate-btn');
+                
+                if (placeholder) placeholder.style.display = "flex";
+                if (scriptContainer) {
+                    scriptContainer.style.display = "none";
+                    scriptContainer.innerHTML = "";
+                }
+                if (copyBtn) copyBtn.style.display = "none";
+                if (loading) loading.style.display = "none";
+                if (generateBtn) {
+                    generateBtn.disabled = false;
+                    generateBtn.innerText = "Gerar Roteiro Inteligente";
+                }
+
+                // 5. Reset específico das Calculadoras Comerciais DMC
+                const resLucroAtual = document.getElementById('res-lucro-atual');
+                const resLucroAderido = document.getElementById('res-lucro-aderido');
+                const resDiferenca = document.getElementById('res-diferenca');
+                const resCaixasConvertidas = document.getElementById('res-caixas-convertidas');
+                const calcBadgeContainer = document.getElementById('calc-badge-container');
+
+                if (resLucroAtual) resLucroAtual.innerText = "R$ 0,00";
+                if (resLucroAderido) resLucroAderido.innerText = "R$ 0,00";
+                if (resDiferenca) resDiferenca.innerText = "R$ 0,00";
+                if (resCaixasConvertidas) resCaixasConvertidas.innerText = "0 caixas";
+                if (calcBadgeContainer) calcBadgeContainer.style.display = "none";
+            });
+        });
+        </script>
     </header>
 
     <main>
@@ -526,20 +807,33 @@
                 <input type="text" id="cliente" placeholder="Ex: Bar do Zé" value="Bar do Zé">
             </div>
 
+            <!-- NOVO CAMPO: STATUS DE COMPRA DO PDV -->
+            <div class="form-group">
+                <label for="status-compra">STATUS DE COMPRA DO PDV</label>
+                <select id="status-compra" name="status-compra">
+                    <option value="" selected disabled>Selecione o status de compra...</option>
+                    <option value="nao_comprador">Não Comprador no Mês (Inativo / Risco de Trava)</option>
+                    <option value="em_risco">Em Risco (Sem comprar há mais de 15 dias)</option>
+                    <option value="comprador_recorrente">Comprador Recorrente (Ativo na Rota)</option>
+                </select>
+            </div>
+
             <div class="form-group">
                 <label for="perfil-cliente">Perfil Comportamental do Cliente</label>
                 <select id="perfil-cliente">
+                    <option value="" selected disabled>Selecione o perfil do cliente...</option>
                     <option value="preco">Focado em Preço (Busca menor custo/economia)</option>
                     <option value="sem-tempo">Sem Tempo (Direto ao ponto, pragmático)</option>
                     <option value="inovador">Inovador (Interessado em tendências e novidades)</option>
-                    <option value="tradicional" selected>Tradicional (Conservador, resistente a mudanças)</option>
+                    <option value="tradicional">Tradicional (Conservador, resistente a mudanças)</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="estilo-vendedor">Estilo de Abordagem do Vendedor</label>
                 <select id="estilo-vendedor">
-                    <option value="amigavel" selected>Parceiro e Coloquial (Amigável e informal)</option>
+                    <option value="" selected disabled>Selecione o estilo de abordagem...</option>
+                    <option value="amigavel">Parceiro e Coloquial (Amigável e informal)</option>
                     <option value="tecnico">Consultivo/Técnico (Focado em margens, números e giro)</option>
                     <option value="direto">Direto e Assertivo (Focado em fechamento rápido)</option>
                 </select>
@@ -548,9 +842,10 @@
             <div class="form-group">
                 <label for="produto">Produto em Foco</label>
                 <select id="produto">
+                    <option value="" selected disabled>Selecione o produto ou ativo...</option>
                     <optgroup label="1. Cervejas Core & Mainstream (Alto Giro / Volume)">
                         <option value="Brahma Chopp" data-category="cerveja-mainstream">Brahma Chopp</option>
-                        <option value="Brahma Duplo Malte" data-category="cerveja-mainstream" selected>Brahma Duplo Malte</option>
+                        <option value="Brahma Duplo Malte" data-category="cerveja-mainstream">Brahma Duplo Malte</option>
                         <option value="Brahma Chopp Black" data-category="cerveja-mainstream">Brahma Chopp Black</option>
                         <option value="Brahma Malzbier" data-category="cerveja-mainstream">Brahma Malzbier</option>
                         <option value="Skol Pilsen" data-category="cerveja-mainstream">Skol Pilsen</option>
@@ -618,16 +913,47 @@
                         <option value="Snacks Elma Chips (Lay's/Doritos/Ruffles/Cheetos)" data-category="bebidas-nao-alcoolicas">Snacks Elma Chips (Lay's, Doritos, Ruffles, Cheetos, Torcida)</option>
                         <option value="Conveniência & Descartáveis BEES" data-category="bebidas-nao-alcoolicas">Conveniência, Descartáveis e Gelo BEES</option>
                     </optgroup>
+                    <optgroup label="6. Ativos & Equipamentos (Comodato / Trade)">
+                        <option value="Geladeira SOPI Cerveja" data-category="ativos">Geladeira SOPI Cerveja (Regra: R$ 2.000 + 10 SKUs)</option>
+                        <option value="Visicooler Visa NAB" data-category="ativos">Visicooler Visa NAB/Refri (Regra: R$ 1.200)</option>
+                        <option value="Vasilhame RGB 300ml" data-category="ativos">Vasilhame RGB 300ml Retornável (Regra Giro 2x)</option>
+                        <option value="Vasilhame RGB 600ml" data-category="ativos">Vasilhame RGB 600ml Retornável (Regra Giro 2x)</option>
+                        <option value="Vasilhame RGB 1L" data-category="ativos">Vasilhame RGB 1L Litrão (Regra Giro 2x)</option>
+                        <option value="Chopeira Elétrica" data-category="ativos">Chopeira Elétrica / Trave</option>
+                        <option value="Conjunto de Mesas e Cadeiras" data-category="ativos">Conjunto de Mesas, Cadeiras e Ombrelones</option>
+                    </optgroup>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="objecao">Principal Objeção do Cliente</label>
                 <select id="objecao">
-                    <option value="giro">"Essa marca premium não vai girar no meu ponto de venda"</option>
-                    <option value="preco">"Esse produto é muito caro para o meu cliente final"</option>
-                    <option value="espaco">"Meu freezer já está cheio de outras marcas"</option>
-                    <option value="concorrente">"O concorrente me dá desconto e bonificação"</option>
+                    <option value="" selected disabled>Selecione a principal objeção...</option>
+                    <optgroup label="A. Equipamentos (Chopeiras, Geladeiras, Cervegelas)">
+                        <option value="energia">"Gasta muita energia elétrica / Minha conta de luz vai explodir"</option>
+                        <option value="espaco-equipamento">"Não tenho espaço físico / Vai atrapalhar a circulação ou a bancada"</option>
+                        <option value="manutencao">"Manutenção e limpeza dão muita dor de cabeça / Ninguém sabe operar"</option>
+                        <option value="canibalizacao-chopp">"Já vendo cerveja engarrafada, não preciso de chopp"</option>
+                    </optgroup>
+                    <optgroup label="B. Produtos, Portfólio e Giro">
+                        <option value="caro-sem-perfil">"Esse produto/lançamento é caro, meu público não compra / Não tem perfil"</option>
+                        <option value="prazo-preco-concorrente">"O concorrente X me dá mais prazo / preço mais barato / brinde"</option>
+                        <option value="estoque-parado">"Já tenho muito estoque / Comprei recente e não girou"</option>
+                        <option value="historico-ruim">"Já trabalhei com isso no passado e não vendeu nada"</option>
+                    </optgroup>
+                    <optgroup label="C. Visibilidade, Cardápio e Trade">
+                        <option value="estetica-bar">"O material de vocês vai poluir a estética do meu bar"</option>
+                        <option value="exclusividade-concorrente">"Já tenho contrato / exclusividade visual com a marca concorrente"</option>
+                        <option value="preco-na-mesa">"Não quero colocar preço na mesa / No cardápio"</option>
+                    </optgroup>
+                    <optgroup label="D. Relacionamento e Operação">
+                        <option value="empurrar-produto">"Vocês só vêm aqui para empurrar produto / Não preciso de visita"</option>
+                    </optgroup>
+                    <optgroup label="E. Não Compradores (NC) & Positivação de Rota">
+                        <option value="nc-estoque">"Ainda tenho estoque / Não vou comprar nada este mês"</option>
+                        <option value="nc-movimento">"Movimento fraco / Deixa para o final do mês"</option>
+                        <option value="nc-app">"Vou pedir direto no aplicativo depois"</option>
+                    </optgroup>
                     <option value="custom">"Outra objeção (Digitar texto livre)..."</option>
                 </select>
             </div>
@@ -684,27 +1010,201 @@
                 </div>
             </div>
 
-            <!-- Bastidores do Prompt (Parte Educativa) -->
-            <div class="blueprint-card">
-                <div class="blueprint-title">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                    Engenharia de Prompt: O Blueprint da IA
+            <!-- Calculadoras Comerciais Interativas -->
+            <div class="calculator-card">
+                <div class="calculator-tabs">
+                    <button class="tab-btn active" id="btn-tab-rentabilidade" onclick="switchTab('tab-rentabilidade')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                        Rentabilidade (Aderido)
+                    </button>
+                    <button class="tab-btn" id="btn-tab-conversor" onclick="switchTab('tab-conversor')">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                        Conversor HCT
+                    </button>
                 </div>
-                <div class="blueprint-code" id="blueprint-code">
-                    <!-- Preenchido dinamicamente via JS -->
+
+                <!-- Tab 1: Rentabilidade -->
+                <div id="tab-rentabilidade" class="tab-content active">
+                    <div class="calc-grid">
+                        <div class="calc-input-group">
+                            <label for="calc-qtd">Qtd/Cx (un)</label>
+                            <input type="number" id="calc-qtd" value="24">
+                        </div>
+                        <div class="calc-input-group">
+                            <label for="calc-volume">Volume (cx/mês)</label>
+                            <input type="number" id="calc-volume" value="20">
+                        </div>
+                        <div class="calc-input-group">
+                            <label for="calc-ttc-nad">Preço Atual (TTC NAD)</label>
+                            <input type="number" id="calc-ttc-nad" step="0.01" value="9.50">
+                        </div>
+                        <div class="calc-input-group">
+                            <label for="calc-ttv-nad">Custo Atual (TTV NAD)</label>
+                            <input type="number" id="calc-ttv-nad" step="0.01" value="145.42">
+                        </div>
+                        <div class="calc-input-group">
+                            <label for="calc-ttc-ad">Preço Sugerido (TTC AD)</label>
+                            <input type="number" id="calc-ttc-ad" step="0.01" value="9.00">
+                        </div>
+                        <div class="calc-input-group">
+                            <label for="calc-ttv-ad">Custo Sugerido (TTV AD)</label>
+                            <input type="number" id="calc-ttv-ad" step="0.01" value="135.42">
+                        </div>
+                    </div>
+
+                    <div class="calc-results" style="margin-top: 1rem;">
+                        <div class="result-row">
+                            <span>Lucro Bruto Atual:</span>
+                            <strong id="res-lucro-atual">R$ 0,00</strong>
+                        </div>
+                        <div class="result-row">
+                            <span>Lucro Bruto Aderido:</span>
+                            <strong id="res-lucro-aderido">R$ 0,00</strong>
+                        </div>
+                        <div class="result-row highlighted">
+                            <span>Diferença de Lucro:</span>
+                            <strong id="res-diferenca">R$ 0,00</strong>
+                        </div>
+                    </div>
+
+                    <div class="calc-badge" id="calc-badge-container" style="display: none;">
+                        💡 <span id="calc-badge-text"></span>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                        <button class="btn-clear" onclick="clearRentabilidade()">Limpar Campos</button>
+                    </div>
+                </div>
+
+                <!-- Tab 2: Conversor HCT -->
+                <div id="tab-conversor" class="tab-content">
+                    <div class="calc-grid-2">
+                        <div class="calc-input-group">
+                            <label for="calc-hct">Volume em Hectolitros (HCT)</label>
+                            <input type="number" id="calc-hct" step="0.01" value="10">
+                        </div>
+                        <div class="calc-input-group">
+                            <label for="calc-fator">Tipo de Embalagem</label>
+                            <select id="calc-fator">
+                                <option value="6.94">Cerveja 600ml (c/ 24 un) - Fator 6.94</option>
+                                <option value="14.49">Cerveja 300ml (c/ 23 un) - Fator 14.49</option>
+                                <option value="8.33">Cerveja Litro (c/ 12 un) - Fator 8.33</option>
+                                <option value="24.78">Cerveja Lata 269ml (c/ 15 un) - Fator 24.78</option>
+                                <option value="8.33">NAB / Refri 2L (c/ 06 un) - Fator 8.33</option>
+                                <option value="16.67">NAB / Refri 1L (c/ 06 un) - Fator 16.67</option>
+                                <option value="23.80">NAB / Refri Lata 350ml (c/ 12 un) - Fator 23.80</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="calc-results" style="margin-top: 1.5rem;">
+                        <div class="result-row highlighted">
+                            <span>Quantidade Convertida:</span>
+                            <strong id="res-caixas-convertidas" style="font-size: 1.2rem; color: var(--primary-accent);">0 caixas</strong>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                        <button class="btn-clear" onclick="clearConversor()">Limpar Campos</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Painel de Metas e Portfólio (Revenda Araguaína/TO - RN 311 ao 319) -->
+            <div class="calculator-card" style="margin-top: 1.5rem;" id="painel-rn-araguaina">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: var(--text-primary);">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
+                        Metas & Portfólio (Araguaína/TO)
+                    </div>
+                    <span class="badge" style="background: rgba(0, 255, 136, 0.15); color: var(--primary-accent); font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 12px; font-weight: 600;">Aba Export • Tempo Real</span>
+                </div>
+
+                <div class="calc-grid-2">
+                    <div class="calc-input-group">
+                        <label for="select-rn-code">Selecione o Roteiro (RN)</label>
+                        <select id="select-rn-code" onchange="atualizarPainelRN()">
+                            <option value="311">311</option>
+                            <option value="312">312</option>
+                            <option value="313">313</option>
+                            <option value="314" selected>314</option>
+                            <option value="315">315</option>
+                            <option value="316">316</option>
+                            <option value="317">317</option>
+                            <option value="318">318</option>
+                            <option value="319">319</option>
+                        </select>
+                    </div>
+                    <div class="calc-input-group">
+                        <label for="busca-pdv-input">🔍 Filtrar por Nome do PDV ou Chave</label>
+                        <input type="text" id="busca-pdv-input" placeholder="Ex: Bar do Zé ou 10492" oninput="filtrarPDVsPainel()">
+                    </div>
+                </div>
+
+                <!-- 5 Métricas de Topo (Score 5 Executivo) -->
+                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.6rem; margin-top: 1rem;">
+                    <div style="background: rgba(0, 255, 136, 0.08); border: 1px solid rgba(0, 255, 136, 0.2); padding: 0.75rem; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: var(--primary-accent); font-weight: 600;">⭐ Score 5 (%)</div>
+                        <div id="rn-score-5" style="font-size: 1.2rem; font-weight: 700; color: #00ff88; margin-top: 0.1rem;">75.0%</div>
+                    </div>
+                    <div style="background: rgba(0, 255, 136, 0.05); border: 1px solid rgba(0, 255, 136, 0.15); padding: 0.75rem; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: var(--primary-accent); font-weight: 600;">🏆 Score 5 (PDVs)</div>
+                        <div id="rn-score5-pdvs" style="font-size: 1.2rem; font-weight: 700; color: #00ff88; margin-top: 0.1rem;">36 PDVs</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.75rem; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: var(--text-secondary);">📍 PDVs Rota</div>
+                        <div id="rn-total-pdvs" style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-top: 0.1rem;">48</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.75rem; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: var(--text-secondary);">✅ Bateram</div>
+                        <div id="rn-meta-batida" style="font-size: 1.2rem; font-weight: 700; color: #00ff88; margin-top: 0.1rem;">36</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.75rem; border-radius: 10px; text-align: center;">
+                        <div style="font-size: 0.7rem; color: var(--text-secondary);">❌ Fora</div>
+                        <div id="rn-fora-meta" style="font-size: 1.2rem; font-weight: 700; color: #ff5555; margin-top: 0.1rem;">12</div>
+                    </div>
+                </div>
+
+                <!-- Tabela / Matriz de Gaps (Real vs Falta) -->
+                <div style="margin-top: 1rem; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 0.85rem; border: 1px solid rgba(255,255,255,0.05);">
+                    <div style="font-size: 0.8rem; font-weight: 600; color: var(--primary-accent); margin-bottom: 0.6rem; display: flex; align-items: center; justify-content: space-between;">
+                        <span>📋 Matriz de Gaps & Execução por Categoria</span>
+                        <span id="pdv-filtrado-badge" style="font-size: 0.7rem; color: #a0aec0; font-weight: normal;">Todos os PDVs da rota</span>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.78rem;">
+                        <div style="background: rgba(255,255,255,0.02); padding: 0.5rem 0.75rem; border-radius: 6px; display: flex; justify-content: space-between; border: 1px solid rgba(255,255,255,0.04);">
+                            <span style="color: #cbd5e1;">High End 600ml (Falta):</span>
+                            <strong id="gap-he-600" style="color: #ffb703;">8 SKUs</strong>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); padding: 0.5rem 0.75rem; border-radius: 6px; display: flex; justify-content: space-between; border: 1px solid rgba(255,255,255,0.04);">
+                            <span style="color: #cbd5e1;">High End Long Necks (Falta):</span>
+                            <strong id="gap-he-ln" style="color: #ffb703;">12 caixas</strong>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); padding: 0.5rem 0.75rem; border-radius: 6px; display: flex; justify-content: space-between; border: 1px solid rgba(255,255,255,0.04);">
+                            <span style="color: #cbd5e1;">Core Inteira (Meta):</span>
+                            <strong id="gap-core-inteira" style="color: #00e5ff;">14 SKUs</strong>
+                        </div>
+                        <div style="background: rgba(255,255,255,0.02); padding: 0.5rem 0.75rem; border-radius: 6px; display: flex; justify-content: space-between; border: 1px solid rgba(255,255,255,0.04);">
+                            <span style="color: #cbd5e1;">Core RGB (Meta):</span>
+                            <strong id="gap-core-rgb" style="color: #00e5ff;">22 caixas</strong>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
     </main>
-
-    <footer>
-        Desenvolvido como Protótipo de Aprendizado no Bootcamp de IA Aplicada a Vendas &copy; 2026. <a href="https://dio.me" target="_blank">Digital Innovation One</a>.
+<footer>
+        DMC Sales Copilot • Concepção e Desenvolvimento por <strong>Rubens Oliveira Silva</strong> © 2026.
     </footer>
+
+    <!-- PapaParse para processar o CSV -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
     <!-- Lógica de Simulação de IA Comercial -->
     <script>
         const vendedorInput = document.getElementById('vendedor');
         const clienteInput = document.getElementById('cliente');
+        const statusCompraSelect = document.getElementById('status-compra');
         const perfilClienteSelect = document.getElementById('perfil-cliente');
         const estiloVendedorSelect = document.getElementById('estilo-vendedor');
         const produtoSelect = document.getElementById('produto');
@@ -716,7 +1216,21 @@
         const placeholder = document.getElementById('placeholder');
         const loading = document.getElementById('loading');
         const scriptContainer = document.getElementById('script-container');
-        const blueprintCode = document.getElementById('blueprint-code');
+        // Elementos das Calculadoras
+        const calcQtd = document.getElementById('calc-qtd');
+        const calcVolume = document.getElementById('calc-volume');
+        const calcTtcNad = document.getElementById('calc-ttc-nad');
+        const calcTtvNad = document.getElementById('calc-ttv-nad');
+        const calcTtcAd = document.getElementById('calc-ttc-ad');
+        const calcTtvAd = document.getElementById('calc-ttv-ad');
+        const resLucroAtual = document.getElementById('res-lucro-atual');
+        const resLucroAderido = document.getElementById('res-lucro-aderido');
+        const resDiferenca = document.getElementById('res-diferenca');
+        const calcBadgeContainer = document.getElementById('calc-badge-container');
+        const calcBadgeText = document.getElementById('calc-badge-text');
+        const calcHct = document.getElementById('calc-hct');
+        const calcFator = document.getElementById('calc-fator');
+        const resCaixasConvertidas = document.getElementById('res-caixas-convertidas');
 
         // Estrutura de dados de simulação com base em vendas Ambev/Heineken
         const database = {
@@ -897,48 +1411,110 @@
                 ]
             }
         };
-        // Função para gerar o texto do prompt de engenharia de prompts
-        function updatePromptBlueprint() {
-            const vendedor = vendedorInput.value || "[Vendedor]";
-            const cliente = clienteInput.value || "[Cliente]";
-            const perfil = perfilClienteSelect.options[perfilClienteSelect.selectedIndex].text;
-            const estilo = estiloVendedorSelect.options[estiloVendedorSelect.selectedIndex].text;
-            const produto = produtoSelect.value;
+        // Alternar abas das calculadoras
+        function switchTab(tabId) {
+            document.querySelectorAll('.calculator-card .tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.querySelectorAll('.calculator-tabs .tab-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
             
-            let objecaoText = "";
-            if (objecaoSelect.value === 'custom') {
-                objecaoText = customObjecaoInput.value || "[Descreva a objeção do cliente]";
+            document.getElementById(tabId).classList.add('active');
+            
+            // Ativa o botão correto com base no ID
+            if (tabId === 'tab-rentabilidade') {
+                document.getElementById('btn-tab-rentabilidade').classList.add('active');
             } else {
-                objecaoText = objecaoSelect.options[objecaoSelect.selectedIndex].text;
+                document.getElementById('btn-tab-conversor').classList.add('active');
             }
-
-            const blueprint = `PAPEL E OBJETIVO:
-Você é o Copiloto de Vendas Ambev, um assistente especialista em negociação B2B, execução de mercado (PDV) e contorno de objeções em campo para Representantes de Negócios (RNs) e vendedores.
-
-VARIÁVEIS DO CENÁRIO:
-- Vendedor: <span class="highlight-variable">${vendedor}</span> (Estilo: <span class="highlight-variable">${estilo}</span>)
-- Cliente: <span class="highlight-variable">${cliente}</span> (Perfil: <span class="highlight-variable">${perfil}</span>)
-- Produto em Foco: <span class="highlight-variable">${produto}</span>
-- Objeção Identificada: <span class="highlight-variable">"${objecaoText}"</span>
-
-ESTRUTURA DE RESPOSTA OBRIGATÓRIA:
-1. Diagnóstico Rápido: A real dor/intenção do cliente em 1 linha.
-2. O Que Falar (Script de Campo): Texto pronto e falado para contornar a objeção usando os pilares Ambev (Giro vs Margem, Ecossistema BEES, Mix/Ocasião e Evitar Ruptura).
-3. Pergunta de Fechamento (CTA): Pergunta comercial para puxar o fechamento imediato do pedido.`;
-
-            blueprintCode.innerHTML = blueprint;
         }
 
-        // Executar inicialização do blueprint
-        updatePromptBlueprint();
+        // Calculadora 1: Rentabilidade
+        function formatCurrency(val) {
+            return val.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        }
 
-        // Listeners para atualizar o blueprint em tempo real conforme digita/muda
-        vendedorInput.addEventListener('input', updatePromptBlueprint);
-        clienteInput.addEventListener('input', updatePromptBlueprint);
-        perfilClienteSelect.addEventListener('change', updatePromptBlueprint);
-        estiloVendedorSelect.addEventListener('change', updatePromptBlueprint);
-        produtoSelect.addEventListener('change', updatePromptBlueprint);
-        
+        function calculateRentabilidade() {
+            const qtd = parseFloat(calcQtd.value) || 0;
+            const volume = parseFloat(calcVolume.value) || 0;
+            const ttcNad = parseFloat(calcTtcNad.value) || 0;
+            const ttvNad = parseFloat(calcTtvNad.value) || 0;
+            const ttcAd = parseFloat(calcTtcAd.value) || 0;
+            const ttvAd = parseFloat(calcTtvAd.value) || 0;
+
+            // 1. Lucro Bruto Atual/cx: (TTC_NAD * Qtd) - TTV_NAD
+            const lucroAtualCx = (ttcNad * qtd) - ttvNad;
+            // 2. Lucro Bruto Total Atual: Lucro_Atual * Volume
+            const lucroAtualTotal = lucroAtualCx * volume;
+
+            // 3. Lucro Bruto Aderido/cx: (TTC_AD * Qtd) - TTV_AD
+            const lucroAderidoCx = (ttcAd * qtd) - ttvAd;
+            // 4. Lucro Bruto Total Aderido: Lucro_Aderido * Volume
+            const lucroAderidoTotal = lucroAderidoCx * volume;
+
+            // 5. Diferença de Lucro: Lucro_Total_Atual - Lucro_Total_Aderido
+            const diferenca = lucroAtualTotal - lucroAderidoTotal;
+
+            resLucroAtual.innerText = formatCurrency(lucroAtualTotal);
+            resLucroAderido.innerText = formatCurrency(lucroAderidoTotal);
+            resDiferenca.innerText = formatCurrency(diferenca);
+
+            if (diferenca > 0 && lucroAderidoCx > 0) {
+                // 6. Volume Incremental Necessário (Caixas): Diferença / Lucro_Aderido_por_cx
+                const volIncremental = diferenca / lucroAderidoCx;
+                calcBadgeText.innerText = `O cliente precisa vender apenas ${volIncremental.toFixed(1)} caixas a mais no mês para cobrir a margem e acelerar o giro!`;
+                calcBadgeContainer.style.display = 'block';
+            } else if (lucroAderidoTotal > lucroAtualTotal) {
+                calcBadgeText.innerText = `A adesão já é mais lucrativa de imediato! O cliente lucra R$ ${(lucroAderidoTotal - lucroAtualTotal).toFixed(2)} a mais com o mesmo volume.`;
+                calcBadgeContainer.style.display = 'block';
+            } else {
+                calcBadgeContainer.style.display = 'none';
+            }
+        }
+
+        function clearRentabilidade() {
+            calcQtd.value = "";
+            calcVolume.value = "";
+            calcTtcNad.value = "";
+            calcTtvNad.value = "";
+            calcTtcAd.value = "";
+            calcTtvAd.value = "";
+            
+            resLucroAtual.innerText = "R$ 0,00";
+            resLucroAderido.innerText = "R$ 0,00";
+            resDiferenca.innerText = "R$ 0,00";
+            calcBadgeContainer.style.display = 'none';
+        }
+
+        // Event listeners para calculadora 1
+        [calcQtd, calcVolume, calcTtcNad, calcTtvNad, calcTtcAd, calcTtvAd].forEach(input => {
+            input.addEventListener('input', calculateRentabilidade);
+        });
+
+        // Inicializar a calculadora 1
+        calculateRentabilidade();
+
+        // Calculadora 2: Conversão HCT para Caixas
+        function calculateConversor() {
+            const hct = parseFloat(calcHct.value) || 0;
+            const fator = parseFloat(calcFator.value) || 0;
+            const caixas = hct * fator;
+            
+            resCaixasConvertidas.innerText = `${Math.ceil(caixas)} caixas (${caixas.toFixed(2)} exatas)`;
+        }
+
+        function clearConversor() {
+            calcHct.value = "";
+            resCaixasConvertidas.innerText = "0 caixas";
+        }
+
+        calcHct.addEventListener('input', calculateConversor);
+        calcFator.addEventListener('change', calculateConversor);
+
+        // Inicializar a calculadora 2
+        calculateConversor();
+
         // Listener de controle de exibição do input customizado
         objecaoSelect.addEventListener('change', () => {
             if (objecaoSelect.value === 'custom') {
@@ -946,16 +1522,136 @@ ESTRUTURA DE RESPOSTA OBRIGATÓRIA:
             } else {
                 customObjecaoGroup.style.display = 'none';
             }
-            updatePromptBlueprint();
         });
-        
-        customObjecaoInput.addEventListener('input', updatePromptBlueprint);
+
+        // Lógica do Painel de Metas & Portfólio - Integração em Tempo Real (Google Drive)
+        let dbRN = {};
+
+        async function carregarDadosDrive() {
+            try {
+                const response = await fetch('/api/sheet');
+                if (!response.ok) throw new Error('Falha ao baixar CSV da API Vercel');
+                const csvText = await response.text();
+
+                Papa.parse(csvText, {
+                    header: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        const rawData = results.data;
+                        
+                        // Processa os dados linha a linha
+                        const consolidado = {};
+                        
+                        rawData.forEach(row => {
+                            const rn = row['RN'] ? row['RN'].replace('.0', '') : null;
+                            if (!rn) return;
+
+                            if (!consolidado[rn]) {
+                                consolidado[rn] = { pdvs: 0, meta: 0, kpis_ok_sum: 0, core_int: 0, core_rgb: 0, he_600: 0, he_ln: 0 };
+                            }
+
+                            consolidado[rn].pdvs += 1;
+                            
+                            // Score 5 = KPIs OK == 5
+                            const kpis = parseInt(row['KPIs OK']) || 0;
+                            consolidado[rn].kpis_ok_sum += kpis;
+                            if (kpis === 5) {
+                                consolidado[rn].meta += 1;
+                            }
+                        });
+
+                        // Calcula percentuais
+                        Object.keys(consolidado).forEach(key => {
+                            const c = consolidado[key];
+                            c.pct = c.pdvs > 0 ? (c.meta / c.pdvs * 100) : 0;
+                        });
+
+                        dbRN = consolidado;
+                        console.log("Base carregada com sucesso do Google Drive:", dbRN);
+                        
+                        // Atualiza as opções do select com os RNs reais da base
+                        const selectRN = document.getElementById('select-rn-code');
+                        const rns_ordenados = Object.keys(dbRN).map(Number).sort((a,b) => a - b);
+                        if(selectRN && rns_ordenados.length > 0) {
+                            selectRN.innerHTML = '';
+                            rns_ordenados.forEach(rn_val => {
+                                const opt = document.createElement('option');
+                                opt.value = rn_val;
+                                opt.innerText = rn_val;
+                                selectRN.appendChild(opt);
+                            });
+                        }
+                        
+                        atualizarPainelRN();
+                    },
+                    error: function(err) {
+                        console.error('Erro ao fazer parse do CSV:', err);
+                    }
+                });
+
+            } catch (error) {
+                console.error("Erro na carga do Drive:", error);
+            }
+        }
+
+        function atualizarPainelRN() {
+            const selectRN = document.getElementById('select-rn-code');
+            const code = selectRN ? selectRN.value : "111";
+            
+            // Se os dados não chegaram ainda ou RN não existe, não faz nada
+            if (!dbRN[code]) return;
+            const data = dbRN[code];
+
+            const score5El = document.getElementById('rn-score-5');
+            const score5PdvsEl = document.getElementById('rn-score5-pdvs');
+            const totalEl = document.getElementById('rn-total-pdvs');
+            const metaEl = document.getElementById('rn-meta-batida');
+            const foraEl = document.getElementById('rn-fora-meta');
+
+            if (score5El) score5El.innerText = `${data.pct.toFixed(1)}%`;
+            if (score5PdvsEl) score5PdvsEl.innerText = `${data.meta} PDVs`;
+            if (totalEl) totalEl.innerText = data.pdvs;
+            if (metaEl) metaEl.innerText = `${data.meta}`;
+            if (foraEl) foraEl.innerText = `${data.pdvs - data.meta}`;
+
+            // Gaps zerados por enquanto pois a base real é apenas Score 5
+            const gapInt = document.getElementById('gap-core-inteira');
+            const gapRgb = document.getElementById('gap-core-rgb');
+            const gap600 = document.getElementById('gap-he-600');
+            const gapLn = document.getElementById('gap-he-ln');
+            
+            if (gapInt) gapInt.innerText = `--`;
+            if (gapRgb) gapRgb.innerText = `--`;
+            if (gap600) gap600.innerText = `--`;
+            if (gapLn) gapLn.innerText = `--`;
+        }
+
+        function filtrarPDVsPainel() {
+            const query = (document.getElementById('busca-pdv-input')?.value || '').trim().toLowerCase();
+            const badge = document.getElementById('pdv-filtrado-badge');
+            if (badge) {
+                badge.innerText = query ? `Filtro: "${query}"` : 'Todos os PDVs da rota';
+            }
+        }
+
+        // Inicializa dados carregando do Drive
+        carregarDadosDrive();
+
+        // Redireciona a chamada global para o botão autónomo
+        window.executarLimpezaGeral = function(event) {
+            const btn = document.getElementById('btn-limpar-campos');
+            if (btn) {
+                btn.click();
+            }
+        };
 
         const aiModeToggle = document.getElementById('ai-mode-toggle');
 
         function getRawPrompt() {
             const vendedor = vendedorInput.value || "Vendedor";
+            const vendedorPrimeiroNome = vendedor !== "Vendedor" ? vendedor.trim().split(' ')[0] : "Vendedor";
             const cliente = clienteInput.value || "Cliente";
+            const statusCompra = statusCompraSelect.selectedIndex >= 0 ? statusCompraSelect.options[statusCompraSelect.selectedIndex].text : "Não Informado";
             const perfil = perfilClienteSelect.options[perfilClienteSelect.selectedIndex].text;
             const estilo = estiloVendedorSelect.options[estiloVendedorSelect.selectedIndex].text;
             const produto = produtoSelect.value;
@@ -969,148 +1665,198 @@ ESTRUTURA DE RESPOSTA OBRIGATÓRIA:
                 objecaoText = objecaoSelect.options[objecaoSelect.selectedIndex].text;
             }
 
-            return `# PAPEL E OBJETIVO
-Você é o Copiloto de Vendas Ambev, um assistente especialista em negociação B2B, execução de mercado (PDV) e contorno de objeções em campo. Seu objetivo é fornecer respostas rápidas, práticas e persuasivas para Representantes de Negócios (RNs) e vendedores que enfrentam objeções de donos de PDVs (bares, restaurantes, mercadinhos, conveniências e adegas).
+            return `# SYSTEM PROMPT: DMC SALES COPILOT - INTELIGÊNCIA COMERCIAL, ATIVOS & NEGOCIAÇÃO ON (AMBEV / BEES)
+
+Você é o DMC Sales Copilot, mentor de inteligência comercial e consultor tático para Representantes de Negócios (RNs) e Supervisores de Vendas no Canal ON (Bares, Restaurantes, Padarias e Lanchonetes). Sua base metodológica integra os princípios da Academia BEES ("Transformando dados em espaço, e espaço em consumo"), gestão rigorosa de comodatos/ativos e técnicas avançadas de quebra de objeções com foco em GANHA-GANHA.
 
 ---
 
-# CENÁRIO DA VISITA / NEGOCIAÇÃO
-- Vendedor / RN: ${vendedor} (Estilo de fala: ${estilo})
-- Cliente / PDV: ${cliente} (Perfil de comportamento: ${perfil})
-- Produto em Foco: ${produto} (Categoria: ${categoria})
-- Objeção do Cliente: "${objecaoText}"
+## 1. MENTALIDADE E DIRETRIZES CENTRAIS
+- "Espaço em bar, restaurante ou padaria não se pede: se conquista com dados, argumentos de negócio e contrapartidas na mão."
+- O PDV compra no BEES; o consumidor decide na mesa. Quem ocupa o espaço certo (mesa, balcão, cardápio) direciona a decisão antes mesmo do garçom fazer a pergunta.
+- NUNCA use argumentos fracos como "A empresa mandou", "O concorrente faz" ou "Deixa aí só hoje".
+- "Espaço sem contrapartida não é negociação: é doação." Toda entrega do RN exige uma contrapartida explícita, específica e mensurável do cliente.
+
+### DIREÇÃO DE FALA AO VENDEDOR (PERSONALIZAÇÃO COM O NOME DO RN):
+- Você está orientando e aconselhando diretamente o Representante de Negócios (RN) chamado "${vendedorPrimeiroNome}".
+- Trate o RN diretamente pelo próprio primeiro nome (ex: "Fala, ${vendedorPrimeiroNome}, para este cliente...", "Olha, ${vendedorPrimeiroNome}, aqui o segredo é alavancar o volume...") ao passar as orientações táticas.
+- Adote o tom de voz de um mentor/parceiro comercial sênior de campo: motivador, direto, prático e focado na rotina diária da rota.
 
 ---
 
-# DIRETRIZES GERAIS DE RESPOSTA
-1. Tom de Voz: Direto, assertivo, comercial e parceiro do cliente. Adapte a linguagem ao estilo "${estilo}" do vendedor e ao perfil "${perfil}" do cliente.
-2. Pilares de Argumentação Obrigatórios:
-   - Giro vs. Margem: Priorizar sempre o lucro total no bolso (R$) pelo giro rápido em vez de margem percentual parada.
-   - Ecossistema BEES: Alavancar pontuação (Clube Bees), prazo, segurança fiscal, entrega garantida e autonomia.
-   - Mix e Ocasião de Consumo: Defender não-alcoólicos (refrigerantes, tônicas, energéticos, isotônicos, águas) e inovações como complementares à cerveja para elevar a cesta média.
-   - Evitar Ruptura: Mostrar o custo financeiro de ficar sem produto no pico de movimento (sexta a domingo).
+## 2. PROIBIÇÃO MANDATÓRIA — CRÉDITO NO BEES (REGRA CRÍTICA)
+- **PROIBIÇÃO TOTAL:** É TERMINANTEMENTE PROIBIDO AFIRMAR OU SUGERIR QUE A NÃO COMPRA "AFETA, REDUZ, BLOQUEIA OU TRAVA O CRÉDITO OU LIMITE NO BEES". NUNCA USE A PALAVRA CRÉDITO OU LIMITE COMO AMEAÇA COMERCIAL.
+- **Consequência Comercial Real a Explicar ao Cliente:** A falta de compra no mês gera **inativação operacional do cadastro na rota**, **ruptura de estoque nos dias de pico do fim de semana** e **perda da visita logística regular da distribuição**.
 
 ---
 
-# BASE DE CONHECIMENTO: MATRIZ DE OBJEÇÕES E RESPOSTAS
+## 3. INTELIGÊNCIA TÁTICA POR STATUS DO CLIENTE
 
-## 1. PREÇO, MARGEM E CONCORRÊNCIA
-- Objeção: "A cerveja/refrigerante do concorrente me dá mais margem."
-  -> Foco: Lucro real no bolso por giro x margem estagnada.
-  -> Argumento base: "Margem alta em produto que fica 20 dias parado na prateleira não paga conta. Nosso produto gira 3 a 4 vezes mais rápido no mesmo período, gerando muito mais dinheiro líquido no seu caixa."
+A IA DEVE modular a intensidade da abordagem baseando-se no status de compra do cliente:
 
-- Objeção: "No atacarejo/distribuidor clandestino está alguns centavos mais barato."
-  -> Foco: Custo oculto, frete, prazo, pontos BEES e risco fiscal.
-  -> Argumento base: "Lá você gasta frete, perde seu tempo, paga à vista e não ganha pontos no Clube Bees para abater em dinheiro no próximo pedido. Aqui você tem prazo, entrega na porta e nota 100% garantida."
-
-- Objeção: "Vou esperar entrar uma promoção melhor no app/próxima semana."
-  -> Foco: Risco de ruptura no final de semana e perda de cliente.
-  -> Argumento base: "Esperar uma semana pode te custar o estoque zerado no sábado à noite. Cliente que não acha a marca que quer vai embora pro vizinho. Vamos garantir o volume de segurança agora."
-
-## 2. ESTOQUE, ESPAÇO E PORTFÓLIO (MIX)
-- Objeção: "Meu estoque está cheio / Não tenho espaço para guardar."
-  -> Foco: Auditoria do estoque e reposição seletiva do que tem alto giro.
-  -> Argumento base: "Seu estoque pode estar cheio do que vende devagar. Vamos olhar as caixas do que realmente gira todo dia (linhas principais e não-alcoólicos). Repomos só o essencial para não faltar no pico."
-
-- Objeção: "Essa inovação/lançamento não vende aqui no meu bairro."
-  -> Foco: Teste de baixo risco + material de visibilidade (merchandising).
-  -> Argumento base: "Todo produto novo precisa de visibilidade para começar a girar. Eu monto o material de ponto de venda no balcão e deixamos apenas 1 ou 2 caixas para teste. Se colocar na temperatura certa, gira rápido."
-
-- Objeção: "Aqui eu só vendo cerveja, não vendo não-alcoólico (refrigerante/água/energético)."
-  -> Foco: Cesta média e ocasiões de consumo (almoço, motorista, família).
-  -> Argumento base: "O cliente que vem comprar cerveja no final de semana quase sempre precisa levar o refrigerante da família ou a água. Se você não tem, ele compra a cerveja aqui e o resto no seu concorrente."
-
-## 3. ECOSSISTEMA DIGITAL (BEES) E OPERAÇÃO
-- Objeção: "Não gosto de pedir pelo aplicativo Bees, prefiro que você tire o pedido."
-  -> Foco: Parceria contínua + autonomia no final de semana/urgência.
-  -> Argumento base: "Eu continuo sendo seu consultor e acompanhando sua loja toda semana. O app serve para você ter autonomia quando acabar um produto no meio do domingo. Vamos fazer o pedido juntos agora para você ver como é simples e acumular seus pontos?"
-
-- Objeção: "Tive problema na entrega anterior (atraso/falta/avaria)."
-  -> Foco: Resolução imediata e acompanhamento de rota.
-  -> Argumento base: "Entendo a frustração e peço desculpas. Já verifiquei a ocorrência anterior para regularização. Eu mesmo vou acompanhar a liberação e entrega desse pedido para garantir que chegue 100% correto."
-
-## 4. EQUIPAMENTOS E COMODATO (GELADEIRAS/FREEZERS)
-- Objeção: "Só compro esse volume se me liberarem outra geladeira/freezer."
-  -> Foco: Metas de volume e pureza como critério técnico de aprovação.
-  -> Argumento base: "A liberação de novos equipamentos depende da pontuação de volume e ocupação do mix da loja. Cumprindo essa grade de volume nas próximas semanas, tenho os dados exatos para abrir e justificar a solicitação do comodato junto à supervisão."
+* **Se for Não Comprador (NC Geral) ou Em Risco:**
+  - Foco exclusivo em **Positivação de Segurança (1 cx Cerveja Líder + 1 cx NAB)** para reativar o cadastro na rota e garantir o caminhão da entrega na porta.
+* **Se for Não Comprador de Categoria Específica (NC em Premium, NAB ou MKT Place):**
+  - Foco em **Teste de Baixo Risco (1 caixa / fardo de teste)** com material de visibilidade e ciclo de giro em 7 dias.
+* **Se for Cliente Comprador Recorrente / Ativo no Mês:**
+  - PROIBIDO sugerir apenas 1 caixa. O discurso muda para **puxar volume de abastecimento**, cobrir o pico do fim de semana e **bater as metas/tasks de volume no BEES Force**.
 
 ---
 
-# FORMATO OBRIGATÓRIO DA RESPOSTA
-Responda EXATAMENTE seguindo estes 3 blocos (mantenha os cabeçalhos das seções em negrito):
+## 4. DIRETRIZES DE COMUNICAÇÃO DE CAMPO & FECHAMENTO
+- **Gatilho de Urgência Real (Horário de Corte / Cutoff):** Use o horário de corte do sistema de entrega para o cliente entender que adiar a emissão do pedido significa ficar desabastecido e perder vendas no sábado.
+- **Fechamento Assertivo por Dupla Alternativa:** NUNCA encerre a fala pronta com perguntas abertas ou que permitam o "Não" (ex: "Podemos fechar?"). Use sempre fechamento por escolha dupla: *"Prefere que o caminhão descarregue na quinta de manhã ou na sexta-feira?"*
+- **Contrapartida de Trade Obrigatória:** Todo pedido exige contrapartida imediata de visibilidade (primeira prateleira da geladeira, ponto nobre de balcão ou cartaz de precificação visível).
 
-**Diagnóstico Rápido:**
-[A real dor/intenção do cliente em 1 linha]
+---
 
-**O Que Falar (Script de Campo):**
-[Texto pronto em linguagem falada, direta e natural para o vendedor dizer ao cliente, adaptado ao estilo do vendedor e perfil do cliente]
+## 5. PREMISSAS DE ATIVOS & COMODATOS (INVESTIGATIVO)
+A IA NUNCA afirma se o PDV tem ou não ativos instalados em tempo real. Ela orienta o RN a fazer um check visual rápido no ponto de venda:
+- **Geladeira SOPI:** Compra mínima mensal de R$ 2.000,00 em cervejas + mix ativo obrigatório de no mínimo 10 SKUs.
+- **Visicooler Visa:** Compra mínima mensal de R$ 1.200,00 em refrigerantes/NAB.
+- **Retornáveis (RGB):** Regra de giro 2x (compra mensal igual ao dobro da quantidade física do fundo fixo de caixas).
+- **PDVs Exclusivos:** Blindagem de 100% de portfólio (proibida a presença de concorrentes no local).
+- **Sem ativos:** Foco 100% na positivação do mix essencial ou alavancagem de volume.
 
-**Pergunta de Fechamento (CTA):**
-[Uma pergunta que encerra a objeção e puxa o fechamento do pedido]
+---
 
-Não adicione saudações ou explicações fora dessa estrutura.`;
+## 6. RESTRIÇÕES ABSOLUTAS (PROIBIÇÕES INEGOCIÁVEIS):
+1. PROIBIÇÃO TOTAL de menções a chopp, chopeiras, barris ou metas relativas a chopeiras.
+2. PROIBIÇÃO ABSOLUTA de mencionar perda, bloqueio ou trava de limite de crédito no BEES.
+3. PROIBIÇÃO DE TESTE DE VOLUME ALTO: Em abordagens de teste para clientes NC/NC de Categoria, NUNCA sugerir mais de 1 caixa/fardo. Para Compradores Ativos, NUNCA propor apenas 1 caixa (puxar volume pesado).
+4. PROIBIÇÃO DE FALÁCIA DO BEES: NUNCA dizer que o cliente perde descontos ou promoções na plataforma BEES.
+
+---
+
+## 7. CENÁRIO DA VISITA / NEGOCIAÇÃO
+- Vendedor / RN: ${vendedor} (Trate o RN por "${vendedorPrimeiroNome}" | Estilo de fala: ${estilo})
+- Cliente / PDV: ${cliente} (Segmento: Canal ON | Perfil: ${perfil} | Status de Compra Atual: ${statusCompra})
+- Produto / Categoria em Foco: ${produto} (Categoria: ${categoria})
+- Objeção / Situação Relatada: "${objecaoText}"
+
+---
+
+## 8. FORMATO HOMOLOGADO DE RESPOSTA (ESTRITAMENTE 3 SEÇÕES — MÁXIMO 120 PALAVRAS)
+
+A IA DEVE GERAR UMA RESPOSTA DIRETA E ÚNICA dividida em exatamente 3 seções curtas (sem opções A, B e C), adaptada ao status (${statusCompra}), perfil (${perfil}) e estilo (${estilo}):
+
+**Check Rápido de Premissas & Cadastro:**
+Fala, ${vendedorPrimeiroNome}!
+• Se houver comodatos no ${cliente}: SOPI (R$ 2k + 10 SKUs) / Visa (R$ 1.2k NAB) / Retornável (Giro 2x).
+• [Se NC/Em Risco]: Positivação de Segurança (1 cx Cerveja Líder + 1 cx NAB) para reativar o cadastro e garantir o caminhão na porta.
+• [Se NC por Categoria]: Teste de Baixo Risco (1 cx/fardo de teste) para destravar o SKU sem risco ao caixa.
+• [Se Comprador Ativo]: Foco em puxar volume de abastecimento para o pico do fim de semana e bater as tasks de volume no BEES Force.
+
+**Abordagem Direta de Balcão:**
+* **Estratégia:** [Diagnóstico tático do perfil "${perfil}", objeção e argumento de giro/margem comercial].
+* **Fala Pronta:** "${cliente}, [frase comercial fluida, natural de balcão, sem menção a crédito e focada na urgência do corte logístico do caminhão de acordo com o estilo "${estilo}"]."
+
+**Contrapartida & Fechamento:**
+* **Exigência Trade:** [Primeira prateleira da geladeira / Ponto nobre de balcão / Cartaz de preço]
+* **Pergunta de Fechamento:** "${cliente}, [pergunta fechada por escolha dupla de entrega para emissão imediata do pedido antes do corte do caminhão]."
+
+Não adicione saudações, introduções ou explicações fora dessa estrutura de 3 seções.`;
         }
 
         function parseAIScript(text) {
+            if (!text || typeof text !== 'string') return [];
             const steps = [];
             
-            // 1. Tenta identificar a nova estrutura com marcadores (Diagnóstico Rápido, O Que Falar, Pergunta de Fechamento)
-            const sectionRegex = /(?:###?\s*|\*\*|#\s*)?(Diagnóstico Rápido|O Que Falar \(Script de Campo\)|O Que Falar|Script de Campo|Pergunta de Fechamento \(CTA\)|Pergunta de Fechamento|Fechamento)(?:\*\*|:|\s*-)?\s*([\s\S]*?)(?=(?:###?\s*|\*\*|#\s*)?(?:Diagnóstico Rápido|O Que Falar|Script de Campo|Pergunta de Fechamento|Fechamento|$))/gi;
-            
+            // Regex simples e robusto para capturar títulos entre ** ** e seus respectivos conteúdos
+            const blockRegex = /\*\*([^*]+)\*\*[:\s]*([\s\S]*?)(?=\*\*[^*]+\*\*|$)/g;
+
             let match;
-            while ((match = sectionRegex.exec(text)) !== null) {
-                const rawTitle = match[1].trim();
-                let body = match[2].trim();
-                // Limpa marcadores de markdown residuais no início/fim
-                body = body.replace(/^[:\-\*]+\s*/, '').trim();
-                if (body) {
-                    let iconTitle = rawTitle;
-                    if (/diagnóstico/i.test(rawTitle)) iconTitle = "🎯 Diagnóstico Rápido";
-                    else if (/falar|script/i.test(rawTitle)) iconTitle = "🗣️ O Que Falar (Script de Campo)";
-                    else if (/fechamento|cta/i.test(rawTitle)) iconTitle = "🤝 Pergunta de Fechamento (CTA)";
-                    
-                    steps.push({
-                        title: iconTitle,
-                        text: body
-                    });
+            while ((match = blockRegex.exec(text)) !== null) {
+                const titleStr = (match[1] || '').trim();
+                let bodyStr = (match[2] || '').trim();
+                bodyStr = bodyStr.replace(/^[:\-\*]+\s*/, '').trim();
+                // Limpar eco do título no início do corpo do bloco
+                bodyStr = bodyStr.replace(/^(?:Bloco \d+:|[🛡️📋🎯🗣️🔒🤝]\s*|\bCheck Rápido[^\n]*|\bAbordagem Direta[^\n]*|\bContrapartida[^\n]*)\s*/gi, '').trim();
+
+                if (titleStr && bodyStr) {
+                    let iconTitle = titleStr;
+                    if (/premissas|check/i.test(titleStr))               iconTitle = "📋 Check Rápido de Premissas & Cadastro";
+                    else if (/abordagem|balcão/i.test(titleStr))         iconTitle = "🎯 Abordagem Direta de Balcão (Pronta para Usar)";
+                    else if (/contrapartida|fechamento/i.test(titleStr))  iconTitle = "🤝 Contrapartida & Fechamento";
+                    else iconTitle = titleStr;
+
+                    steps.push({ title: iconTitle, text: bodyStr });
                 }
             }
             
-            // 2. Se não encontrou as 3 seções completas, tenta capturar "Passo X: Nome do Passo"
+            // Fallback: se o regex por ** ** não capturou nada, tenta capturar "Seção X:"
             if (steps.length === 0) {
-                const regex = /(Passo \d+:[^\n]+)\n([^]*?)(?=(Passo \d+:|$))/gi;
-                while ((match = regex.exec(text)) !== null) {
-                    steps.push({
-                        title: match[1].trim(),
-                        text: match[2].trim()
-                    });
+                const fallbackRegex = /(\b(?:Seção|Bloco|Passo) \d+:[^\n]+)\n([^]*?)(?=(?:Seção|Bloco|Passo) \d+:|$)/gi;
+                while ((match = fallbackRegex.exec(text)) !== null) {
+                    const t = (match[1] || '').trim();
+                    const b = (match[2] || '').trim();
+                    if (t && b) steps.push({ title: t, text: b });
                 }
             }
-            
+
+            // Fallback final: divisão por parágrafos duplos
             if (steps.length === 0) {
-                // Tenta sem os dois pontos
-                const alternateRegex = /(Passo \d+[^\n]*)\n([^]*?)(?=(Passo \d+|$))/gi;
-                while ((match = alternateRegex.exec(text)) !== null) {
-                    steps.push({
-                        title: match[1].trim(),
-                        text: match[2].trim()
-                    });
-                }
-            }
-            
-            if (steps.length === 0) {
-                // Fallback: divide o texto em blocos de quebras de linha duplas
                 const blocks = text.split(/\n{2,}/);
                 blocks.forEach((block, index) => {
-                    if (block.trim() && index < 4) {
-                        steps.push({
-                            title: `Bloco ${index + 1}`,
-                            text: block.trim()
-                        });
+                    if (block.trim() && index < 3) {
+                        steps.push({ title: `Seção ${index + 1}`, text: block.trim() });
                     }
                 });
             }
+
             return steps;
+        }
+
+        function formatStepContent(text) {
+            if (!text) return '';
+            
+            const lines = text.trim().split('\n');
+            let htmlLines = [];
+
+            lines.forEach(line => {
+                let trimmed = line.trim();
+                if (!trimmed) return;
+
+                // 1. Divider line (aceita ---, ***, ___ e também * solto como divisor)
+                if (trimmed === '---' || trimmed === '***' || trimmed === '___' || trimmed === '*') {
+                    htmlLines.push('<hr class="script-divider">');
+                    return;
+                }
+
+                // 2. Option headers
+                if (/^\*\*(Opção [A-C][^\*]*)\*\*$/i.test(trimmed) || /^\*\s*\*\*(Opção [A-C][^\*]*)\*\*$/i.test(trimmed)) {
+                    const titleText = trimmed.replace(/^[\*\-\s]+/, '').replace(/\*\*/g, '');
+                    htmlLines.push(`<h5 class="option-title">${titleText}</h5>`);
+                    return;
+                }
+
+                // 3. List items starting with * or -
+                if (/^[\*\-]\s+/.test(trimmed)) {
+                    let content = trimmed.replace(/^[\*\-]\s+/, '');
+                    
+                    // Format bold **text** -> <strong>text</strong>
+                    content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                    
+                    // Format italic *text* or _text_ -> <em>text</em>
+                    content = content.replace(/[\*_](.*?)[\*_]/g, '<em>$1</em>');
+                    
+                    // Highlight quotes "..." with fala-pronta
+                    content = content.replace(/(".*?"|"[^"]*")/g, '<span class="fala-pronta">$1</span>');
+                    
+                    htmlLines.push(`<div class="option-bullet">${content}</div>`);
+                    return;
+                }
+
+                // 4. Normal paragraph lines
+                let content = trimmed;
+                content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                content = content.replace(/[\*_](.*?)[\*_]/g, '<em>$1</em>');
+                content = content.replace(/(".*?"|"[^"]*")/g, '<span class="fala-pronta">$1</span>');
+
+                htmlLines.push(`<p>${content}</p>`);
+            });
+
+            return htmlLines.join('');
         }
 
         // Ação de geração de roteiro
@@ -1165,7 +1911,7 @@ Não adicione saudações ou explicações fora dessa estrutura.`;
                         stepDiv.className = 'script-step';
                         stepDiv.innerHTML = `
                             <h4>Roteiro Gerado pela IA</h4>
-                            <p>${aiText.replace(/\n/g, '<br>')}</p>
+                            <div class="step-content">${formatStepContent(aiText)}</div>
                         `;
                         scriptContainer.appendChild(stepDiv);
                     } else {
@@ -1176,7 +1922,7 @@ Não adicione saudações ou explicações fora dessa estrutura.`;
                             
                             stepDiv.innerHTML = `
                                 <h4>${step.title}</h4>
-                                <p>${step.text}</p>
+                                <div class="step-content">${formatStepContent(step.text)}</div>
                             `;
                             scriptContainer.appendChild(stepDiv);
                         });
@@ -1222,32 +1968,24 @@ Não adicione saudações ou explicações fora dessa estrutura.`;
                     const categoria = produtoSelectElement.getAttribute('data-category');
                     const objecao = objecaoSelect.value;
                     const cliente = clienteInput.value || "Cliente";
+                    const vendedor = vendedorInput.value || "Vendedor";
+                    const vendedorPrimeiroNome = vendedor !== "Vendedor" ? vendedor.trim().split(' ')[0] : "RN";
 
                     // Obter dados correspondentes da simulação
-                    let scriptSteps = [];
-                    if (objecao === 'custom') {
-                        const customText = customObjecaoInput.value || "a concorrência ou o preço";
-                        scriptSteps = [
-                            { 
-                                title: "Passo 1: Validar e Conectar", 
-                                text: `"{cliente}, eu compreendo o seu ponto de vista quando diz que '${customText}'. É super natural pensar assim."` 
-                            },
-                            { 
-                                title: "Passo 2: Justificativa de Negócio", 
-                                text: `"${vendedorInput.value || "João"}, foque na rentabilidade de trabalhar com o portfólio líder da DMC Ambev. Trazer marcas como ${produto} atrai um cliente que gasta muito mais na mesa, compensando esse receio inicial."` 
-                            },
-                            { 
-                                title: "Passo 3: Proposta Sem Risco", 
-                                text: `"Para provarmos o giro disso sem risco pro seu caixa, vamos colocar apenas uma quantidade de teste reduzida. Eu me comprometo a passar aqui no meio da semana para acompanhar com você."` 
-                            },
-                            { 
-                                title: "Passo 4: Fechamento Comercial", 
-                                text: `"Podemos fechar essa carga menor experimental no seu pedido de hoje para ver como o seu público reage no final de semana?"` 
-                            }
-                        ];
-                    } else {
-                        scriptSteps = database[objecao][categoria];
-                    }
+                    let scriptSteps = [
+                        { 
+                            title: "📋 Check Rápido de Premissas & Cadastro", 
+                            text: `Fala, ${vendedorPrimeiroNome}!\n• Se houver comodatos no ${cliente}: SOPI (R$ 2k + 10 SKUs) / Visa (R$ 1.2k NAB) / Retornável (Giro 2x).\n• Se NC: Positivação de Segurança (1 cx Cerveja + 1 cx NAB) para reativar o cadastro e garantir o caminhão na porta.` 
+                        },
+                        { 
+                            title: "🎯 Abordagem Direta de Balcão", 
+                            text: `* **Estratégia:** Quebrar o hábito de adiar o pedido e proteger a rota logística de entrega no fim de semana antes do horário de corte.\n* **Fala Pronta:** "${cliente}, vim garantir seu abastecimento de ${produto} antes do horário de corte do sistema. Lançando o pedido agora, o caminhão descarrega direto na sua porta sem risco de faltar produto no sábado."` 
+                        },
+                        { 
+                            title: "🤝 Contrapartida & Fechamento", 
+                            text: `* **Exigência Trade:** Primeira prateleira da geladeira e cartaz de preço visível no balcão.\n* **Pergunta de Fechamento:** "${cliente}, com a geladeira organizada na frente, já lanço aqui o pedido antes do corte do caminhão. Você prefere receber na quinta de manhã ou na sexta-feira?"` 
+                        }
+                    ];
                     
                     // Limpar e preencher container de roteiros
                     scriptContainer.innerHTML = '';
@@ -1257,12 +1995,11 @@ Não adicione saudações ou explicações fora dessa estrutura.`;
                         stepDiv.className = 'script-step';
                         stepDiv.style.animationDelay = `${index * 0.25}s`;
                         
-                        let textProcessed = step.text.replace(/{cliente}/g, cliente);
-                        textProcessed = textProcessed.replace(/{produto}/g, produto);
+                        let textProcessed = step.text.replace(/{cliente}/g, cliente).replace(/{produto}/g, produto);
 
                         stepDiv.innerHTML = `
                             <h4>${step.title}</h4>
-                            <p>${textProcessed}</p>
+                            <div class="step-content">${formatStepContent(textProcessed)}</div>
                         `;
                         scriptContainer.appendChild(stepDiv);
                     });
