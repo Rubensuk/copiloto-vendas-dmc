@@ -403,18 +403,18 @@ else:
 
         # HTML do "Expander" (details/summary) customizado
         row_html = f"""
-        <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; margin-bottom: 8px; font-family: sans-serif;">
-            <summary style="padding: 12px 15px; cursor: pointer; display: flex; align-items: center; list-style: none;">
-                <div style="flex: 2; font-weight: bold;">{icone} {row.get('NOME PDV', 'PDV')} <span style="font-size:0.75rem; color:#888; font-weight:normal; margin-left:5px;">{row.get('CHAVE PDV', '')}</span></div>
-                <div style="flex: 1; font-size: 0.9rem;">{base}</div>
-                <div style="flex: 1; font-size: 0.9rem; font-weight: bold;">{status_txt}</div>
-                <div style="flex: 2; text-align: right; font-size: 0.9rem; color: #aaa;">{meta_info}</div>
-            </summary>
-            <div style="padding: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
-                {inner_html}
-            </div>
-        </details>
-        """
+<details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; margin-bottom: 8px; font-family: sans-serif;">
+    <summary style="padding: 12px 15px; cursor: pointer; display: flex; align-items: center; list-style: none;">
+        <div style="flex: 2; font-weight: bold;">{icone} {row.get('NOME PDV', 'PDV')} <span style="font-size:0.75rem; color:#888; font-weight:normal; margin-left:5px;">{row.get('CHAVE PDV', '')}</span></div>
+        <div style="flex: 1; font-size: 0.9rem;">{base}</div>
+        <div style="flex: 1; font-size: 0.9rem; font-weight: bold;">{status_txt}</div>
+        <div style="flex: 2; text-align: right; font-size: 0.9rem; color: #aaa;">{meta_info}</div>
+    </summary>
+    <div style="padding: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+        {inner_html}
+    </div>
+</details>
+"""
         html_lista.append(row_html)
 
     # Renderiza tudo de uma vez
