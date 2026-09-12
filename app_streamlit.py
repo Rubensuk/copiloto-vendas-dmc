@@ -3,8 +3,8 @@ import pandas as pd
 import requests
 import io
 
-st.set_page_config(page_title="DMC Sales Copilot - Metas & Portfólio", layout="wide")
-st.title("🎯 DMC Sales Copilot — Metas & Portfólio (Araguaína/TO • Com TO PA Sul)")
+st.set_page_config(page_title="DMC - Score 5", layout="wide")
+st.title("🎯 DMC - Score 5")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURAÇÃO
