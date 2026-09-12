@@ -224,12 +224,14 @@ real_ln_total  = int(df_he['REAL_HE_LN'].sum()) if not df_he.empty else 0
 
 # 300ml total (Core)
 real_300_total = int(df_core['REAL_CORE_300'].sum()) if not df_core.empty else 0
+meta_300_total = int(df_core['LITRINHO'].fillna(0).sum()) if not df_core.empty and 'LITRINHO' in df_core.columns else 0
 
 m1, m2, m3, m4 = st.columns(4)
 
 pct_rgb = (real_rgb_total / meta_rgb_total * 100) if meta_rgb_total > 0 else 0
 pct_600 = ((real_600_he + real_int_core) / (meta_600_he + meta_int_core) * 100) if (meta_600_he + meta_int_core) > 0 else 0
 pct_ln  = (real_ln_total / meta_ln_total * 100) if meta_ln_total > 0 else 0
+pct_300 = (real_300_total / meta_300_total * 100) if meta_300_total > 0 else 0
 
 with m1:
     st.metric("📦 RGB (Vasilhames)", f"{real_rgb_total}/{meta_rgb_total} cxs")
@@ -244,7 +246,8 @@ with m3:
     st.markdown(barra_progresso_html(pct_ln, "Atingimento Long Neck"), unsafe_allow_html=True)
 
 with m4:
-    st.metric("🥃 300ml", f"{real_300_total} cxs vendidas")
+    st.metric("🥃 300ml", f"{real_300_total}/{meta_300_total} cxs")
+    st.markdown(barra_progresso_html(pct_300, "Atingimento 300ml"), unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -314,7 +317,7 @@ else:
         if base == 'HIGH END':
             meta_info = f"600ml: {int(row.get('600',0) or 0)} &nbsp;|&nbsp; Long Neck: {int(row.get('LN',0) or 0)}"
         elif base == 'CORE':
-            meta_info = f"Inteira: {int(row.get('INTEIRA',0) or 0)} &nbsp;|&nbsp; RGB: {int(row.get('RGB',0) or 0)}"
+            meta_info = f"Inteira: {int(row.get('INTEIRA',0) or 0)} &nbsp;|&nbsp; RGB: {int(row.get('RGB',0) or 0)} &nbsp;|&nbsp; 300ml: {int(row.get('LITRINHO',0) or 0)}"
         else:
             meta_info = "Vitrine"
 
@@ -362,12 +365,16 @@ else:
             real_int = float(row.get('REAL_CORE_600', 0))
             meta_rgb = float(row.get('RGB', 0) or 0)
             real_rgb = float(row.get('REAL_RGB_TOTAL', 0))
+            meta_300 = float(row.get('LITRINHO', 0) or 0)
+            real_300 = float(row.get('REAL_CORE_300', 0))
 
             pct_int_c = (real_int / meta_int * 100) if meta_int > 0 else 0
             pct_rgb_c = (real_rgb / meta_rgb * 100) if meta_rgb > 0 else 0
+            pct_300_c = (real_300 / meta_300 * 100) if meta_300 > 0 else 0
 
             inner_html += barra_progresso_html(pct_int_c, f"🍺 Inteira (600ml) — Meta: {int(meta_int)} | Real: {int(real_int)} | Falta: {int(max(0, meta_int - real_int))}")
             inner_html += barra_progresso_html(pct_rgb_c, f"📦 RGB (Vasilhames) — Meta: {int(meta_rgb)} | Real: {int(real_rgb)} | Falta: {int(max(0, meta_rgb - real_rgb))}")
+            inner_html += barra_progresso_html(pct_300_c, f"🥃 300ml — Meta: {int(meta_300)} | Real: {int(real_300)} | Falta: {int(max(0, meta_300 - real_300))}")
 
             mix_items = []
             def format_row(sq, nome, val):
