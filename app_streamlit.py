@@ -293,122 +293,139 @@ def gerar_quadrado(vendeu):
 if df_exib.empty:
     st.info("Nenhum cliente encontrado.")
 else:
+    # ── CABEÇALHO DA TABELA DE CLIENTES ──
+    header_html = """
+    <div style="display:flex; padding:10px 15px; background:rgba(0,0,0,0.1); font-weight:bold; font-size:0.9rem; border-bottom:2px solid rgba(255,255,255,0.1); margin-bottom:5px;">
+        <div style="flex: 2;">🏪 NOME DO PDV</div>
+        <div style="flex: 1;">📊 SEGMENTO</div>
+        <div style="flex: 1;">🎯 STATUS</div>
+        <div style="flex: 2; text-align:right;">📋 METAS</div>
+    </div>
+    """
+    
+    html_lista = [header_html]
+
     for _, row in df_exib.iterrows():
         base  = row.get('BASE', 'CORE')
         bateu = float(row.get('BATEU META', 0) or 0)
-        status_txt = "✅ BATEU META" if bateu == 1 else "❌ FORA DA META"
+        status_txt = "<span style='color:#22c55e;'>✅ BATEU META</span>" if bateu == 1 else "<span style='color:#ef4444;'>❌ FORA DA META</span>"
         icone = "🟡" if base == 'CORE' else ("💎" if base == 'HIGH END' else "🏪")
 
-        # ── Monta resumo de meta para o header ──
         if base == 'HIGH END':
-            meta_info = f"Meta 600ml: {int(row.get('600',0) or 0)} | Meta Long Neck: {int(row.get('LN',0) or 0)}"
+            meta_info = f"600ml: {int(row.get('600',0) or 0)} &nbsp;|&nbsp; Long Neck: {int(row.get('LN',0) or 0)}"
         elif base == 'CORE':
-            meta_info = f"Meta Inteira: {int(row.get('INTEIRA',0) or 0)} | Meta RGB: {int(row.get('RGB',0) or 0)}"
+            meta_info = f"Inteira: {int(row.get('INTEIRA',0) or 0)} &nbsp;|&nbsp; RGB: {int(row.get('RGB',0) or 0)}"
         else:
             meta_info = "Vitrine"
 
-        with st.expander(f"{icone} {row.get('NOME PDV','PDV')} — {base} — {status_txt} — 📋 {meta_info}"):
+        # Conteúdo interno (barras e tabela de mix)
+        inner_html = ""
+        
+        if base == 'HIGH END':
+            meta_600  = float(row.get('600', 0) or 0)
+            real_600  = float(row.get('REAL_HE_600', 0))
+            meta_ln   = float(row.get('LN', 0) or 0)
+            real_ln   = float(row.get('REAL_HE_LN', 0))
 
-            # ── BARRAS DE PROGRESSO ──
-            if base == 'HIGH END':
-                meta_600  = float(row.get('600', 0) or 0)
-                real_600  = float(row.get('REAL_HE_600', 0))
-                meta_ln   = float(row.get('LN', 0) or 0)
-                real_ln   = float(row.get('REAL_HE_LN', 0))
+            pct_600_c = (real_600 / meta_600 * 100) if meta_600 > 0 else 0
+            pct_ln_c  = (real_ln / meta_ln * 100) if meta_ln > 0 else 0
 
-                pct_600_c = (real_600 / meta_600 * 100) if meta_600 > 0 else 0
-                pct_ln_c  = (real_ln / meta_ln * 100) if meta_ln > 0 else 0
+            inner_html += barra_progresso_html(pct_600_c, f"🍺 600ml — Meta: {int(meta_600)} | Real: {int(real_600)} | Falta: {int(max(0, meta_600 - real_600))}")
+            inner_html += barra_progresso_html(pct_ln_c,  f"🍾 Long Neck — Meta: {int(meta_ln)} | Real: {int(real_ln)} | Falta: {int(max(0, meta_ln - real_ln))}")
 
-                st.markdown(
-                    barra_progresso_html(pct_600_c, f"🍺 600ml — Meta: {int(meta_600)} | Real: {int(real_600)} | Falta: {int(max(0, meta_600 - real_600))}") +
-                    barra_progresso_html(pct_ln_c,  f"🍾 Long Neck — Meta: {int(meta_ln)} | Real: {int(real_ln)} | Falta: {int(max(0, meta_ln - real_ln))}"),
-                    unsafe_allow_html=True
-                )
+            mix_items = []
+            def format_row(sq, nome, val):
+                qtd = int(val) if pd.notna(val) else 0
+                return f'<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px 12px;text-align:center;">{sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;">{nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;">{qtd}</td></tr>'
 
-                # ── TABELA DE MIX HIGH END ──
-                st.markdown("---")
-                st.markdown("#### 📦 Mix de Produtos (High End)")
-                mix_items = []
+            for col, nome in HE_600.items():
+                if col in df.columns:
+                    val = row.get(col, 0)
+                    vendeu = pd.notna(val) and float(val) > 0
+                    mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
+            for col, nome in HE_LN.items():
+                if col in df.columns:
+                    val = row.get(col, 0)
+                    vendeu = pd.notna(val) and float(val) > 0
+                    mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
 
-                def format_row(sq, nome, val):
-                    qtd = int(val) if pd.notna(val) else 0
-                    return f'<tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:10px 12px;text-align:center;vertical-align:middle;">{sq}</td><td style="padding:10px 12px;text-align:left;font-size:1.05rem;">{nome}</td><td style="padding:10px 12px;text-align:center;font-size:1.1rem;font-weight:600;">{qtd}</td></tr>'
+            inner_html += f'''<div style="margin-top:15px; font-weight:bold;">📦 Mix de Produtos (High End)</div>
+            <table style="width:100%; border-collapse:collapse; margin-top:5px; background:rgba(0,0,0,0.1); border-radius:5px; overflow:hidden;">
+                <thead style="background:rgba(255,255,255,0.05);font-size:0.9rem;">
+                    <tr><th style="padding:8px;text-align:center;width:15%;">Status</th><th style="padding:8px;text-align:left;width:65%;">Produto</th><th style="padding:8px;text-align:center;width:20%;">Vendida</th></tr>
+                </thead>
+                <tbody>{"".join(mix_items)}</tbody>
+            </table>'''
 
-                # 600ml
-                for col, nome in HE_600.items():
-                    if col in df.columns:
-                        val = row.get(col, 0)
-                        vendeu = pd.notna(val) and float(val) > 0
-                        mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
+        elif base == 'CORE':
+            meta_int = float(row.get('INTEIRA', 0) or 0)
+            real_int = float(row.get('REAL_CORE_600', 0))
+            meta_rgb = float(row.get('RGB', 0) or 0)
+            real_rgb = float(row.get('REAL_RGB_TOTAL', 0))
 
-                # Long Neck
-                for col, nome in HE_LN.items():
-                    if col in df.columns:
-                        val = row.get(col, 0)
-                        vendeu = pd.notna(val) and float(val) > 0
-                        mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
+            pct_int_c = (real_int / meta_int * 100) if meta_int > 0 else 0
+            pct_rgb_c = (real_rgb / meta_rgb * 100) if meta_rgb > 0 else 0
 
-                tabela = f'''<table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;box-shadow: 0 4px 8px rgba(0,0,0,0.2);margin-top:10px;">
-                    <thead style="background:rgba(255,255,255,0.08);color:#fff;font-size:1.1rem;">
-                        <tr><th style="padding:12px;text-align:center;width:15%;">Status</th><th style="padding:12px;text-align:left;width:65%;">Produto</th><th style="padding:12px;text-align:center;width:20%;">Vendida</th></tr>
-                    </thead>
-                    <tbody>{"".join(mix_items)}</tbody>
-                </table>'''
-                st.markdown(tabela, unsafe_allow_html=True)
+            inner_html += barra_progresso_html(pct_int_c, f"🍺 Inteira (600ml) — Meta: {int(meta_int)} | Real: {int(real_int)} | Falta: {int(max(0, meta_int - real_int))}")
+            inner_html += barra_progresso_html(pct_rgb_c, f"📦 RGB (Vasilhames) — Meta: {int(meta_rgb)} | Real: {int(real_rgb)} | Falta: {int(max(0, meta_rgb - real_rgb))}")
 
-            elif base == 'CORE':
-                meta_int = float(row.get('INTEIRA', 0) or 0)
-                real_int = float(row.get('REAL_CORE_600', 0))
-                meta_rgb = float(row.get('RGB', 0) or 0)
-                real_rgb = float(row.get('REAL_RGB_TOTAL', 0))
+            mix_items = []
+            def format_row(sq, nome, val):
+                qtd = int(val) if pd.notna(val) else 0
+                return f'<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px 12px;text-align:center;">{sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;">{nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;">{qtd}</td></tr>'
 
-                pct_int_c = (real_int / meta_int * 100) if meta_int > 0 else 0
-                pct_rgb_c = (real_rgb / meta_rgb * 100) if meta_rgb > 0 else 0
+            for col, nome in CORE_600.items():
+                if col in df.columns:
+                    val = row.get(col, 0)
+                    vendeu = pd.notna(val) and float(val) > 0
+                    mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
+            for col, nome in CORE_300.items():
+                if col in df.columns:
+                    val = row.get(col, 0)
+                    vendeu = pd.notna(val) and float(val) > 0
+                    mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
+            for col, nome in CORE_1000.items():
+                if col in df.columns:
+                    val = row.get(col, 0)
+                    vendeu = pd.notna(val) and float(val) > 0
+                    mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
 
-                st.markdown(
-                    barra_progresso_html(pct_int_c, f"🍺 Inteira (600ml) — Meta: {int(meta_int)} | Real: {int(real_int)} | Falta: {int(max(0, meta_int - real_int))}") +
-                    barra_progresso_html(pct_rgb_c, f"📦 RGB (Vasilhames) — Meta: {int(meta_rgb)} | Real: {int(real_rgb)} | Falta: {int(max(0, meta_rgb - real_rgb))}"),
-                    unsafe_allow_html=True
-                )
+            inner_html += f'''<div style="margin-top:15px; font-weight:bold;">📦 Mix de Produtos (Core)</div>
+            <table style="width:100%; border-collapse:collapse; margin-top:5px; background:rgba(0,0,0,0.1); border-radius:5px; overflow:hidden;">
+                <thead style="background:rgba(255,255,255,0.05);font-size:0.9rem;">
+                    <tr><th style="padding:8px;text-align:center;width:15%;">Status</th><th style="padding:8px;text-align:left;width:65%;">Produto</th><th style="padding:8px;text-align:center;width:20%;">Vendida</th></tr>
+                </thead>
+                <tbody>{"".join(mix_items)}</tbody>
+            </table>'''
 
-                # ── TABELA DE MIX CORE ──
-                st.markdown("---")
-                st.markdown("#### 📦 Mix de Produtos (Core)")
-                mix_items = []
+        else:
+            inner_html += "<div>Segmento Vitrine</div>"
 
-                def format_row(sq, nome, val):
-                    qtd = int(val) if pd.notna(val) else 0
-                    return f'<tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:10px 12px;text-align:center;vertical-align:middle;">{sq}</td><td style="padding:10px 12px;text-align:left;font-size:1.05rem;">{nome}</td><td style="padding:10px 12px;text-align:center;font-size:1.1rem;font-weight:600;">{qtd}</td></tr>'
+        # HTML do "Expander" (details/summary) customizado
+        row_html = f"""
+        <details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; margin-bottom: 8px; font-family: sans-serif;">
+            <summary style="padding: 12px 15px; cursor: pointer; display: flex; align-items: center; list-style: none;">
+                <div style="flex: 2; font-weight: bold;">{icone} {row.get('NOME PDV', 'PDV')} <span style="font-size:0.75rem; color:#888; font-weight:normal; margin-left:5px;">{row.get('CHAVE PDV', '')}</span></div>
+                <div style="flex: 1; font-size: 0.9rem;">{base}</div>
+                <div style="flex: 1; font-size: 0.9rem; font-weight: bold;">{status_txt}</div>
+                <div style="flex: 2; text-align: right; font-size: 0.9rem; color: #aaa;">{meta_info}</div>
+            </summary>
+            <div style="padding: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+                {inner_html}
+            </div>
+        </details>
+        """
+        html_lista.append(row_html)
 
-                # 600ml Core
-                for col, nome in CORE_600.items():
-                    if col in df.columns:
-                        val = row.get(col, 0)
-                        vendeu = pd.notna(val) and float(val) > 0
-                        mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
+    # Renderiza tudo de uma vez
+    st.markdown("".join(html_lista), unsafe_allow_html=True)
 
-                # 300ml Core
-                for col, nome in CORE_300.items():
-                    if col in df.columns:
-                        val = row.get(col, 0)
-                        vendeu = pd.notna(val) and float(val) > 0
-                        mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
-
-                # 1000ml Core
-                for col, nome in CORE_1000.items():
-                    if col in df.columns:
-                        val = row.get(col, 0)
-                        vendeu = pd.notna(val) and float(val) > 0
-                        mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
-
-                tabela = f'''<table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;box-shadow: 0 4px 8px rgba(0,0,0,0.2);margin-top:10px;">
-                    <thead style="background:rgba(255,255,255,0.08);color:#fff;font-size:1.1rem;">
-                        <tr><th style="padding:12px;text-align:center;width:15%;">Status</th><th style="padding:12px;text-align:left;width:65%;">Produto</th><th style="padding:12px;text-align:center;width:20%;">Vendida</th></tr>
-                    </thead>
-                    <tbody>{"".join(mix_items)}</tbody>
-                </table>'''
-                st.markdown(tabela, unsafe_allow_html=True)
-
-            else:
-                st.write("🏪 Segmento Vitrine")
+# CSS para esconder a setinha padrão do HTML details no Safari/Chrome
+st.markdown("""
+<style>
+details > summary::-webkit-details-marker {
+  display: none;
+}
+</style>
+""", unsafe_allow_html=True)
 
