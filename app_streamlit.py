@@ -253,10 +253,29 @@ st.markdown("---")
 # ─────────────────────────────────────────────────────────────────────────────
 st.markdown("### 📋 Clientes — Meta & Mix de Portfólio")
 
-busca = st.text_input("🔍 Filtrar por Nome do PDV ou Chave:", "")
-mostrar_fora = st.checkbox("Mostrar apenas quem está FORA da meta", value=False)
+st.warning("⚠️ **AVISO:** Se as palavras 'High End' e 'Long Neck' estiverem aparecendo como 'Topo de Linha' ou 'Pescoço Longo', **desative o Tradutor Automático do seu navegador**. Ele quebra o visual do site!")
+
+col_busca1, col_busca2 = st.columns([2, 1])
+with col_busca1:
+    busca = st.text_input("🔍 Filtrar por Nome do PDV ou Chave:", "")
+with col_busca2:
+    st.markdown("<br>", unsafe_allow_html=True)
+    mostrar_fora = st.checkbox("Apenas FORA da meta", value=False)
+
+# Filtro de Segmento (Botões para separar Core e High End)
+segmento_filtro = st.radio(
+    "Filtrar por Segmento:",
+    ["Todos", "Core", "High End"],
+    horizontal=True
+)
 
 df_exib = df_rn.copy()
+
+if segmento_filtro == "Core":
+    df_exib = df_exib[df_exib['BASE'] == 'CORE']
+elif segmento_filtro == "High End":
+    df_exib = df_exib[df_exib['BASE'] == 'HIGH END']
+
 if busca:
     df_exib = df_exib[
         df_exib['NOME PDV'].astype(str).str.contains(busca, case=False, na=False) |
