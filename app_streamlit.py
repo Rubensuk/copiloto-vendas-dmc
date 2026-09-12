@@ -222,7 +222,10 @@ real_int_core  = int(df_core['REAL_CORE_600'].sum()) if not df_core.empty else 0
 meta_ln_total  = int(df_he['LN'].fillna(0).sum()) if not df_he.empty and 'LN' in df_he.columns else 0
 real_ln_total  = int(df_he['REAL_HE_LN'].sum()) if not df_he.empty else 0
 
-m1, m2, m3 = st.columns(3)
+# 300ml total (Core)
+real_300_total = int(df_core['REAL_CORE_300'].sum()) if not df_core.empty else 0
+
+m1, m2, m3, m4 = st.columns(4)
 
 pct_rgb = (real_rgb_total / meta_rgb_total * 100) if meta_rgb_total > 0 else 0
 pct_600 = ((real_600_he + real_int_core) / (meta_600_he + meta_int_core) * 100) if (meta_600_he + meta_int_core) > 0 else 0
@@ -233,19 +236,22 @@ with m1:
     st.markdown(barra_progresso_html(pct_rgb, "Atingimento RGB"), unsafe_allow_html=True)
 
 with m2:
-    st.metric("🍺 600ml (Inteira + HE)", f"{real_600_he + real_int_core}/{meta_600_he + meta_int_core} SKUs")
+    st.metric("🍺 600ml (Inteira + High End)", f"{real_600_he + real_int_core}/{meta_600_he + meta_int_core} SKUs")
     st.markdown(barra_progresso_html(pct_600, "Atingimento 600ml"), unsafe_allow_html=True)
 
 with m3:
     st.metric("🍾 Long Neck", f"{real_ln_total}/{meta_ln_total} cxs")
     st.markdown(barra_progresso_html(pct_ln, "Atingimento Long Neck"), unsafe_allow_html=True)
 
+with m4:
+    st.metric("🥃 300ml", f"{real_300_total} cxs vendidas")
+
 st.markdown("---")
 
 # ─────────────────────────────────────────────────────────────────────────────
-# MATRIZ DE CLIENTES COM BARRAS E PORTFÓLIO VISUAL
+# LISTA DE CLIENTES COM META + TABELA DE MIX INLINE
 # ─────────────────────────────────────────────────────────────────────────────
-st.markdown("### 📋 Clientes — Execução & Portfólio")
+st.markdown("### 📋 Clientes — Meta & Mix de Portfólio")
 
 busca = st.text_input("🔍 Filtrar por Nome do PDV ou Chave:", "")
 mostrar_fora = st.checkbox("Mostrar apenas quem está FORA da meta", value=False)
@@ -261,6 +267,10 @@ if mostrar_fora:
 
 st.caption(f"Exibindo {len(df_exib)} de {total_pdvs} PDVs do RN {rn_selecionado}")
 
+def gerar_quadrado(vendeu):
+    cor = '#22c55e' if vendeu else '#ef4444'
+    return f'<span style="display:inline-block;width:16px;height:16px;background:{cor};border-radius:3px;border:1px solid rgba(255,255,255,0.2);"></span>'
+
 if df_exib.empty:
     st.info("Nenhum cliente encontrado.")
 else:
@@ -270,52 +280,57 @@ else:
         status_txt = "✅ BATEU META" if bateu == 1 else "❌ FORA DA META"
         icone = "🟡" if base == 'CORE' else ("💎" if base == 'HIGH END' else "🏪")
 
-        with st.expander(f"{icone} {row.get('NOME PDV', 'PDV')} — {base} — {status_txt}"):
+        # ── Monta resumo de meta para o header ──
+        if base == 'HIGH END':
+            meta_info = f"Meta 600ml: {int(row.get('600',0) or 0)} | Meta Long Neck: {int(row.get('LN',0) or 0)}"
+        elif base == 'CORE':
+            meta_info = f"Meta Inteira: {int(row.get('INTEIRA',0) or 0)} | Meta RGB: {int(row.get('RGB',0) or 0)}"
+        else:
+            meta_info = "Vitrine"
 
-            # ── INFO BÁSICA ────────────────────────────────────────────
-            st.markdown(f"**Chave:** `{row.get('CHAVE PDV', '---')}` &nbsp;|&nbsp; **Visita:** {row.get('VISITA', '---')} &nbsp;|&nbsp; **Segmento:** {icone} {base}")
-            st.markdown("---")
+        with st.expander(f"{icone} {row.get('NOME PDV','PDV')} — {base} — {status_txt} — 📋 {meta_info}"):
 
-            # ══════════════════════════════════════════════════════════
-            # BARRAS DE PROGRESSO — META vs REALIZADO
-            # ══════════════════════════════════════════════════════════
+            # ── BARRAS DE PROGRESSO ──
             if base == 'HIGH END':
                 meta_600  = float(row.get('600', 0) or 0)
                 real_600  = float(row.get('REAL_HE_600', 0))
                 meta_ln   = float(row.get('LN', 0) or 0)
                 real_ln   = float(row.get('REAL_HE_LN', 0))
 
-                pct_600 = (real_600 / meta_600 * 100) if meta_600 > 0 else 0
-                pct_ln  = (real_ln / meta_ln * 100) if meta_ln > 0 else 0
+                pct_600_c = (real_600 / meta_600 * 100) if meta_600 > 0 else 0
+                pct_ln_c  = (real_ln / meta_ln * 100) if meta_ln > 0 else 0
 
-                st.markdown("**📊 Progresso das Metas:**")
                 st.markdown(
-                    barra_progresso_html(pct_600, f"🍺 600ml — Meta: {int(meta_600)} | Real: {int(real_600)} | Falta: {int(max(0, meta_600 - real_600))}") +
-                    barra_progresso_html(pct_ln,  f"🍾 Long Neck — Meta: {int(meta_ln)} | Real: {int(real_ln)} | Falta: {int(max(0, meta_ln - real_ln))}"),
+                    barra_progresso_html(pct_600_c, f"🍺 600ml — Meta: {int(meta_600)} | Real: {int(real_600)} | Falta: {int(max(0, meta_600 - real_600))}") +
+                    barra_progresso_html(pct_ln_c,  f"🍾 Long Neck — Meta: {int(meta_ln)} | Real: {int(real_ln)} | Falta: {int(max(0, meta_ln - real_ln))}"),
                     unsafe_allow_html=True
                 )
 
-                # ── PORTFÓLIO VISUAL HIGH END ──────────────────────
+                # ── TABELA DE MIX HIGH END ──
                 st.markdown("---")
-                st.markdown("**📦 Portfólio 600ml:**")
-                items_600 = []
+                mix_items = []
+
+                # 600ml
                 for col, nome in HE_600.items():
                     if col in df.columns:
                         val = row.get(col, 0)
                         vendeu = pd.notna(val) and float(val) > 0
-                        items_600.append(quadrado_produto(nome, vendeu))
-                if items_600:
-                    st.markdown("<br>".join(items_600), unsafe_allow_html=True)
+                        sq = gerar_quadrado(vendeu)
+                        mix_items.append(f'<tr><td style="padding:3px 8px;">{sq}</td><td style="padding:3px 8px;">{nome}</td><td style="padding:3px 8px;text-align:center;">{int(val) if pd.notna(val) else 0}</td></tr>')
 
-                st.markdown("**📦 Portfólio Long Neck:**")
-                items_ln = []
+                # Long Neck
                 for col, nome in HE_LN.items():
                     if col in df.columns:
                         val = row.get(col, 0)
                         vendeu = pd.notna(val) and float(val) > 0
-                        items_ln.append(quadrado_produto(nome, vendeu))
-                if items_ln:
-                    st.markdown("<br>".join(items_ln), unsafe_allow_html=True)
+                        sq = gerar_quadrado(vendeu)
+                        mix_items.append(f'<tr><td style="padding:3px 8px;">{sq}</td><td style="padding:3px 8px;">{nome}</td><td style="padding:3px 8px;text-align:center;">{int(val) if pd.notna(val) else 0}</td></tr>')
+
+                tabela = f'''<table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+                    <tr style="background:rgba(255,255,255,0.05);"><th style="padding:4px 8px;text-align:left;">Status</th><th style="padding:4px 8px;text-align:left;">Produto</th><th style="padding:4px 8px;text-align:center;">Qtd</th></tr>
+                    {"".join(mix_items)}
+                </table>'''
+                st.markdown(tabela, unsafe_allow_html=True)
 
             elif base == 'CORE':
                 meta_int = float(row.get('INTEIRA', 0) or 0)
@@ -323,47 +338,49 @@ else:
                 meta_rgb = float(row.get('RGB', 0) or 0)
                 real_rgb = float(row.get('REAL_RGB_TOTAL', 0))
 
-                pct_int = (real_int / meta_int * 100) if meta_int > 0 else 0
-                pct_rgb = (real_rgb / meta_rgb * 100) if meta_rgb > 0 else 0
+                pct_int_c = (real_int / meta_int * 100) if meta_int > 0 else 0
+                pct_rgb_c = (real_rgb / meta_rgb * 100) if meta_rgb > 0 else 0
 
-                st.markdown("**📊 Progresso das Metas:**")
                 st.markdown(
-                    barra_progresso_html(pct_int, f"🍺 Inteira (600ml) — Meta: {int(meta_int)} | Real: {int(real_int)} | Falta: {int(max(0, meta_int - real_int))}") +
-                    barra_progresso_html(pct_rgb, f"📦 RGB (Vasilhames) — Meta: {int(meta_rgb)} | Real: {int(real_rgb)} | Falta: {int(max(0, meta_rgb - real_rgb))}"),
+                    barra_progresso_html(pct_int_c, f"🍺 Inteira (600ml) — Meta: {int(meta_int)} | Real: {int(real_int)} | Falta: {int(max(0, meta_int - real_int))}") +
+                    barra_progresso_html(pct_rgb_c, f"📦 RGB (Vasilhames) — Meta: {int(meta_rgb)} | Real: {int(real_rgb)} | Falta: {int(max(0, meta_rgb - real_rgb))}"),
                     unsafe_allow_html=True
                 )
 
-                # ── PORTFÓLIO VISUAL CORE ──────────────────────────
+                # ── TABELA DE MIX CORE ──
                 st.markdown("---")
-                st.markdown("**📦 Portfólio 600ml (Inteira):**")
-                items_c600 = []
+                mix_items = []
+
+                # 600ml Core
                 for col, nome in CORE_600.items():
                     if col in df.columns:
                         val = row.get(col, 0)
                         vendeu = pd.notna(val) and float(val) > 0
-                        items_c600.append(quadrado_produto(nome, vendeu))
-                if items_c600:
-                    st.markdown("<br>".join(items_c600), unsafe_allow_html=True)
+                        sq = gerar_quadrado(vendeu)
+                        mix_items.append(f'<tr><td style="padding:3px 8px;">{sq}</td><td style="padding:3px 8px;">{nome}</td><td style="padding:3px 8px;text-align:center;">{int(val) if pd.notna(val) else 0}</td></tr>')
 
-                st.markdown("**📦 Portfólio 300ml:**")
-                items_c300 = []
+                # 300ml Core
                 for col, nome in CORE_300.items():
                     if col in df.columns:
                         val = row.get(col, 0)
                         vendeu = pd.notna(val) and float(val) > 0
-                        items_c300.append(quadrado_produto(nome, vendeu))
-                if items_c300:
-                    st.markdown("<br>".join(items_c300), unsafe_allow_html=True)
+                        sq = gerar_quadrado(vendeu)
+                        mix_items.append(f'<tr><td style="padding:3px 8px;">{sq}</td><td style="padding:3px 8px;">{nome}</td><td style="padding:3px 8px;text-align:center;">{int(val) if pd.notna(val) else 0}</td></tr>')
 
-                st.markdown("**📦 Portfólio 1000ml (Litrão):**")
-                items_c1000 = []
+                # 1000ml Core
                 for col, nome in CORE_1000.items():
                     if col in df.columns:
                         val = row.get(col, 0)
                         vendeu = pd.notna(val) and float(val) > 0
-                        items_c1000.append(quadrado_produto(nome, vendeu))
-                if items_c1000:
-                    st.markdown("<br>".join(items_c1000), unsafe_allow_html=True)
+                        sq = gerar_quadrado(vendeu)
+                        mix_items.append(f'<tr><td style="padding:3px 8px;">{sq}</td><td style="padding:3px 8px;">{nome}</td><td style="padding:3px 8px;text-align:center;">{int(val) if pd.notna(val) else 0}</td></tr>')
+
+                tabela = f'''<table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
+                    <tr style="background:rgba(255,255,255,0.05);"><th style="padding:4px 8px;text-align:left;">Status</th><th style="padding:4px 8px;text-align:left;">Produto</th><th style="padding:4px 8px;text-align:center;">Qtd</th></tr>
+                    {"".join(mix_items)}
+                </table>'''
+                st.markdown(tabela, unsafe_allow_html=True)
 
             else:
                 st.write("🏪 Segmento Vitrine")
+
