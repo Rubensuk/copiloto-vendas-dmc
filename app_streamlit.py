@@ -9,41 +9,70 @@ st.title("🎯 DMC Sales Copilot — Metas & Portfólio (Araguaína/TO • Com T
 # ─────────────────────────────────────────────────────────────────────────────
 # CONFIGURAÇÃO DO GOOGLE DRIVE
 # ─────────────────────────────────────────────────────────────────────────────
-GDRIVE_FILE_ID   = "1WJOSePDmcVRjANuUXIuJLFdB8p0yhTvB"
+GDRIVE_FILE_ID    = "1RdtvJaS0S1jeSNgBoYZ86WzIfvEIKlo8"
 GDRIVE_EXPORT_URL = f"https://docs.google.com/spreadsheets/d/{GDRIVE_FILE_ID}/export?format=xlsx"
 
-# KPIs que compõem o Score 5
-KPIS = ['COMPR', 'VISITAÇÃO', 'TASK FAT', 'COOLERS', 'AD & TASK', 'MENU & PTC', 'MAT TRADE', 'DIG COUP']
-KPIS_LABELS = {
-    'COMPR'      : '🛒 Compra',
-    'VISITAÇÃO'  : '👁️ Visitação',
-    'TASK FAT'   : '📦 Task Fat.',
-    'COOLERS'    : '❄️ Coolers',
-    'AD & TASK'  : '📢 AD & Task',
-    'MENU & PTC' : '📋 Menu & PTC',
-    'MAT TRADE'  : '🎨 Mat. Trade',
-    'DIG COUP'   : '🎟️ Dig. Coupon',
-}
+# ─────────────────────────────────────────────────────────────────────────────
+# COLUNAS DE REALIZADO (High End e Core RGB)
+# ─────────────────────────────────────────────────────────────────────────────
+# HIGH END 600ml (positivação de SKUs)
+HE_600_COLS = ['SPT 600', 'STL 600', 'STL PG 600', 'BUD 600', 'COR 600', 'ORI 600 ', 'OUTROS 600']
+# HIGH END Long Necks
+HE_LN_COLS  = ['COR LN', 'STL LN', 'STL PG LN', 'SPT LN', 'MIC LN', 'OUTROS LN', 'BUD LN']
+# Core RGB (vasilhames retornáveis: 600 + 300 + 1000)
+CORE_600_COLS = ['AP 600', 'BC 600', 'BUD 600 ', 'ORI 600', 'SK 600', 'SPT 600 ', 'STL 600 ', 'STL PG 600 ', ' OUTROS 600 ']
+CORE_300_COLS = ['AP 300', 'BC 300', 'BUD 300', 'ORI 300', 'SK 300', 'OUTROS 300']
+CORE_1000_COLS = ['AP 1000', 'BC 1000', 'BUD 1000', 'ORI 1000', 'SK 1000', 'OUTROS 1000']
 
 # ─────────────────────────────────────────────────────────────────────────────
-# CARREGAMENTO E TRATAMENTO DA PLANILHA
+# CARREGAMENTO DA PLANILHA
 # ─────────────────────────────────────────────────────────────────────────────
 @st.cache_data(ttl=300)
 def carregar_dados():
     try:
         resp = requests.get(GDRIVE_EXPORT_URL, timeout=30)
         if resp.status_code != 200:
-            st.error(f"❌ Erro ao acessar Google Drive (status {resp.status_code}). Verifique o compartilhamento do arquivo.")
+            st.error(f"❌ Erro ao acessar Google Drive (status {resp.status_code}).")
             return pd.DataFrame()
 
         df = pd.read_excel(io.BytesIO(resp.content), sheet_name='Export')
 
         # Normaliza tipos
-        df['RN']   = pd.to_numeric(df['RN'],   errors='coerce')
+        df['RN']   = pd.to_numeric(df['RN'], errors='coerce')
         df['BASE'] = df['BASE'].astype(str).str.strip().str.upper() if 'BASE' in df.columns else 'CORE'
 
-        # Score 5: cliente atingiu todos os 5 KPIs quando KPIs OK == 5
-        df['BATEU_SCORE5'] = (df['KPIs OK'] == 5).astype(int) if 'KPIs OK' in df.columns else 0
+        # ── Cálculos High End ──────────────────────────────────────────
+        cols_he600 = [c for c in HE_600_COLS if c in df.columns]
+        cols_heln  = [c for c in HE_LN_COLS  if c in df.columns]
+
+        df['REAL_HE_600'] = df[cols_he600].fillna(0).sum(axis=1) if cols_he600 else 0
+        df['REAL_HE_LN']  = df[cols_heln].fillna(0).sum(axis=1)  if cols_heln  else 0
+
+        df['FALTA_HE_600'] = df.apply(
+            lambda r: max(0, float(r.get('600', 0) or 0) - float(r['REAL_HE_600'])), axis=1
+        )
+        df['FALTA_HE_LN'] = df.apply(
+            lambda r: max(0, float(r.get('LN', 0) or 0) - float(r['REAL_HE_LN'])), axis=1
+        )
+
+        # ── Cálculos Core RGB (600 + 300 + 1000) ──────────────────────
+        cols_c600  = [c for c in CORE_600_COLS  if c in df.columns]
+        cols_c300  = [c for c in CORE_300_COLS  if c in df.columns]
+        cols_c1000 = [c for c in CORE_1000_COLS if c in df.columns]
+
+        df['REAL_CORE_600']  = df[cols_c600].fillna(0).sum(axis=1)  if cols_c600  else 0
+        df['REAL_CORE_300']  = df[cols_c300].fillna(0).sum(axis=1)  if cols_c300  else 0
+        df['REAL_CORE_1000'] = df[cols_c1000].fillna(0).sum(axis=1) if cols_c1000 else 0
+        df['REAL_RGB_TOTAL'] = df['REAL_CORE_600'] + df['REAL_CORE_300'] + df['REAL_CORE_1000']
+
+        # Falta Core Inteira (meta col INTEIRA vs realizado 600ml core)
+        df['FALTA_INTEIRA'] = df.apply(
+            lambda r: max(0, float(r.get('INTEIRA', 0) or 0) - float(r['REAL_CORE_600'])), axis=1
+        )
+        # Falta Core RGB (meta col RGB vs realizado total vasilhames)
+        df['FALTA_RGB'] = df.apply(
+            lambda r: max(0, float(r.get('RGB', 0) or 0) - float(r['REAL_RGB_TOTAL'])), axis=1
+        )
 
         return df
 
@@ -51,10 +80,10 @@ def carregar_dados():
         st.error(f"❌ Erro ao carregar dados: {e}")
         return pd.DataFrame()
 
-with st.spinner("📡 Conectando ao Google Drive e carregando planilha..."):
+with st.spinner("📡 Conectando ao Google Drive..."):
     df = carregar_dados()
 
-if st.button("🔄 Atualizar dados"):
+if st.button("🔄 Atualizar dados do Drive"):
     st.cache_data.clear()
     st.rerun()
 
@@ -62,10 +91,10 @@ if st.button("🔄 Atualizar dados"):
 # APLICAÇÃO PRINCIPAL
 # ─────────────────────────────────────────────────────────────────────────────
 if df.empty:
-    st.warning("⚠️ Sem dados disponíveis. Verifique a conexão com o Google Drive.")
+    st.warning("⚠️ Sem dados disponíveis.")
     st.stop()
 
-# ── Filtro de RN — apenas o número, lido dinamicamente ────────────────────
+# ── Filtro Dinâmico de RN ──────────────────────────────────────────────────
 rns_disponiveis = sorted([int(x) for x in df['RN'].dropna().unique()])
 
 st.sidebar.header("🔍 Filtros de Operação")
@@ -75,89 +104,60 @@ rn_selecionado = st.sidebar.selectbox(
     format_func=lambda x: str(x)
 )
 
-# ── Filtragem rigorosa pelo RN selecionado ─────────────────────────────────
+# ── Filtragem rigorosa ─────────────────────────────────────────────────────
 df_rn = df[df['RN'] == float(rn_selecionado)].copy()
 
-# ── Segmentação Core / High End ────────────────────────────────────────────
+# ── Segmentação ────────────────────────────────────────────────────────────
 df_core = df_rn[df_rn['BASE'] == 'CORE']
 df_he   = df_rn[df_rn['BASE'] == 'HIGH END']
+df_vit  = df_rn[df_rn['BASE'] == 'VITRINE']
 
 total_pdvs    = len(df_rn)
 total_core    = len(df_core)
 total_he      = len(df_he)
-bateram_total = int(df_rn['BATEU_SCORE5'].sum())
-bateram_core  = int(df_core['BATEU_SCORE5'].sum()) if not df_core.empty else 0
-bateram_he    = int(df_he['BATEU_SCORE5'].sum())   if not df_he.empty  else 0
-fora_meta     = total_pdvs - bateram_total
-score5_pct    = (bateram_total / total_pdvs * 100)  if total_pdvs > 0 else 0.0
+total_vit     = len(df_vit)
 
-# ── KPIs OK média do RN ────────────────────────────────────────────────────
-kpis_ok_media = df_rn['KPIs OK'].mean() if 'KPIs OK' in df_rn.columns else 0
+bateram_total = int(df_rn['BATEU META'].fillna(0).sum()) if 'BATEU META' in df_rn.columns else 0
+bateram_core  = int(df_core['BATEU META'].fillna(0).sum()) if not df_core.empty and 'BATEU META' in df_core.columns else 0
+bateram_he    = int(df_he['BATEU META'].fillna(0).sum()) if not df_he.empty and 'BATEU META' in df_he.columns else 0
+fora_meta     = total_pdvs - bateram_total
+score5_pct    = (bateram_total / total_pdvs * 100) if total_pdvs > 0 else 0.0
 
 # ─────────────────────────────────────────────────────────────────────────────
-# PAINEL EXECUTIVO — CARDS DO TOPO
+# PAINEL EXECUTIVO
 # ─────────────────────────────────────────────────────────────────────────────
 st.markdown(f"### 📊 Painel Executivo — RN {rn_selecionado}")
 
-c1, c2, c3, c4, c5, c6 = st.columns(6)
-
-with c1:
-    st.metric("⭐ Score 5 (%)", f"{score5_pct:.1f}%",
-              help="% de PDVs que atingiram os 5 KPIs")
-with c2:
-    st.metric("🏆 Score 5 (PDVs)", f"{bateram_total}",
-              help="Quantidade de clientes com KPIs OK = 5")
-with c3:
-    st.metric("📍 PDVs na Rota", total_pdvs)
-with c4:
-    st.metric("🟡 Core (Total / ✅)", f"{total_core} / {bateram_core}")
-with c5:
-    st.metric("💎 High End (Total / ✅)", f"{total_he} / {bateram_he}")
-with c6:
-    st.metric("📊 KPIs Médios", f"{kpis_ok_media:.1f} / 5")
+c1, c2, c3, c4, c5 = st.columns(5)
+with c1: st.metric("⭐ Score 5 (%)", f"{score5_pct:.1f}%")
+with c2: st.metric("🟡 Core", f"{bateram_core}/{total_core}")
+with c3: st.metric("💎 High End", f"{bateram_he}/{total_he}")
+with c4: st.metric("✅ Bateram", f"{bateram_total} PDVs")
+with c5: st.metric("❌ Fora", f"{fora_meta} PDVs")
 
 st.markdown("---")
 
 # ─────────────────────────────────────────────────────────────────────────────
-# BREAKDOWN POR KPI DO RN
+# GAP CONSOLIDADO POR SEGMENTO
 # ─────────────────────────────────────────────────────────────────────────────
-st.markdown(f"#### 🎯 Atingimento por KPI — RN {rn_selecionado}")
+st.markdown(f"#### 📉 Gap Consolidado — RN {rn_selecionado}")
 
-kpi_cols = [k for k in KPIS if k in df_rn.columns]
-if kpi_cols and total_pdvs > 0:
-    kpi_data = []
-    for k in kpi_cols:
-        atingiram = int(df_rn[k].fillna(0).apply(lambda x: 1 if x == 1 else 0).sum())
-        pct = atingiram / total_pdvs * 100
-        kpi_data.append({"KPI": KPIS_LABELS.get(k, k), "Atingiram": atingiram,
-                          "Total": total_pdvs, "% Atingimento": f"{pct:.0f}%"})
-    df_kpi = pd.DataFrame(kpi_data)
-    st.dataframe(df_kpi, use_container_width=True, hide_index=True)
+g1, g2, g3, g4 = st.columns(4)
+
+if not df_core.empty:
+    with g1: st.metric("🟡 Falta Core Inteira", f"{int(df_core['FALTA_INTEIRA'].sum())} SKUs")
+    with g2: st.metric("🟡 Falta Core RGB", f"{int(df_core['FALTA_RGB'].sum())} cxs")
+
+if not df_he.empty:
+    with g3: st.metric("💎 Falta HE 600ml", f"{int(df_he['FALTA_HE_600'].sum())} SKUs")
+    with g4: st.metric("💎 Falta HE Long Neck", f"{int(df_he['FALTA_HE_LN'].sum())} cxs")
 
 st.markdown("---")
-
-# ─────────────────────────────────────────────────────────────────────────────
-# TASK DE FATURAMENTO (META vs REAL)
-# ─────────────────────────────────────────────────────────────────────────────
-df_task = df_rn[df_rn.get('POSSUI TASK', pd.Series(dtype=str)) == 'S'] if 'POSSUI TASK' in df_rn.columns else pd.DataFrame()
-if not df_task.empty and 'META TASK' in df_task.columns and 'REAL TASK' in df_task.columns:
-    st.markdown(f"#### 📦 Task de Faturamento — RN {rn_selecionado}")
-    meta_total = df_task['META TASK'].sum()
-    real_total = df_task['REAL TASK'].sum()
-    gap_task   = meta_total - real_total
-    pct_task   = (real_total / meta_total * 100) if meta_total > 0 else 0
-
-    t1, t2, t3, t4 = st.columns(4)
-    with t1: st.metric("🎯 Meta Task (R\$)", f"R$ {meta_total:,.0f}")
-    with t2: st.metric("✅ Real Task (R\$)", f"R$ {real_total:,.0f}")
-    with t3: st.metric("❌ Gap Task (R\$)", f"R$ {gap_task:,.0f}")
-    with t4: st.metric("📈 Atingimento Task", f"{pct_task:.1f}%")
-    st.markdown("---")
 
 # ─────────────────────────────────────────────────────────────────────────────
 # MATRIZ DE CONSULTA POR CLIENTE
 # ─────────────────────────────────────────────────────────────────────────────
-st.markdown("### 📋 Matriz de Clientes — Execução & KPIs Individuais")
+st.markdown("### 📋 Matriz de Clientes — Execução Individual")
 
 busca = st.text_input("🔍 Filtrar por Nome do PDV ou Chave:", "")
 mostrar_fora = st.checkbox("Mostrar apenas quem está FORA da meta", value=False)
@@ -169,54 +169,51 @@ if busca:
         df_exib['CHAVE PDV'].astype(str).str.contains(busca, case=False, na=False)
     ]
 if mostrar_fora:
-    df_exib = df_exib[df_exib['BATEU_SCORE5'] == 0]
+    df_exib = df_exib[df_exib['BATEU META'].fillna(0) == 0]
 
 st.caption(f"Exibindo {len(df_exib)} de {total_pdvs} PDVs do RN {rn_selecionado}")
 
 if df_exib.empty:
-    st.info("Nenhum cliente encontrado com esse filtro.")
+    st.info("Nenhum cliente encontrado.")
 else:
     for _, row in df_exib.iterrows():
-        base       = row.get('BASE', 'CORE')
-        bateu      = row.get('BATEU_SCORE5', 0)
-        kpis_ok    = int(row.get('KPIs OK', 0)) if pd.notna(row.get('KPIs OK')) else 0
-        status_txt = f"✅ Score 5 completo ({kpis_ok}/5 KPIs)" if bateu == 1 else f"❌ Fora da meta ({kpis_ok}/5 KPIs)"
-        icone      = "🟡" if base == 'CORE' else "💎"
+        base   = row.get('BASE', 'CORE')
+        bateu  = float(row.get('BATEU META', 0) or 0)
+        status = "✅ Bateu Meta" if bateu == 1 else "❌ Fora da Meta"
+        icone  = "🟡" if base == 'CORE' else ("💎" if base == 'HIGH END' else "🏪")
 
-        with st.expander(f"{icone} {row.get('NOME PDV', 'PDV')} — {status_txt}"):
+        with st.expander(f"{icone} {row.get('NOME PDV', 'PDV')} — {base} — {status}"):
             c1, c2, c3 = st.columns(3)
 
             with c1:
                 st.write(f"**Chave PDV:** `{row.get('CHAVE PDV', '---')}`")
-                st.write(f"**Segmento:** {icone} {base}")
                 st.write(f"**Dia de Visita:** {row.get('VISITA', '---')}")
-                st.write(f"**Operação:** {row.get('OPERAÇÃO', '---')}")
-                st.write(f"**GV:** {row.get('GV', '---')}")
+                st.write(f"**Segmento:** {icone} {base}")
 
             with c2:
-                st.write("**📋 KPIs:**")
-                for k in kpi_cols:
-                    val = row.get(k)
-                    ok  = pd.notna(val) and val == 1
-                    st.write(f"{'✅' if ok else '❌'} {KPIS_LABELS.get(k, k)}")
+                if base == 'HIGH END':
+                    meta_600 = row.get('600', 0) or 0
+                    real_600 = row.get('REAL_HE_600', 0)
+                    falta_600 = row.get('FALTA_HE_600', 0)
+                    meta_ln  = row.get('LN', 0) or 0
+                    real_ln  = row.get('REAL_HE_LN', 0)
+                    falta_ln = row.get('FALTA_HE_LN', 0)
+
+                    st.write(f"**600ml** — Meta: `{int(meta_600)}` | Real: `{int(real_600)}` | Falta: `{int(falta_600)}`")
+                    st.write(f"**Long Neck** — Meta: `{int(meta_ln)}` | Real: `{int(real_ln)}` | Falta: `{int(falta_ln)}`")
+                elif base == 'CORE':
+                    meta_int = row.get('INTEIRA', 0) or 0
+                    meta_rgb = row.get('RGB', 0) or 0
+                    real_600c = row.get('REAL_CORE_600', 0)
+                    real_rgb  = row.get('REAL_RGB_TOTAL', 0)
+                    falta_int = row.get('FALTA_INTEIRA', 0)
+                    falta_rgb = row.get('FALTA_RGB', 0)
+
+                    st.write(f"**Inteira (600ml)** — Meta: `{int(meta_int)}` | Real: `{int(real_600c)}` | Falta: `{int(falta_int)}`")
+                    st.write(f"**RGB (Vasilhames)** — Meta: `{int(meta_rgb)}` | Real: `{int(real_rgb)}` | Falta: `{int(falta_rgb)}`")
+                else:
+                    st.write("Segmento Vitrine")
 
             with c3:
-                # Task de Faturamento (se aplicável)
-                if row.get('POSSUI TASK') == 'S':
-                    meta_t = row.get('META TASK', 0)
-                    real_t = row.get('REAL TASK', 0)
-                    gap_t  = (meta_t - real_t) if pd.notna(meta_t) and pd.notna(real_t) else 0
-                    pct_t  = (real_t / meta_t * 100) if pd.notna(meta_t) and meta_t > 0 else 0
-                    st.write(f"**📦 Task Fat.:**")
-                    st.write(f"Meta: `R$ {meta_t:,.0f}` | Real: `R$ {real_t:,.0f}`")
-                    st.write(f"Gap: `R$ {gap_t:,.0f}` | `{pct_t:.1f}%`")
-                else:
-                    st.write("📦 Sem Task de Faturamento")
-
-                # Tendências
-                cerv = row.get('CERV (TEND)')
-                he   = row.get('HE (TEND)')
-                if pd.notna(cerv):
-                    st.write(f"**🍺 Cerv. Tend.:** `{cerv:.1f}`")
-                if pd.notna(he):
-                    st.write(f"**🍾 HE Tend.:** `{he:.1f}`")
+                st.write(f"**Status:** {status}")
+                st.write(f"**Operação:** {row.get('OPERAÇÃO', '---')}")
