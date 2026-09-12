@@ -308,27 +308,32 @@ else:
 
                 # ── TABELA DE MIX HIGH END ──
                 st.markdown("---")
+                st.markdown("#### 📦 Mix de Produtos (High End)")
                 mix_items = []
+
+                def format_row(sq, nome, val):
+                    qtd = int(val) if pd.notna(val) else 0
+                    return f'<tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:10px 12px;text-align:center;vertical-align:middle;">{sq}</td><td style="padding:10px 12px;text-align:left;font-size:1.05rem;">{nome}</td><td style="padding:10px 12px;text-align:center;font-size:1.1rem;font-weight:600;">{qtd}</td></tr>'
 
                 # 600ml
                 for col, nome in HE_600.items():
                     if col in df.columns:
                         val = row.get(col, 0)
                         vendeu = pd.notna(val) and float(val) > 0
-                        sq = gerar_quadrado(vendeu)
-                        mix_items.append(f'<tr><td style="padding:3px 8px;">{sq}</td><td style="padding:3px 8px;">{nome}</td><td style="padding:3px 8px;text-align:center;">{int(val) if pd.notna(val) else 0}</td></tr>')
+                        mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
 
                 # Long Neck
                 for col, nome in HE_LN.items():
                     if col in df.columns:
                         val = row.get(col, 0)
                         vendeu = pd.notna(val) and float(val) > 0
-                        sq = gerar_quadrado(vendeu)
-                        mix_items.append(f'<tr><td style="padding:3px 8px;">{sq}</td><td style="padding:3px 8px;">{nome}</td><td style="padding:3px 8px;text-align:center;">{int(val) if pd.notna(val) else 0}</td></tr>')
+                        mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
 
-                tabela = f'''<table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
-                    <tr style="background:rgba(255,255,255,0.05);"><th style="padding:4px 8px;text-align:left;">Status</th><th style="padding:4px 8px;text-align:left;">Produto</th><th style="padding:4px 8px;text-align:center;">Qtd</th></tr>
-                    {"".join(mix_items)}
+                tabela = f'''<table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;box-shadow: 0 4px 8px rgba(0,0,0,0.2);margin-top:10px;">
+                    <thead style="background:rgba(255,255,255,0.08);color:#fff;font-size:1.1rem;">
+                        <tr><th style="padding:12px;text-align:center;width:15%;">Status</th><th style="padding:12px;text-align:left;width:65%;">Produto</th><th style="padding:12px;text-align:center;width:20%;">Vendida</th></tr>
+                    </thead>
+                    <tbody>{"".join(mix_items)}</tbody>
                 </table>'''
                 st.markdown(tabela, unsafe_allow_html=True)
 
@@ -349,35 +354,39 @@ else:
 
                 # ── TABELA DE MIX CORE ──
                 st.markdown("---")
+                st.markdown("#### 📦 Mix de Produtos (Core)")
                 mix_items = []
+
+                def format_row(sq, nome, val):
+                    qtd = int(val) if pd.notna(val) else 0
+                    return f'<tr style="border-bottom:1px solid rgba(255,255,255,0.1);"><td style="padding:10px 12px;text-align:center;vertical-align:middle;">{sq}</td><td style="padding:10px 12px;text-align:left;font-size:1.05rem;">{nome}</td><td style="padding:10px 12px;text-align:center;font-size:1.1rem;font-weight:600;">{qtd}</td></tr>'
 
                 # 600ml Core
                 for col, nome in CORE_600.items():
                     if col in df.columns:
                         val = row.get(col, 0)
                         vendeu = pd.notna(val) and float(val) > 0
-                        sq = gerar_quadrado(vendeu)
-                        mix_items.append(f'<tr><td style="padding:3px 8px;">{sq}</td><td style="padding:3px 8px;">{nome}</td><td style="padding:3px 8px;text-align:center;">{int(val) if pd.notna(val) else 0}</td></tr>')
+                        mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
 
                 # 300ml Core
                 for col, nome in CORE_300.items():
                     if col in df.columns:
                         val = row.get(col, 0)
                         vendeu = pd.notna(val) and float(val) > 0
-                        sq = gerar_quadrado(vendeu)
-                        mix_items.append(f'<tr><td style="padding:3px 8px;">{sq}</td><td style="padding:3px 8px;">{nome}</td><td style="padding:3px 8px;text-align:center;">{int(val) if pd.notna(val) else 0}</td></tr>')
+                        mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
 
                 # 1000ml Core
                 for col, nome in CORE_1000.items():
                     if col in df.columns:
                         val = row.get(col, 0)
                         vendeu = pd.notna(val) and float(val) > 0
-                        sq = gerar_quadrado(vendeu)
-                        mix_items.append(f'<tr><td style="padding:3px 8px;">{sq}</td><td style="padding:3px 8px;">{nome}</td><td style="padding:3px 8px;text-align:center;">{int(val) if pd.notna(val) else 0}</td></tr>')
+                        mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
 
-                tabela = f'''<table style="width:100%;border-collapse:collapse;font-size:0.85rem;">
-                    <tr style="background:rgba(255,255,255,0.05);"><th style="padding:4px 8px;text-align:left;">Status</th><th style="padding:4px 8px;text-align:left;">Produto</th><th style="padding:4px 8px;text-align:center;">Qtd</th></tr>
-                    {"".join(mix_items)}
+                tabela = f'''<table style="width:100%;border-collapse:collapse;border-radius:8px;overflow:hidden;box-shadow: 0 4px 8px rgba(0,0,0,0.2);margin-top:10px;">
+                    <thead style="background:rgba(255,255,255,0.08);color:#fff;font-size:1.1rem;">
+                        <tr><th style="padding:12px;text-align:center;width:15%;">Status</th><th style="padding:12px;text-align:left;width:65%;">Produto</th><th style="padding:12px;text-align:center;width:20%;">Vendida</th></tr>
+                    </thead>
+                    <tbody>{"".join(mix_items)}</tbody>
                 </table>'''
                 st.markdown(tabela, unsafe_allow_html=True)
 
