@@ -314,10 +314,14 @@ else:
         status_txt = "<span style='color:#22c55e;'>✅ BATEU META</span>" if bateu == 1 else "<span style='color:#ef4444;'>❌ FORA DA META</span>"
         icone = "🟡" if base == 'CORE' else ("💎" if base == 'HIGH END' else "🏪")
 
+        # Função segura para lidar com NaN e converter para int
+        def safe_int(v):
+            return int(float(v)) if pd.notna(v) and str(v).strip() != '' else 0
+
         if base == 'HIGH END':
-            meta_info = f"600ml: {int(row.get('600',0) or 0)} &nbsp;|&nbsp; Long Neck: {int(row.get('LN',0) or 0)}"
+            meta_info = f"600ml: {safe_int(row.get('600',0))} &nbsp;|&nbsp; Long Neck: {safe_int(row.get('LN',0))}"
         elif base == 'CORE':
-            meta_info = f"Inteira: {int(row.get('INTEIRA',0) or 0)} &nbsp;|&nbsp; RGB: {int(row.get('RGB',0) or 0)} &nbsp;|&nbsp; 300ml: {int(row.get('LITRINHO',0) or 0)}"
+            meta_info = f"Inteira: {safe_int(row.get('INTEIRA',0))} &nbsp;|&nbsp; RGB: {safe_int(row.get('RGB',0))} &nbsp;|&nbsp; 300ml: {safe_int(row.get('LITRINHO',0))}"
         else:
             meta_info = "Vitrine"
 
@@ -325,31 +329,31 @@ else:
         inner_html = ""
         
         if base == 'HIGH END':
-            meta_600  = float(row.get('600', 0) or 0)
-            real_600  = float(row.get('REAL_HE_600', 0))
-            meta_ln   = float(row.get('LN', 0) or 0)
-            real_ln   = float(row.get('REAL_HE_LN', 0))
+            meta_600  = safe_int(row.get('600', 0))
+            real_600  = safe_int(row.get('REAL_HE_600', 0))
+            meta_ln   = safe_int(row.get('LN', 0))
+            real_ln   = safe_int(row.get('REAL_HE_LN', 0))
 
             pct_600_c = (real_600 / meta_600 * 100) if meta_600 > 0 else 0
             pct_ln_c  = (real_ln / meta_ln * 100) if meta_ln > 0 else 0
 
-            inner_html += barra_progresso_html(pct_600_c, f"🍺 600ml — Meta: {int(meta_600)} | Real: {int(real_600)} | Falta: {int(max(0, meta_600 - real_600))}")
-            inner_html += barra_progresso_html(pct_ln_c,  f"🍾 Long Neck — Meta: {int(meta_ln)} | Real: {int(real_ln)} | Falta: {int(max(0, meta_ln - real_ln))}")
+            inner_html += barra_progresso_html(pct_600_c, f"🍺 600ml — Meta: {meta_600} | Real: {real_600} | Falta: {max(0, meta_600 - real_600)}")
+            inner_html += barra_progresso_html(pct_ln_c,  f"🍾 Long Neck — Meta: {meta_ln} | Real: {real_ln} | Falta: {max(0, meta_ln - real_ln)}")
 
             mix_items = []
             def format_row(sq, nome, val):
-                qtd = int(val) if pd.notna(val) else 0
+                qtd = safe_int(val)
                 return f'<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px 12px;text-align:center;">{sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;">{nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;">{qtd}</td></tr>'
 
             for col, nome in HE_600.items():
                 if col in df.columns:
                     val = row.get(col, 0)
-                    vendeu = pd.notna(val) and float(val) > 0
+                    vendeu = pd.notna(val) and safe_int(val) > 0
                     mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
             for col, nome in HE_LN.items():
                 if col in df.columns:
                     val = row.get(col, 0)
-                    vendeu = pd.notna(val) and float(val) > 0
+                    vendeu = pd.notna(val) and safe_int(val) > 0
                     mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
 
             inner_html += f'''<div style="margin-top:15px; font-weight:bold;">📦 Mix de Produtos (High End)</div>
@@ -361,40 +365,40 @@ else:
             </table>'''
 
         elif base == 'CORE':
-            meta_int = float(row.get('INTEIRA', 0) or 0)
-            real_int = float(row.get('REAL_CORE_600', 0))
-            meta_rgb = float(row.get('RGB', 0) or 0)
-            real_rgb = float(row.get('REAL_RGB_TOTAL', 0))
-            meta_300 = float(row.get('LITRINHO', 0) or 0)
-            real_300 = float(row.get('REAL_CORE_300', 0))
+            meta_int = safe_int(row.get('INTEIRA', 0))
+            real_int = safe_int(row.get('REAL_CORE_600', 0))
+            meta_rgb = safe_int(row.get('RGB', 0))
+            real_rgb = safe_int(row.get('REAL_RGB_TOTAL', 0))
+            meta_300 = safe_int(row.get('LITRINHO', 0))
+            real_300 = safe_int(row.get('REAL_CORE_300', 0))
 
             pct_int_c = (real_int / meta_int * 100) if meta_int > 0 else 0
             pct_rgb_c = (real_rgb / meta_rgb * 100) if meta_rgb > 0 else 0
             pct_300_c = (real_300 / meta_300 * 100) if meta_300 > 0 else 0
 
-            inner_html += barra_progresso_html(pct_int_c, f"🍺 Inteira (600ml) — Meta: {int(meta_int)} | Real: {int(real_int)} | Falta: {int(max(0, meta_int - real_int))}")
-            inner_html += barra_progresso_html(pct_rgb_c, f"📦 RGB (Vasilhames) — Meta: {int(meta_rgb)} | Real: {int(real_rgb)} | Falta: {int(max(0, meta_rgb - real_rgb))}")
-            inner_html += barra_progresso_html(pct_300_c, f"🥃 300ml — Meta: {int(meta_300)} | Real: {int(real_300)} | Falta: {int(max(0, meta_300 - real_300))}")
+            inner_html += barra_progresso_html(pct_int_c, f"🍺 Inteira (600ml) — Meta: {meta_int} | Real: {real_int} | Falta: {max(0, meta_int - real_int)}")
+            inner_html += barra_progresso_html(pct_rgb_c, f"📦 RGB (Vasilhames) — Meta: {meta_rgb} | Real: {real_rgb} | Falta: {max(0, meta_rgb - real_rgb)}")
+            inner_html += barra_progresso_html(pct_300_c, f"🥃 300ml — Meta: {meta_300} | Real: {real_300} | Falta: {max(0, meta_300 - real_300)}")
 
             mix_items = []
             def format_row(sq, nome, val):
-                qtd = int(val) if pd.notna(val) else 0
+                qtd = safe_int(val)
                 return f'<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px 12px;text-align:center;">{sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;">{nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;">{qtd}</td></tr>'
 
             for col, nome in CORE_600.items():
                 if col in df.columns:
                     val = row.get(col, 0)
-                    vendeu = pd.notna(val) and float(val) > 0
+                    vendeu = pd.notna(val) and safe_int(val) > 0
                     mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
             for col, nome in CORE_300.items():
                 if col in df.columns:
                     val = row.get(col, 0)
-                    vendeu = pd.notna(val) and float(val) > 0
+                    vendeu = pd.notna(val) and safe_int(val) > 0
                     mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
             for col, nome in CORE_1000.items():
                 if col in df.columns:
                     val = row.get(col, 0)
-                    vendeu = pd.notna(val) and float(val) > 0
+                    vendeu = pd.notna(val) and safe_int(val) > 0
                     mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
 
             inner_html += f'''<div style="margin-top:15px; font-weight:bold;">📦 Mix de Produtos (Core)</div>
