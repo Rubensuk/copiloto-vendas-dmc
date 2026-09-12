@@ -197,26 +197,48 @@ score5_pct    = (bateram_total / total_pdvs * 100) if total_pdvs > 0 else 0.0
 # PAINEL EXECUTIVO
 # ─────────────────────────────────────────────────────────────────────────────
 st.markdown(f"### 📊 Painel Executivo — RN {rn_selecionado}")
-c1, c2, c3, c4, c5 = st.columns(5)
-with c1: st.metric("⭐ Score 5 (%)", f"{score5_pct:.1f}%")
-with c2: st.metric("🟡 Core", f"{bateram_core}/{len(df_core)}")
-with c3: st.metric("💎 High End", f"{bateram_he}/{len(df_he)}")
-with c4: st.metric("✅ Bateram", f"{bateram_total}")
-with c5: st.metric("❌ Fora", f"{fora_meta}")
 
-st.markdown("---")
+# Linha 1: PDVs e Score 5
+c1, c2, c3, c4 = st.columns(4)
+with c1: st.metric("⭐ Score 5 (PDVs)", f"{bateram_total} de {total_pdvs}")
+with c2: st.metric("🟡 PDVs Core", f"{len(df_core)}")
+with c3: st.metric("💎 PDVs High End", f"{len(df_he)}")
+with c4: st.metric("✅ Bateram Meta (Geral)", f"{bateram_total} PDVs")
 
-# ─────────────────────────────────────────────────────────────────────────────
-# GAP CONSOLIDADO
-# ─────────────────────────────────────────────────────────────────────────────
-st.markdown(f"#### 📉 Gap Consolidado — RN {rn_selecionado}")
-g1, g2, g3, g4 = st.columns(4)
-if not df_core.empty:
-    with g1: st.metric("🟡 Falta Inteira", f"{int(df_core['FALTA_INTEIRA'].sum())} SKUs")
-    with g2: st.metric("🟡 Falta RGB", f"{int(df_core['FALTA_RGB'].sum())} cxs")
-if not df_he.empty:
-    with g3: st.metric("💎 Falta 600ml", f"{int(df_he['FALTA_HE_600'].sum())} SKUs")
-    with g4: st.metric("💎 Falta Long Neck", f"{int(df_he['FALTA_HE_LN'].sum())} cxs")
+st.markdown("")
+
+# Linha 2: Meta consolidada da rota — quanto já bateu no geral
+# RGB total (Core)
+meta_rgb_total = int(df_core['RGB'].fillna(0).sum()) if not df_core.empty and 'RGB' in df_core.columns else 0
+real_rgb_total = int(df_core['REAL_RGB_TOTAL'].sum()) if not df_core.empty else 0
+
+# 600ml total (High End + Core Inteira)
+meta_600_he    = int(df_he['600'].fillna(0).sum()) if not df_he.empty and '600' in df_he.columns else 0
+real_600_he    = int(df_he['REAL_HE_600'].sum()) if not df_he.empty else 0
+meta_int_core  = int(df_core['INTEIRA'].fillna(0).sum()) if not df_core.empty and 'INTEIRA' in df_core.columns else 0
+real_int_core  = int(df_core['REAL_CORE_600'].sum()) if not df_core.empty else 0
+
+# Long Neck total (High End)
+meta_ln_total  = int(df_he['LN'].fillna(0).sum()) if not df_he.empty and 'LN' in df_he.columns else 0
+real_ln_total  = int(df_he['REAL_HE_LN'].sum()) if not df_he.empty else 0
+
+m1, m2, m3 = st.columns(3)
+
+pct_rgb = (real_rgb_total / meta_rgb_total * 100) if meta_rgb_total > 0 else 0
+pct_600 = ((real_600_he + real_int_core) / (meta_600_he + meta_int_core) * 100) if (meta_600_he + meta_int_core) > 0 else 0
+pct_ln  = (real_ln_total / meta_ln_total * 100) if meta_ln_total > 0 else 0
+
+with m1:
+    st.metric("📦 RGB (Vasilhames)", f"{real_rgb_total}/{meta_rgb_total} cxs")
+    st.markdown(barra_progresso_html(pct_rgb, "Atingimento RGB"), unsafe_allow_html=True)
+
+with m2:
+    st.metric("🍺 600ml (Inteira + HE)", f"{real_600_he + real_int_core}/{meta_600_he + meta_int_core} SKUs")
+    st.markdown(barra_progresso_html(pct_600, "Atingimento 600ml"), unsafe_allow_html=True)
+
+with m3:
+    st.metric("🍾 Long Neck", f"{real_ln_total}/{meta_ln_total} cxs")
+    st.markdown(barra_progresso_html(pct_ln, "Atingimento Long Neck"), unsafe_allow_html=True)
 
 st.markdown("---")
 
