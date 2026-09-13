@@ -215,7 +215,20 @@
                 <p class="text-sm text-slate-500 mt-2">Aguarde, gerando insights práticos.</p>
             </div>
             
-            <div id="coach-report-content" class="hidden bg-cardbg border border-slate-800 rounded-2xl p-6 md:p-10 shadow-2xl leading-relaxed text-slate-300">
+            
+                <!-- Inject Score -->
+                <div class="bg-slate-800/50 p-6 rounded-2xl border border-slate-700 mb-8 text-center flex flex-col items-center justify-center shadow-lg">
+                    <h3 class="text-lg text-slate-400 mb-4 font-medium uppercase tracking-wide">Sua Pontuação Final</h3>
+                    <div class="relative w-32 h-32 flex items-center justify-center rounded-full bg-slate-900 border-4 border-slate-700 mb-6 shadow-inner transition-colors duration-1000" id="score-circle">
+                        <span id="final-score" class="text-5xl font-black text-white">--</span>
+                    </div>
+                    <button id="btn-ver-ranking" class="px-8 py-3 bg-gradient-to-r from-yellow-500 to-orange-500 hover:from-yellow-400 hover:to-orange-400 text-white font-bold rounded-full shadow-lg shadow-yellow-500/20 transition-all hover:-translate-y-1 flex items-center gap-2">
+                        🏆 Ver Ranking Global
+                    </button>
+                </div>
+                <!-- Fim Inject Score -->
+                
+                <div id="coach-report-content" class="hidden bg-cardbg border border-slate-800 rounded-2xl p-6 md:p-10 shadow-2xl leading-relaxed text-slate-300">
                 <!-- Conteúdo do relatório gerado -->
             </div>
             
