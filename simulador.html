@@ -135,6 +135,21 @@
                 </div>
             </div>
         </section>
+        
+        <!-- Ranking na Tela Inicial -->
+        <section class="border-t border-slate-800 bg-darkbg px-6 py-10" id="landing-ranking-section">
+            <div class="max-w-4xl mx-auto">
+                <div class="flex justify-between items-center mb-6">
+                    <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">🏆 Pódio Global (Top 10)</h2>
+                    <button id="btn-atualizar-ranking" class="text-slate-400 hover:text-white transition-colors" title="Atualizar Ranking">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </button>
+                </div>
+                <div class="bg-cardbg rounded-2xl shadow-xl border border-slate-700 p-4 md:p-6 min-h-[200px]" id="ranking-list">
+                    <div class="flex justify-center items-center h-full"><span class="text-teal-400">Carregando pódio...</span></div>
+                </div>
+            </div>
+        </section>
     </main>
 
 
@@ -683,12 +698,16 @@ IMPORTANTE: No final absoluto da sua resposta, você DEVE gerar uma nota numéri
         if (btnVerRanking) {
             btnVerRanking.addEventListener('click', () => {
                 document.getElementById('coach-screen').classList.add('hidden');
-                document.getElementById('coach-screen').classList.remove('flex');
-                
-                document.getElementById('ranking-screen').classList.remove('hidden');
-                document.getElementById('ranking-screen').classList.add('flex');
+                document.getElementById('landing-screen').classList.remove('hidden');
+                document.getElementById('main-header').classList.remove('-translate-y-full'); // Volta header
                 
                 carregarRanking();
+                
+                // Scroll para o ranking
+                setTimeout(() => {
+                    const rankingSection = document.getElementById('landing-ranking-section');
+                    if(rankingSection) rankingSection.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
             });
         }
         
