@@ -1587,6 +1587,7 @@
                 Papa.parse(csvText, {
                     header: true,
                     skipEmptyLines: true,
+                    transformHeader: function(h) { return h ? h.trim() : h; },
                     complete: function(results) {
                         const rawData = results.data;
                         
