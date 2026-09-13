@@ -697,6 +697,67 @@
             background-color: #080b10;
         }
     </style>
+
+    <style>
+        body.light-mode {
+            background-color: #f0f2f6;
+            color: #111827;
+            --text-primary: #111827;
+            --text-secondary: #4b5563;
+        }
+        body.light-mode header {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        body.light-mode .calculator-card, body.light-mode .output-card {
+            background: #ffffff;
+            border-color: #e5e7eb;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+        body.light-mode .logo-text h1 {
+            background: linear-gradient(to right, #111827, #4b5563);
+            -webkit-background-clip: text;
+        }
+        body.light-mode input, body.light-mode select, body.light-mode textarea {
+            background: #f9fafb;
+            color: #111827;
+            border-color: #d1d5db;
+        }
+        body.light-mode .btn-limpar-campos {
+            background: #f3f4f6;
+            color: #374151;
+            border-color: #d1d5db;
+        }
+        body.light-mode .pdv-row {
+            background: #f9fafb;
+            border-color: #e5e7eb;
+            color: #111827;
+        }
+        body.light-mode .pdv-details {
+            border-top-color: #e5e7eb;
+        }
+        
+        .pdv-row {
+            background: rgba(255,255,255,0.03); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 8px; 
+            margin-bottom: 8px; 
+            font-family: var(--font-body);
+        }
+        .pdv-summary {
+            padding: 12px 15px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            list-style: none;
+        }
+        .pdv-summary::-webkit-details-marker { display: none; }
+        .pdv-details {
+            padding: 15px; 
+            border-top: 1px solid rgba(255,255,255,0.05);
+        }
+    </style>
+    
 </head>
 <body>
 
@@ -708,6 +769,10 @@
                 <p>Inteligência Comercial</p>
             </div>
         </div>
+        <button id="btn-theme-toggle" type="button" class="btn-limpar-campos" title="Alternar Tema Claro/Escuro" style="margin-right: 10px;">
+            <span id="theme-icon">🌙</span>
+            <span id="theme-text">Escuro</span>
+        </button>
         <button id="btn-limpar-campos" type="button" class="btn-limpar-campos" title="Limpar todos os campos">
             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                 <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
@@ -724,6 +789,14 @@
                     e.stopPropagation();
                 }
 
+                
+        document.getElementById('btn-theme-toggle')?.addEventListener('click', function() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            document.getElementById('theme-icon').innerText = isLight ? '☀️' : '🌙';
+            document.getElementById('theme-text').innerText = isLight ? 'Claro' : 'Escuro';
+        });
+    
                 // 1. Força a seleção do placeholder neutro (índice 0) em todos os selects
                 document.querySelectorAll('select').forEach(sel => {
                     sel.selectedIndex = 0;
@@ -1165,35 +1238,13 @@
                     </div>
                 </div>
 
-                <!-- Tabela / Matriz de Gaps (Real vs Falta) -->
-                <div style="margin-top: 1rem; background: rgba(0,0,0,0.25); border-radius: 10px; padding: 0.85rem; border: 1px solid rgba(255,255,255,0.05);">
-                    <div style="font-size: 0.8rem; font-weight: 600; color: var(--primary-accent); margin-bottom: 0.6rem; display: flex; align-items: center; justify-content: space-between;">
-                        <span>📋 Matriz de Gaps & Execução por Categoria</span>
-                        <span id="pdv-filtrado-badge" style="font-size: 0.7rem; color: #a0aec0; font-weight: normal;">Todos os PDVs da rota</span>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.78rem;">
-                        <div style="background: rgba(255,255,255,0.02); padding: 0.5rem 0.75rem; border-radius: 6px; display: flex; justify-content: space-between; border: 1px solid rgba(255,255,255,0.04);">
-                            <span style="color: #cbd5e1;">High End 600ml (Falta):</span>
-                            <strong id="gap-he-600" style="color: #ffb703;">8 SKUs</strong>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.02); padding: 0.5rem 0.75rem; border-radius: 6px; display: flex; justify-content: space-between; border: 1px solid rgba(255,255,255,0.04);">
-                            <span style="color: #cbd5e1;">High End Long Necks (Falta):</span>
-                            <strong id="gap-he-ln" style="color: #ffb703;">12 caixas</strong>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.02); padding: 0.5rem 0.75rem; border-radius: 6px; display: flex; justify-content: space-between; border: 1px solid rgba(255,255,255,0.04);">
-                            <span style="color: #cbd5e1;">Core Inteira (Meta):</span>
-                            <strong id="gap-core-inteira" style="color: #00e5ff;">14 SKUs</strong>
-                        </div>
-                        <div style="background: rgba(255,255,255,0.02); padding: 0.5rem 0.75rem; border-radius: 6px; display: flex; justify-content: space-between; border: 1px solid rgba(255,255,255,0.04);">
-                            <span style="color: #cbd5e1;">Core RGB (Meta):</span>
-                            <strong id="gap-core-rgb" style="color: #00e5ff;">22 caixas</strong>
-                        </div>
-                    </div>
-                </div>
+                <!-- Lista Expandível de Clientes (Substitui Matriz de Gaps) -->
+                <div id="pdv-list-container" style="margin-top: 1rem;"></div>
             </div>
         </section>
     </main>
-<footer>
+
+    <footer>
         DMC Sales Copilot • Concepção e Desenvolvimento por <strong>Rubens Oliveira Silva</strong> © 2026.
     </footer>
 
@@ -1547,12 +1598,12 @@
                             if (!rn) return;
 
                             if (!consolidado[rn]) {
-                                consolidado[rn] = { pdvs: 0, meta: 0, kpis_ok_sum: 0, core_int: 0, core_rgb: 0, he_600: 0, he_ln: 0 };
+                                consolidado[rn] = { pdvs: 0, meta: 0, kpis_ok_sum: 0, rows: [] };
                             }
 
                             consolidado[rn].pdvs += 1;
+                            consolidado[rn].rows.push(row);
                             
-                            // Score 5 = KPIs OK == 5
                             const kpis = parseInt(row['KPIs OK']) || 0;
                             consolidado[rn].kpis_ok_sum += kpis;
                             if (kpis === 5) {
@@ -1614,6 +1665,148 @@
             if (metaEl) metaEl.innerText = `${data.meta}`;
             if (foraEl) foraEl.innerText = `${data.pdvs - data.meta}`;
 
+            
+            // GERAR TABELA DE METAS E PORTFOLIO (ESTRUTURA STREAMLIT)
+            const listContainer = document.getElementById('pdv-list-container');
+            if (listContainer) {
+                const HE_600 = {'ORIGINAL': 'Original 600ml', 'ST_600': 'Stella 600ml', 'SPATEN_600': 'Spaten 600ml', 'CORONA_600': 'Corona 600ml'};
+                const HE_LN = {'ST_LN': 'Stella LN', 'SPATEN_LN': 'Spaten LN', 'CORONA_LN': 'Corona LN', 'BUD_LN': 'Budweiser LN'};
+                const CORE_600 = {'BRAHMA': 'Brahma 600ml', 'SKOL': 'Skol 600ml', 'ANTARCTICA': 'Antarctica 600ml'};
+                const CORE_300 = {'BRAHMA_300': 'Brahma 300ml', 'SKOL_300': 'Skol 300ml'};
+                const CORE_1000 = {'BRAHMA_1000': 'Brahma Litrão', 'SKOL_1000': 'Skol Litrão'};
+                
+                function safeInt(val) {
+                    if (!val || val.trim() === '') return 0;
+                    const parsed = parseInt(parseFloat(val));
+                    return isNaN(parsed) ? 0 : parsed;
+                }
+                function calcReal(row, mapping) {
+                    let sum = 0;
+                    for (const key in mapping) {
+                        sum += safeInt(row[key]);
+                    }
+                    return sum;
+                }
+                function barraHTML(pct, label) {
+                    let cor = pct < 40 ? '#ef4444' : (pct < 75 ? '#f59e0b' : '#22c55e');
+                    let bg_bar = document.body.classList.contains('light-mode') ? '#e2e8f0' : '#2a2a3a';
+                    return `
+                    <div style="margin: 4px 0;">
+                        <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 2px;">
+                            <span><b>${label}</b></span>
+                            <span style="color: ${cor}; font-weight: 700;">${pct.toFixed(0)}%</span>
+                        </div>
+                        <div style="background: ${bg_bar}; border-radius: 6px; height: 18px; overflow: hidden;">
+                            <div style="width: ${pct}%; height: 100%; background: ${cor}; border-radius: 6px; transition: width 0.3s;"></div>
+                        </div>
+                    </div>`;
+                }
+                function gerarQuadrado(vendeu) {
+                    return vendeu ? `<div style="width:16px;height:16px;background-color:#22c55e;border-radius:3px;margin:0 auto;"></div>` : `<div style="width:16px;height:16px;background-color:#ef4444;border-radius:3px;margin:0 auto;"></div>`;
+                }
+
+                let html_lista = `
+                <div style="display:flex; padding:10px 15px; background:var(--table-header-bg, rgba(0,0,0,0.1)); font-weight:bold; font-size:0.9rem; border-bottom:2px solid var(--table-border, rgba(255,255,255,0.1)); margin-bottom:5px;">
+                    <div style="flex: 2;">🏪 NOME DO PDV</div>
+                    <div style="flex: 1;">📊 SEGMENTO</div>
+                    <div style="flex: 1;">🎯 STATUS</div>
+                    <div style="flex: 2; text-align:right;">📋 METAS</div>
+                </div>`;
+                
+                data.rows.forEach(row => {
+                    let base = row['BASE'] ? row['BASE'].trim().toUpperCase() : 'CORE';
+                    if (!base) base = 'CORE';
+                    let bateu = parseFloat(row['BATEU META']) || 0;
+                    let status_txt = bateu === 1 ? "<span style='color:#22c55e;'>✅ BATEU META</span>" : "<span style='color:#ef4444;'>❌ FORA DA META</span>";
+                    let icone = base === 'CORE' ? "🟡" : (base === 'HIGH END' ? "💎" : "🏪");
+                    
+                    let meta_info = "";
+                    let inner_html = "";
+                    let is_light = document.body.classList.contains('light-mode');
+                    let border_color = is_light ? 'rgba(0,0,0,0.1)' : 'rgba(255,255,255,0.1)';
+                    let row_bg = is_light ? 'rgba(0,0,0,0.02)' : 'rgba(255,255,255,0.03)';
+                    let thead_bg = is_light ? 'rgba(0,0,0,0.05)' : 'rgba(255,255,255,0.05)';
+                    let text_color = is_light ? '#111827' : '#ffffff';
+
+                    if (base === 'HIGH END') {
+                        let meta_600 = safeInt(row['600']);
+                        let real_600 = calcReal(row, HE_600);
+                        let meta_ln = safeInt(row['LN']);
+                        let real_ln = calcReal(row, HE_LN);
+                        meta_info = `600ml: ${meta_600} &nbsp;|&nbsp; Long Neck: ${meta_ln}`;
+                        
+                        let pct_600 = meta_600 > 0 ? (real_600 / meta_600 * 100) : 0;
+                        let pct_ln = meta_ln > 0 ? (real_ln / meta_ln * 100) : 0;
+                        
+                        inner_html += barraHTML(pct_600, `🍺 600ml — Meta: ${meta_600} | Real: ${real_600} | Falta: ${Math.max(0, meta_600 - real_600)}`);
+                        inner_html += barraHTML(pct_ln, `🍾 Long Neck — Meta: ${meta_ln} | Real: ${real_ln} | Falta: ${Math.max(0, meta_ln - real_ln)}`);
+                        
+                        let mix_items = "";
+                        const formatRow = (sq, nome, val) => `<tr style="border-bottom:1px solid ${border_color};"><td style="padding:6px 12px;text-align:center;">${sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;color:${text_color};">${nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;color:${text_color};">${val}</td></tr>`;
+                        
+                        for (let col in HE_600) { if (row[col] !== undefined) mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), HE_600[col], safeInt(row[col])); }
+                        for (let col in HE_LN) { if (row[col] !== undefined) mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), HE_LN[col], safeInt(row[col])); }
+                        
+                        inner_html += `<div style="margin-top:15px; font-weight:bold;">📦 Mix de Produtos (High End)</div>
+                        <table style="width:100%; border-collapse:collapse; margin-top:5px; background:var(--table-header-bg, rgba(0,0,0,0.1)); border-radius:5px; overflow:hidden;">
+                            <thead style="background:${thead_bg};font-size:0.9rem;">
+                                <tr><th style="padding:8px;text-align:center;width:15%;">Status</th><th style="padding:8px;text-align:left;width:65%;">Produto</th><th style="padding:8px;text-align:center;width:20%;">Vendida</th></tr>
+                            </thead>
+                            <tbody>${mix_items}</tbody>
+                        </table>`;
+                    } else if (base === 'CORE') {
+                        let meta_int = safeInt(row['INTEIRA']);
+                        let real_int = calcReal(row, CORE_600);
+                        let meta_rgb = safeInt(row['RGB']);
+                        let real_rgb = real_int + calcReal(row, CORE_300) + calcReal(row, CORE_1000);
+                        let meta_300 = safeInt(row['LITRINHO']);
+                        let real_300 = calcReal(row, CORE_300);
+                        
+                        meta_info = `Inteira: ${meta_int} &nbsp;|&nbsp; RGB: ${meta_rgb} &nbsp;|&nbsp; 300ml: ${meta_300}`;
+                        
+                        let pct_int = meta_int > 0 ? (real_int / meta_int * 100) : 0;
+                        let pct_rgb = meta_rgb > 0 ? (real_rgb / meta_rgb * 100) : 0;
+                        let pct_300 = meta_300 > 0 ? (real_300 / meta_300 * 100) : 0;
+                        
+                        inner_html += barraHTML(pct_int, `🍺 Inteira (600ml) — Meta: ${meta_int} | Real: ${real_int} | Falta: ${Math.max(0, meta_int - real_int)}`);
+                        inner_html += barraHTML(pct_rgb, `📦 RGB (Vasilhames) — Meta: ${meta_rgb} | Real: ${real_rgb} | Falta: ${Math.max(0, meta_rgb - real_rgb)}`);
+                        inner_html += barraHTML(pct_300, `🥃 300ml — Meta: ${meta_300} | Real: ${real_300} | Falta: ${Math.max(0, meta_300 - real_300)}`);
+                        
+                        let mix_items = "";
+                        const formatRow = (sq, nome, val) => `<tr style="border-bottom:1px solid ${border_color};"><td style="padding:6px 12px;text-align:center;">${sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;color:${text_color};">${nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;color:${text_color};">${val}</td></tr>`;
+                        
+                        for (let col in CORE_600) { if (row[col] !== undefined) mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), CORE_600[col], safeInt(row[col])); }
+                        for (let col in CORE_300) { if (row[col] !== undefined) mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), CORE_300[col], safeInt(row[col])); }
+                        for (let col in CORE_1000) { if (row[col] !== undefined) mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), CORE_1000[col], safeInt(row[col])); }
+                        
+                        inner_html += `<div style="margin-top:15px; font-weight:bold;">📦 Mix de Produtos (Core)</div>
+                        <table style="width:100%; border-collapse:collapse; margin-top:5px; background:var(--table-header-bg, rgba(0,0,0,0.1)); border-radius:5px; overflow:hidden;">
+                            <thead style="background:${thead_bg};font-size:0.9rem;">
+                                <tr><th style="padding:8px;text-align:center;width:15%;">Status</th><th style="padding:8px;text-align:left;width:65%;">Produto</th><th style="padding:8px;text-align:center;width:20%;">Vendida</th></tr>
+                            </thead>
+                            <tbody>${mix_items}</tbody>
+                        </table>`;
+                    } else {
+                        inner_html += `<div>Segmento Vitrine</div>`;
+                    }
+                    
+                    html_lista += `
+                    <details class="pdv-row pdv-item" data-nome="${row['NOME PDV']?.toLowerCase() || ''}" data-chave="${row['CHAVE PDV'] || ''}" style="background: ${row_bg}; border: 1px solid ${border_color}; border-radius: 8px; margin-bottom: 8px; font-family: sans-serif;">
+                        <summary class="pdv-summary" style="padding: 12px 15px; cursor: pointer; display: flex; align-items: center; list-style: none;">
+                            <div style="flex: 2; font-weight: bold; color: ${text_color};">${icone} ${row['NOME PDV'] || 'PDV'} <span style="font-size:0.75rem; color:#888; font-weight:normal; margin-left:5px;">${row['CHAVE PDV'] || ''}</span></div>
+                            <div style="flex: 1; font-size: 0.9rem; color: ${text_color};">${base}</div>
+                            <div style="flex: 1; font-size: 0.9rem; font-weight: bold;">${status_txt}</div>
+                            <div style="flex: 2; text-align: right; font-size: 0.9rem; color: #888;">${meta_info}</div>
+                        </summary>
+                        <div class="pdv-details" style="padding: 15px; border-top: 1px solid ${border_color}; color: ${text_color};">
+                            ${inner_html}
+                        </div>
+                    </details>`;
+                });
+                
+                listContainer.innerHTML = html_lista;
+            }
+    
             // Gaps zerados por enquanto pois a base real é apenas Score 5
             const gapInt = document.getElementById('gap-core-inteira');
             const gapRgb = document.getElementById('gap-core-rgb');
