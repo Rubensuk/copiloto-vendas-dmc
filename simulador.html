@@ -229,6 +229,8 @@
 
     <!-- SCRIPTS E LÓGICA -->
     <script>
+        const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbx6YRvO3mDePSXevXF_UNnX5NWlXmR3QJx-iNd2jEYULXDkkgV044tjv7OlciGKNcs/exec";
+        let credenciais = { rn: "", nome: "" };
         const PERSONAS = [
             {
                 id: 'zeca',
@@ -489,7 +491,10 @@ Gere um relatório rigoroso em Markdown com a seguinte estrutura:
 ### ⚠️ Oportunidades Perdidas
 (onde cedeu ou não contornou)
 ### 🚀 Como Melhorar na Prática
-(roteiros literais do que dizer para melhorar)`;
+(roteiros literais do que dizer para melhorar)
+
+IMPORTANTE: No final absoluto da sua resposta, você DEVE gerar uma nota numérica de 0 a 100 avaliando o vendedor. Use EXATAMENTE este formato na última linha:
+[NOTA: 85]`;
 
             try {
                 const response = await fetch(API_URL, {
@@ -499,6 +504,42 @@ Gere um relatório rigoroso em Markdown com a seguinte estrutura:
                 });
                 if (!response.ok) throw new Error("HTTP error");
                 const data = await response.json();
+                
+                let rawResult = data.result || "Erro ao processar.";
+                
+                // Extrair Nota
+                const notaMatch = rawResult.match(/\[NOTA:\s*(\d+)\]/i);
+                const nota = notaMatch ? parseInt(notaMatch[1]) : 0;
+                rawResult = rawResult.replace(/\[NOTA:\s*\d+\]/gi, '').trim();
+                data.result = rawResult;
+                
+                // Animar círculo de cor da nota
+                try {
+                    const circle = document.getElementById('score-circle');
+                    const scoreText = document.getElementById('final-score');
+                    scoreText.innerText = nota;
+                    
+                    circle.classList.remove('border-gray-700', 'border-red-500', 'border-yellow-500', 'border-teal-500');
+                    if(nota >= 80) circle.classList.add('border-teal-500', 'text-teal-400');
+                    else if(nota >= 60) circle.classList.add('border-yellow-500', 'text-yellow-400');
+                    else circle.classList.add('border-red-500', 'text-red-400');
+                } catch(e) {}
+
+                // Enviar para o Ranking (se tiver webhook configurado)
+                if (typeof WEBHOOK_URL !== 'undefined' && WEBHOOK_URL && typeof credenciais !== 'undefined') {
+                    try {
+                        fetch(WEBHOOK_URL, {
+                            method: 'POST',
+                            headers: {'Content-Type': 'text/plain'},
+                            body: JSON.stringify({
+                                nome: credenciais.nome,
+                                rn: credenciais.rn,
+                                persona: currentPersona.name,
+                                nota: nota
+                            })
+                        }).catch(e => console.log('Erro post ranking', e));
+                    } catch(e) {}
+                }
                 
                 document.getElementById('coach-loading').classList.add('hidden');
                 document.getElementById('coach-footer').style.display = 'block';
