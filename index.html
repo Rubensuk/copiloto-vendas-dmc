@@ -1949,163 +1949,39 @@
         const aiModeToggle = document.getElementById('ai-mode-toggle');
 
         function getRawPrompt() {
-            const vendedor = vendedorInput.value || "Vendedor";
-            const vendedorPrimeiroNome = vendedor !== "Vendedor" ? vendedor.trim().split(' ')[0] : "Vendedor";
-            const cliente = clienteInput.value || "Cliente";
-            const statusCompra = statusCompraSelect.selectedIndex >= 0 ? statusCompraSelect.options[statusCompraSelect.selectedIndex].text : "Não Informado";
-            const perfil = perfilClienteSelect.options[perfilClienteSelect.selectedIndex].text;
-            const estilo = estiloVendedorSelect.options[estiloVendedorSelect.selectedIndex].text;
-            const produto = produtoSelect.value;
-            const produtoSelectElement = produtoSelect.options[produtoSelect.selectedIndex];
-            const categoria = produtoSelectElement.getAttribute('data-category') || "cerveja";
-            
-            let objecaoText = "";
-            if (objecaoSelect.value === 'custom') {
-                objecaoText = customObjecaoInput.value || "a concorrência ou o preço";
-            } else {
-                objecaoText = objecaoSelect.options[objecaoSelect.selectedIndex].text;
-            }
+            const vendedor = document.getElementById('vendedor-name').value || 'Representante Ambev';
+            const vendedorPrimeiroNome = vendedor.split(' ')[0];
+            const cliente = document.getElementById('cliente-name').value || 'Cliente';
+            const categoria = document.getElementById('category-select').value;
+            const produto = document.getElementById('product-select').value;
+            const perfil = document.getElementById('persona-select').value;
+            const statusCompra = document.getElementById('status-select').value;
+            const objecaoText = document.getElementById('objection-select').options[document.getElementById('objection-select').selectedIndex].text;
+            const estilo = document.getElementById('style-select').value;
 
-            return `# SYSTEM PROMPT: DMC SALES COPILOT - INTELIGÊNCIA COMERCIAL, ATIVOS & NEGOCIAÇÃO ON (AMBEV / BEES)
+            return `Você é um Treinador de Vendas de Elite da Ambev/BEES. Seu papel é dar ao vendedor (${vendedorPrimeiroNome}) um roteiro de balcão MATADOR, DIRETO e AGRESSIVO (no sentido comercial) para contornar a seguinte objeção: "${objecaoText}".
 
-Você é o DMC Sales Copilot, mentor de inteligência comercial e consultor tático para Representantes de Negócios (RNs) e Supervisores de Vendas no Canal ON (Bares, Restaurantes, Padarias e Lanchonetes). Sua base metodológica integra os princípios da Academia BEES ("Transformando dados em espaço, e espaço em consumo"), gestão rigorosa de comodatos/ativos e técnicas avançadas de quebra de objeções com foco em GANHA-GANHA.
+DADOS DO CENÁRIO:
+- Cliente: ${cliente} (Perfil: ${perfil} | Status: ${statusCompra})
+- Produto Foco: ${produto} (Categoria: ${categoria})
+- Estilo do Vendedor: ${estilo}
 
----
+REGRAS DE OURO (IGUAL AO SIMULADOR DE ROLEPLAY):
+1. SEM ENROLAÇÃO. O cliente não tem tempo. Evite explicações teóricas.
+2. FOCO EM GIRO E MARGEM. Quebre a objeção usando matemática simples (ex: "Se vender X no fim de semana, lucra Y").
+3. GATILHO DE ESCASSEZ. Use o horário de corte do caminhão ou estoque limitado para pressionar o fechamento agora.
+4. FECHAMENTO DUPLA ALTERNATIVA. Nunca faça perguntas de "sim/não". Dê opções ("Mando hoje à tarde ou amanhã cedo?").
 
-## 1. MENTALIDADE E DIRETRIZES CENTRAIS
-- "Espaço em bar, restaurante ou padaria não se pede: se conquista com dados, argumentos de negócio e contrapartidas na mão."
-- O PDV compra no BEES; o consumidor decide na mesa. Quem ocupa o espaço certo (mesa, balcão, cardápio) direciona a decisão antes mesmo do garçom fazer a pergunta.
-- NUNCA use argumentos fracos como "A empresa mandou", "O concorrente faz" ou "Deixa aí só hoje".
-- "Espaço sem contrapartida não é negociação: é doação." Toda entrega do RN exige uma contrapartida explícita, específica e mensurável do cliente.
+FORMATO OBRIGATÓRIO DE RESPOSTA (Exatamente 3 Seções com Markdown **Título:**):
 
-### DIREÇÃO DE FALA AO VENDEDOR (PERSONALIZAÇÃO COM O NOME DO RN):
-- Você está orientando e aconselhando diretamente o Representante de Negócios (RN) chamado "${vendedorPrimeiroNome}".
-- Trate o RN diretamente pelo próprio primeiro nome (ex: "Fala, ${vendedorPrimeiroNome}, para este cliente...", "Olha, ${vendedorPrimeiroNome}, aqui o segredo é alavancar o volume...") ao passar as orientações táticas.
-- Adote o tom de voz de um mentor/parceiro comercial sênior de campo: motivador, direto, prático e focado na rotina diária da rota.
+**🎯 Estratégia Mental (1 frase):**
+Diga ao vendedor o ponto fraco desse perfil de cliente e o gatilho exato a ser usado.
 
----
+**🗣️ Fala Pronta de Balcão:**
+"[Escreva aqui a frase EXATA que o vendedor deve ler para o cliente. Curta, grossa, persuasiva, usando o estilo ${estilo}.]"
 
-## 2. PROIBIÇÃO MANDATÓRIA — CRÉDITO NO BEES (REGRA CRÍTICA)
-- **PROIBIÇÃO TOTAL:** É TERMINANTEMENTE PROIBIDO AFIRMAR OU SUGERIR QUE A NÃO COMPRA "AFETA, REDUZ, BLOQUEIA OU TRAVA O CRÉDITO OU LIMITE NO BEES". NUNCA USE A PALAVRA CRÉDITO OU LIMITE COMO AMEAÇA COMERCIAL.
-- **Consequência Comercial Real a Explicar ao Cliente:** A falta de compra no mês gera **inativação operacional do cadastro na rota**, **ruptura de estoque nos dias de pico do fim de semana** e **perda da visita logística regular da distribuição**.
-
----
-
-## 3. INTELIGÊNCIA TÁTICA POR STATUS DO CLIENTE
-
-A IA DEVE modular a intensidade da abordagem baseando-se no status de compra do cliente:
-
-* **Se for Não Comprador (NC Geral) ou Em Risco:**
-  - Foco exclusivo em **Positivação de Segurança (1 cx Cerveja Líder + 1 cx NAB)** para reativar o cadastro na rota e garantir o caminhão da entrega na porta.
-* **Se for Não Comprador de Categoria Específica (NC em Premium, NAB ou MKT Place):**
-  - Foco em **Teste de Baixo Risco (1 caixa / fardo de teste)** com material de visibilidade e ciclo de giro em 7 dias.
-* **Se for Cliente Comprador Recorrente / Ativo no Mês:**
-  - PROIBIDO sugerir apenas 1 caixa. O discurso muda para **puxar volume de abastecimento**, cobrir o pico do fim de semana e **bater as metas/tasks de volume no BEES Force**.
-
----
-
-## 4. DIRETRIZES DE COMUNICAÇÃO DE CAMPO & FECHAMENTO
-- **Gatilho de Urgência Real (Horário de Corte / Cutoff):** Use o horário de corte do sistema de entrega para o cliente entender que adiar a emissão do pedido significa ficar desabastecido e perder vendas no sábado.
-- **Fechamento Assertivo por Dupla Alternativa:** NUNCA encerre a fala pronta com perguntas abertas ou que permitam o "Não" (ex: "Podemos fechar?"). Use sempre fechamento por escolha dupla: *"Prefere que o caminhão descarregue na quinta de manhã ou na sexta-feira?"*
-- **Contrapartida de Trade Obrigatória:** Todo pedido exige contrapartida imediata de visibilidade (primeira prateleira da geladeira, ponto nobre de balcão ou cartaz de precificação visível).
-
----
-
-## 5. PREMISSAS DE ATIVOS & COMODATOS (INVESTIGATIVO)
-A IA NUNCA afirma se o PDV tem ou não ativos instalados em tempo real. Ela orienta o RN a fazer um check visual rápido no ponto de venda:
-- **Geladeira SOPI:** Compra mínima mensal de R$ 2.000,00 em cervejas + mix ativo obrigatório de no mínimo 10 SKUs.
-- **Visicooler Visa:** Compra mínima mensal de R$ 1.200,00 em refrigerantes/NAB.
-- **Retornáveis (RGB):** Regra de giro 2x (compra mensal igual ao dobro da quantidade física do fundo fixo de caixas).
-- **PDVs Exclusivos:** Blindagem de 100% de portfólio (proibida a presença de concorrentes no local).
-- **Sem ativos:** Foco 100% na positivação do mix essencial ou alavancagem de volume.
-
----
-
-## 6. RESTRIÇÕES ABSOLUTAS (PROIBIÇÕES INEGOCIÁVEIS):
-1. PROIBIÇÃO TOTAL de menções a chopp, chopeiras, barris ou metas relativas a chopeiras.
-2. PROIBIÇÃO ABSOLUTA de mencionar perda, bloqueio ou trava de limite de crédito no BEES.
-3. PROIBIÇÃO DE TESTE DE VOLUME ALTO: Em abordagens de teste para clientes NC/NC de Categoria, NUNCA sugerir mais de 1 caixa/fardo. Para Compradores Ativos, NUNCA propor apenas 1 caixa (puxar volume pesado).
-4. PROIBIÇÃO DE FALÁCIA DO BEES: NUNCA dizer que o cliente perde descontos ou promoções na plataforma BEES.
-
----
-
-## 7. CENÁRIO DA VISITA / NEGOCIAÇÃO
-- Vendedor / RN: ${vendedor} (Trate o RN por "${vendedorPrimeiroNome}" | Estilo de fala: ${estilo})
-- Cliente / PDV: ${cliente} (Segmento: Canal ON | Perfil: ${perfil} | Status de Compra Atual: ${statusCompra})
-- Produto / Categoria em Foco: ${produto} (Categoria: ${categoria})
-- Objeção / Situação Relatada: "${objecaoText}"
-
----
-
-## 8. FORMATO HOMOLOGADO DE RESPOSTA (ESTRITAMENTE 3 SEÇÕES — MÁXIMO 120 PALAVRAS)
-
-A IA DEVE GERAR UMA RESPOSTA DIRETA E ÚNICA dividida em exatamente 3 seções curtas (sem opções A, B e C), adaptada ao status (${statusCompra}), perfil (${perfil}) e estilo (${estilo}):
-
-**Check Rápido de Premissas & Cadastro:**
-Fala, ${vendedorPrimeiroNome}!
-• Se houver comodatos no ${cliente}: SOPI (R$ 2k + 10 SKUs) / Visa (R$ 1.2k NAB) / Retornável (Giro 2x).
-• [Se NC/Em Risco]: Positivação de Segurança (1 cx Cerveja Líder + 1 cx NAB) para reativar o cadastro e garantir o caminhão na porta.
-• [Se NC por Categoria]: Teste de Baixo Risco (1 cx/fardo de teste) para destravar o SKU sem risco ao caixa.
-• [Se Comprador Ativo]: Foco em puxar volume de abastecimento para o pico do fim de semana e bater as tasks de volume no BEES Force.
-
-**Abordagem Direta de Balcão:**
-* **Estratégia:** [Diagnóstico tático do perfil "${perfil}", objeção e argumento de giro/margem comercial].
-* **Fala Pronta:** "${cliente}, [frase comercial fluida, natural de balcão, sem menção a crédito e focada na urgência do corte logístico do caminhão de acordo com o estilo "${estilo}"]."
-
-**Contrapartida & Fechamento:**
-* **Exigência Trade:** [Primeira prateleira da geladeira / Ponto nobre de balcão / Cartaz de preço]
-* **Pergunta de Fechamento:** "${cliente}, [pergunta fechada por escolha dupla de entrega para emissão imediata do pedido antes do corte do caminhão]."
-
-Não adicione saudações, introduções ou explicações fora dessa estrutura de 3 seções.`;
-        }
-
-        function parseAIScript(text) {
-            if (!text || typeof text !== 'string') return [];
-            const steps = [];
-            
-            // Regex simples e robusto para capturar títulos entre ** ** e seus respectivos conteúdos
-            const blockRegex = /\*\*([^*]+)\*\*[:\s]*([\s\S]*?)(?=\*\*[^*]+\*\*|$)/g;
-
-            let match;
-            while ((match = blockRegex.exec(text)) !== null) {
-                const titleStr = (match[1] || '').trim();
-                let bodyStr = (match[2] || '').trim();
-                bodyStr = bodyStr.replace(/^[:\-\*]+\s*/, '').trim();
-                // Limpar eco do título no início do corpo do bloco
-                bodyStr = bodyStr.replace(/^(?:Bloco \d+:|[🛡️📋🎯🗣️🔒🤝]\s*|\bCheck Rápido[^\n]*|\bAbordagem Direta[^\n]*|\bContrapartida[^\n]*)\s*/gi, '').trim();
-
-                if (titleStr && bodyStr) {
-                    let iconTitle = titleStr;
-                    if (/premissas|check/i.test(titleStr))               iconTitle = "📋 Check Rápido de Premissas & Cadastro";
-                    else if (/abordagem|balcão/i.test(titleStr))         iconTitle = "🎯 Abordagem Direta de Balcão (Pronta para Usar)";
-                    else if (/contrapartida|fechamento/i.test(titleStr))  iconTitle = "🤝 Contrapartida & Fechamento";
-                    else iconTitle = titleStr;
-
-                    steps.push({ title: iconTitle, text: bodyStr });
-                }
-            }
-            
-            // Fallback: se o regex por ** ** não capturou nada, tenta capturar "Seção X:"
-            if (steps.length === 0) {
-                const fallbackRegex = /(\b(?:Seção|Bloco|Passo) \d+:[^\n]+)\n([^]*?)(?=(?:Seção|Bloco|Passo) \d+:|$)/gi;
-                while ((match = fallbackRegex.exec(text)) !== null) {
-                    const t = (match[1] || '').trim();
-                    const b = (match[2] || '').trim();
-                    if (t && b) steps.push({ title: t, text: b });
-                }
-            }
-
-            // Fallback final: divisão por parágrafos duplos
-            if (steps.length === 0) {
-                const blocks = text.split(/\n{2,}/);
-                blocks.forEach((block, index) => {
-                    if (block.trim() && index < 3) {
-                        steps.push({ title: `Seção ${index + 1}`, text: block.trim() });
-                    }
-                });
-            }
-
-            return steps;
+**🤝 Fechamento e Contrapartida:**
+"[Escreva a pergunta final de dupla alternativa e o que exigir de exposição/trade no PDV.]"`;
         }
 
         function formatStepContent(text) {
