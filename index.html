@@ -1952,7 +1952,8 @@
             const vendedor = document.getElementById('vendedor-name').value || 'Representante Ambev';
             const vendedorPrimeiroNome = vendedor.split(' ')[0];
             const cliente = document.getElementById('cliente-name').value || 'Cliente';
-            const categoria = document.getElementById('category-select').value;
+            const prodSelect = document.getElementById('product-select');
+            const categoria = prodSelect.options[prodSelect.selectedIndex].getAttribute('data-category') || 'Bebidas';
             const produto = document.getElementById('product-select').value;
             const perfil = document.getElementById('persona-select').value;
             const statusCompra = document.getElementById('status-select').value;
