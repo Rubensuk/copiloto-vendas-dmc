@@ -63,10 +63,11 @@
     </header>
 
     <!-- TELA 1: VITRINE / SELEÇÃO DE PERSONA -->
-    <main id="landing-screen" class="pt-16 min-h-screen flex flex-col justify-between">
+    <main id="landing-screen" class="pt-16 min-h-screen max-w-[1400px] mx-auto px-4 md:px-8 grid grid-cols-1 xl:grid-cols-12 gap-8 pb-12 items-start">
+<div class="xl:col-span-8 flex flex-col space-y-6">
         
         <!-- Hero Section Dinâmica -->
-        <section class="flex-grow flex items-center py-12 md:py-20 px-6">
+        <section class="flex-grow flex items-center py-10 px-6 bg-darkbg/40 rounded-3xl border border-slate-800 shadow-xl">
             <div class="max-w-6xl mx-auto w-full grid md:grid-cols-12 gap-12 items-center">
                 
                 <!-- Avatar Esquerda -->
@@ -115,7 +116,7 @@
                             <div class="flex flex-col justify-end">
                                 <label class="block text-sm text-slate-400 mb-1">Seu Recorde Pessoal</label>
                                 <div class="bg-slate-900 border border-slate-700 rounded-xl p-3 flex items-center justify-between h-[50px]">
-                                    <span class="text-sm text-slate-500 font-medium">Top 10:</span>
+                                    <span class="text-sm text-slate-500 font-medium">Sua Posição:</span>
                                     <span id="personal-score" class="text-lg font-bold text-slate-600">Zerado</span>
                                 </div>
                             </div>
@@ -134,7 +135,7 @@
         </section>
 
         <!-- Seção: Escolha seu cliente -->
-        <section class="border-t border-slate-800 bg-darkbg/50 px-6 py-10">
+        <section class="bg-darkbg/40 px-6 py-8 rounded-3xl border border-slate-800 shadow-xl">
             <div class="max-w-6xl mx-auto">
                 <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 ml-2">Escolha outro perfil para treinar</h3>
                 <div class="flex gap-5 overflow-x-auto pb-6 pt-2 px-2 hide-scroll" id="persona-list">
@@ -143,8 +144,11 @@
             </div>
         </section>
         
-        <!-- Ranking na Tela Inicial -->
-        <section class="border-t border-slate-800 bg-darkbg px-6 py-10" id="landing-ranking-section">
+        </div>
+
+        <!-- Coluna Direita (Ranking Fixo) -->
+        <div class="lg:col-span-5 sticky top-28">
+        <section class="bg-cardbg rounded-3xl shadow-2xl border border-slate-700 p-6 flex flex-col max-h-[80vh]" id="landing-ranking-section">
             <div class="max-w-4xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <h2 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-orange-500">🏆 Pódio Global (Top 10)</h2>
@@ -152,11 +156,12 @@
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
                     </button>
                 </div>
-                <div class="bg-cardbg rounded-2xl shadow-xl border border-slate-700 p-4 md:p-6 min-h-[200px]" id="ranking-list">
+                <div class="flex-1 overflow-y-auto pr-2 hide-scroll min-h-[300px]" id="ranking-list">
                     <div class="flex justify-center items-center h-full"><span class="text-teal-400">Carregando pódio...</span></div>
                 </div>
             </div>
         </section>
+        </div>
     </main>
 
 
@@ -680,7 +685,7 @@ IMPORTANTE: No final absoluto da sua resposta, você DEVE gerar uma nota numéri
                 }
                 
                 let htmlStr = '<div class="space-y-3">';
-                data.forEach((item, index) => {
+                data.slice(0, 10).forEach((item, index) => {
                     let positionClass = "bg-gray-700 text-gray-400";
                     if (index === 0) positionClass = "bg-yellow-500 text-yellow-900 font-black shadow-lg shadow-yellow-500/20 transform scale-105";
                     else if (index === 1) positionClass = "bg-gray-300 text-gray-800 font-bold";
@@ -744,8 +749,9 @@ IMPORTANTE: No final absoluto da sua resposta, você DEVE gerar uma nota numéri
             const foundIndex = globalRankingData.findIndex(item => item.rn == rn);
             if (foundIndex !== -1) {
                 const nota = globalRankingData[foundIndex].nota;
-                scoreSpan.innerText = nota + ' pts';
-                scoreSpan.className = 'text-lg font-black text-yellow-400 drop-shadow-md';
+                const position = foundIndex + 1;
+                scoreSpan.innerHTML = nota + ' pts <span class="text-xs bg-slate-700 text-slate-300 px-2 py-0.5 rounded ml-2 shadow-sm">#' + position + '</span>';
+                scoreSpan.className = 'text-lg font-black text-yellow-400 drop-shadow-md flex items-center';
             } else {
                 scoreSpan.innerText = 'Zerado';
                 scoreSpan.className = 'text-lg font-bold text-slate-500';
