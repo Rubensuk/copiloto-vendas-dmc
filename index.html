@@ -142,12 +142,12 @@
         /* Main Layout */
         main {
             flex: 1;
-            max-width: 1300px;
+            max-width: 900px;
             width: 100%;
             margin: 2rem auto;
             padding: 0 1.5rem;
-            display: grid;
-            grid-template-columns: 1fr 1.2fr;
+            display: flex;
+            flex-direction: column;
             gap: 2rem;
         }
 
@@ -1949,16 +1949,20 @@
         const aiModeToggle = document.getElementById('ai-mode-toggle');
 
         function getRawPrompt() {
-            const vendedor = document.getElementById('vendedor-name').value || 'Representante Ambev';
-            const vendedorPrimeiroNome = vendedor.split(' ')[0];
-            const cliente = document.getElementById('cliente-name').value || 'Cliente';
-            const prodSelect = document.getElementById('product-select');
-            const categoria = prodSelect.options[prodSelect.selectedIndex].getAttribute('data-category') || 'Bebidas';
-            const produto = document.getElementById('product-select').value;
-            const perfil = document.getElementById('persona-select').value;
-            const statusCompra = document.getElementById('status-select').value;
-            const objecaoText = document.getElementById('objection-select').options[document.getElementById('objection-select').selectedIndex].text;
-            const estilo = document.getElementById('style-select').value;
+            const vendedor = vendedorInput.value || 'Representante Ambev';
+            const vendedorPrimeiroNome = vendedor.trim().split(' ')[0];
+            const cliente = clienteInput.value || 'Cliente';
+            const categoria = produtoSelect.options[produtoSelect.selectedIndex]?.getAttribute('data-category') || 'Bebidas';
+            const produto = produtoSelect.options[produtoSelect.selectedIndex]?.text || '';
+            const perfil = perfilClienteSelect.options[perfilClienteSelect.selectedIndex]?.text || '';
+            const statusCompra = statusCompraSelect.options[statusCompraSelect.selectedIndex]?.text || '';
+            
+            let objecaoText = objecaoSelect.options[objecaoSelect.selectedIndex]?.text || '';
+            if (objecaoSelect.value === 'custom') {
+                objecaoText = customObjecaoInput.value || objecaoText;
+            }
+            
+            const estilo = estiloVendedorSelect.options[estiloVendedorSelect.selectedIndex]?.text || '';
 
             return `Você é um Treinador de Vendas de Elite da Ambev/BEES. Seu papel é dar ao vendedor (${vendedorPrimeiroNome}) um roteiro de balcão MATADOR, DIRETO e AGRESSIVO (no sentido comercial) para contornar a seguinte objeção: "${objecaoText}".
 
