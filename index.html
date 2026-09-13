@@ -1208,6 +1208,18 @@
                             <option value="319">319</option>
                         </select>
                     </div>
+                    <div class="calc-input-group" style="margin-left: 10px;">
+                        <label for="select-dia-visita">Dia da Visita</label>
+                        <select id="select-dia-visita" onchange="atualizarPainelRN()">
+                            <option value="TODOS">Todos os Dias</option>
+                            <option value="SEG">Segunda-feira (SEG)</option>
+                            <option value="TER">Terça-feira (TER)</option>
+                            <option value="QUA">Quarta-feira (QUA)</option>
+                            <option value="QUI">Quinta-feira (QUI)</option>
+                            <option value="SEX">Sexta-feira (SEX)</option>
+                            <option value="SAB">Sábado (SAB)</option>
+                        </select>
+                    </div>
                     <div class="calc-input-group">
                         <label for="busca-pdv-input">🔍 Filtrar por Nome do PDV ou Chave</label>
                         <input type="text" id="busca-pdv-input" placeholder="Ex: Bar do Zé ou 10492" oninput="filtrarPDVsPainel()">
@@ -1740,7 +1752,26 @@
                     count_core: 0, count_he: 0
                 };
                 
-                data.rows.forEach(row => {
+                
+                const selectDia = document.getElementById('select-dia-visita');
+                const diaFiltro = selectDia ? selectDia.value : "TODOS";
+                
+                let filteredRows = data.rows.filter(row => {
+                    if (diaFiltro === "TODOS") return true;
+                    let vis = row['VISITA'] || '';
+                    return vis.toUpperCase().includes(diaFiltro);
+                });
+                
+                filteredRows.sort((a, b) => {
+                    let bateuA = safeInt(a['BATEU META']) === 1 ? 1 : 0;
+                    let bateuB = safeInt(b['BATEU META']) === 1 ? 1 : 0;
+                    return bateuA - bateuB;
+                });
+                
+                filteredRows.forEach(row => {
+                    agg.count_pdvs = (agg.count_pdvs || 0) + 1;
+                    if (safeInt(row['BATEU META']) === 1) agg.count_bateu_meta = (agg.count_bateu_meta || 0) + 1;
+
                     let base = row['BASE'] ? row['BASE'].trim().toUpperCase() : 'CORE';
                     if (!base) base = 'CORE';
                     let bateu = parseFloat(row['BATEU META']) || 0;
@@ -1833,7 +1864,7 @@
                     html_lista += `
                     <details class="pdv-row pdv-item" data-nome="${row['NOME PDV']?.toLowerCase() || ''}" data-chave="${row['CHAVE PDV'] || ''}" style="background: ${row_bg}; border: 1px solid ${border_color}; border-radius: 8px; margin-bottom: 8px; font-family: sans-serif;">
                         <summary class="pdv-summary" style="padding: 12px 15px; cursor: pointer; display: flex; align-items: center; list-style: none;">
-                            <div style="flex: 2; font-weight: bold; color: ${text_color};">${icone} ${row['NOME PDV'] || 'PDV'} <span style="font-size:0.75rem; color:#888; font-weight:normal; margin-left:5px;">${row['CHAVE PDV'] || ''}</span>${badge_visita}</div>
+                            <div style="flex: 2; font-weight: bold; color: ${text_color};">${icone} ${row['NOME PDV'] || 'PDV'} ${badge_visita}</div>
                             <div style="flex: 1; font-size: 0.9rem; color: ${text_color};">${base}</div>
                             <div style="flex: 1; font-size: 0.9rem; font-weight: bold;">${status_txt}</div>
                             <div style="flex: 2; text-align: right; font-size: 0.9rem; color: #888;">${meta_info}</div>
@@ -1877,10 +1908,10 @@
                 const pdvsHeEl = document.getElementById('rn-pdvs-he');
                 const metaBatidaEl = document.getElementById('rn-meta-batida');
                 
-                if (score5PdvsEl) score5PdvsEl.innerText = `${data.meta} de ${data.pdvs}`;
+                if (score5PdvsEl) score5PdvsEl.innerText = `${agg.count_bateu_meta || 0} de ${agg.count_pdvs || 0}`;
                 if (pdvsCoreEl) pdvsCoreEl.innerText = `${agg.count_core}`;
                 if (pdvsHeEl) pdvsHeEl.innerText = `${agg.count_he}`;
-                if (metaBatidaEl) metaBatidaEl.innerText = `${data.meta} PDVs`;
+                if (metaBatidaEl) metaBatidaEl.innerText = `${agg.count_bateu_meta || 0} PDVs`;
             }
     
             // Gaps zerados por enquanto pois a base real é apenas Score 5
