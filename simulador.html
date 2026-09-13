@@ -1,0 +1,422 @@
+import os
+
+html_content = """<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DMC Simulador de Vendas - Treinamento</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #0f111a;
+            --card-bg: #1a1d2d;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --primary-accent: #00ff88;
+            --secondary-accent: #3b82f6;
+            --danger-accent: #ef4444;
+            --border-light: rgba(255, 255, 255, 0.08);
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
+        body { background: var(--bg-dark); color: var(--text-primary); padding: 20px; line-height: 1.6; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border-light); padding-bottom: 20px; }
+        .header h1 { font-family: 'Outfit', sans-serif; font-size: 1.8rem; background: linear-gradient(90deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .nav-btn { background: rgba(0, 255, 136, 0.1); color: var(--primary-accent); text-decoration: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.9rem; border: 1px solid var(--primary-accent); transition: 0.2s; }
+        .nav-btn:hover { background: var(--primary-accent); color: var(--bg-dark); }
+        
+        .container { max-width: 900px; margin: 0 auto; }
+        
+        /* Personas Screen */
+        #personas-screen { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+        .persona-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 12px; padding: 20px; cursor: pointer; transition: transform 0.2s, border-color 0.2s; display: flex; flex-direction: column; gap: 10px; }
+        .persona-card:hover { transform: translateY(-5px); border-color: var(--secondary-accent); }
+        .persona-card h3 { font-family: 'Outfit'; color: var(--secondary-accent); display: flex; align-items: center; gap: 10px; }
+        .persona-card p { font-size: 0.9rem; color: var(--text-secondary); flex-grow: 1; }
+        .difficulty { font-size: 0.75rem; font-weight: bold; padding: 4px 8px; border-radius: 8px; display: inline-block; align-self: flex-start; }
+        .diff-hard { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
+        .diff-med { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
+        
+        /* Chat Screen */
+        #chat-screen { display: none; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-light); overflow: hidden; height: 75vh; flex-direction: column; }
+        .chat-header { padding: 15px 20px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
+        .turn-counter { background: rgba(59, 130, 246, 0.2); color: var(--secondary-accent); padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; }
+        
+        .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg { max-width: 80%; padding: 12px 18px; border-radius: 15px; line-height: 1.4; font-size: 0.95rem; }
+        .msg.bot { align-self: flex-start; background: #2a2d40; border-bottom-left-radius: 4px; }
+        .msg.user { align-self: flex-end; background: var(--secondary-accent); color: white; border-bottom-right-radius: 4px; }
+        
+        .chat-input { padding: 15px 20px; border-top: 1px solid var(--border-light); display: flex; gap: 10px; align-items: flex-end; background: rgba(0,0,0,0.2); }
+        .chat-input textarea { flex-grow: 1; background: #0f111a; border: 1px solid var(--border-light); border-radius: 8px; padding: 12px; color: white; resize: none; outline: none; font-family: inherit; font-size: 0.95rem; height: 50px; }
+        .chat-input textarea:focus { border-color: var(--secondary-accent); }
+        
+        .action-btn { background: var(--secondary-accent); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; height: 50px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .action-btn:hover { background: #2563eb; }
+        .action-btn:disabled { background: #475569; cursor: not-allowed; }
+        
+        .mic-btn { background: #334155; padding: 0 15px; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; height: 50px; display: flex; align-items: center; justify-content: center; }
+        .mic-btn:hover { background: #475569; }
+        .mic-btn.recording { background: var(--danger-accent); animation: pulse 1.5s infinite; }
+        
+        .end-btn { background: transparent; color: var(--danger-accent); border: 1px solid var(--danger-accent); }
+        .end-btn:hover { background: rgba(239, 68, 68, 0.1); }
+        
+        /* Coach Screen */
+        #coach-screen { display: none; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-light); padding: 30px; }
+        .coach-report h2 { color: var(--primary-accent); display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .report-section { margin-bottom: 20px; background: rgba(255,255,255,0.02); padding: 20px; border-radius: 8px; border-left: 4px solid var(--secondary-accent); }
+        .report-section.pontos-fortes { border-left-color: var(--primary-accent); }
+        .report-section.perdidas { border-left-color: var(--danger-accent); }
+        .report-section h4 { margin-bottom: 10px; font-size: 1.1rem; }
+        
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+        
+        .loading { display: none; align-items: center; gap: 10px; color: var(--secondary-accent); font-weight: bold; justify-content: center; padding: 20px; }
+        .spinner { width: 24px; height: 24px; border: 3px solid rgba(59, 130, 246, 0.3); border-top-color: var(--secondary-accent); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        
+        .tts-btn { background: rgba(255,255,255,0.1); color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; }
+        .tts-btn:hover { background: rgba(255,255,255,0.2); }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>🎮 Simulador de Objeções (Treinamento)</h1>
+        <a href="index.html" class="nav-btn">⬅ Voltar ao Painel</a>
+    </div>
+
+    <!-- TELA 1: SELEÇÃO DE PERSONAS -->
+    <div id="personas-screen"></div>
+
+    <!-- TELA 2: CHAT INTERATIVO -->
+    <div id="chat-screen">
+        <div class="chat-header">
+            <div>
+                <h3 id="chat-persona-name" style="font-family:'Outfit';">Cliente</h3>
+                <span id="chat-persona-desc" style="font-size:0.8rem; color:var(--text-secondary);"></span>
+            </div>
+            <div style="display:flex; gap: 10px;">
+                <button class="action-btn end-btn" onclick="endSimulation()">Encerrar</button>
+                <div class="turn-counter" id="turn-counter">Turnos: 15/15</div>
+            </div>
+        </div>
+        
+        <div class="chat-messages" id="chat-messages">
+            <!-- Messages go here -->
+        </div>
+        
+        <div class="loading" id="chat-loading">
+            <div class="spinner"></div> Processando resposta do cliente...
+        </div>
+        
+        <div class="chat-input" id="chat-input-area">
+            <button class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Falar (Ditado)">🎤</button>
+            <textarea id="user-input" placeholder="Digite ou fale sua abordagem de vendas..." onkeydown="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"></textarea>
+            <button class="action-btn" id="send-btn" onclick="sendMessage()">Enviar ➔</button>
+        </div>
+    </div>
+
+    <!-- TELA 3: COACH REPORT -->
+    <div id="coach-screen">
+        <div class="loading" id="coach-loading" style="display:flex; flex-direction:column;">
+            <div class="spinner" style="width:40px; height:40px;"></div>
+            <p style="margin-top:10px;">Treinador IA analisando a negociação...</p>
+        </div>
+        <div id="coach-report-content" style="display:none;">
+            <!-- Report goes here -->
+        </div>
+        <button class="action-btn" style="margin-top:20px; width:100%;" onclick="location.reload()">🔄 Iniciar Nova Simulação</button>
+    </div>
+</div>
+
+<script>
+    // ---------------- PERSONAS DATABASE ----------------
+    const PERSONAS = [
+        {
+            id: 'zeca',
+            name: 'Zeca - O Comerciante Colérico',
+            diffClass: 'diff-hard', difficulty: 'Nível Difícil',
+            desc: '60 anos. Detesta vendedores, enxerga tudo como custo e exige justificativa financeira imediata.',
+            prompt: `Você é "Zeca", dono de um bar movimentado de 60 anos. Você é colérico, impaciente e tem repulsa a vendedores que "falam bonito". 
+Você enxerga tudo como custo. Se te oferecem um produto novo, você diz que não tem margem, que encalha ou que não tem espaço. 
+Regras:
+1. Responda em no MÁXIMO 2 ou 3 frases curtas e grossas.
+2. Seja resistente nas primeiras interações. Só ceda se o vendedor der um argumento MATADOR sobre giro rápido ou margem de lucro real.
+3. Não seja bonzinho. Exija números e praticidade.
+4. NUNCA saia do personagem. Apenas responda com a sua fala direta.`
+        },
+        {
+            id: 'bibi',
+            name: 'Bibi - A Gerente Desconfiada',
+            diffClass: 'diff-med', difficulty: 'Nível Intermediário',
+            desc: 'Foca muito na concorrência e tem medo de arriscar novos produtos no mix. Pede muitas provas.',
+            prompt: `Você é "Bibi", gerente de uma loja de conveniência. Você é metódica e muito desconfiada. 
+Seu maior medo é comprar produto que fica parado na prateleira, pois seu espaço é minúsculo. 
+Regras:
+1. Responda em no MÁXIMO 2 ou 3 frases.
+2. Peça provas de que o produto vende. Fale que "a marca concorrente já me atende bem".
+3. Só aceite a venda se o vendedor focar em teste de aceitação, combo ou argumento de giro garantido com marketing.
+4. NUNCA saia do personagem.`
+        },
+        {
+            id: 'joao',
+            name: 'João - O Inativo das Desculpas',
+            diffClass: 'diff-hard', difficulty: 'Nível Evasivo',
+            desc: 'Simpático, mas mestre em dar desculpas para adiar a compra: "movimento caiu", "ainda tenho".',
+            prompt: `Você é "João", um dono de padaria/lanchonete muito simpático, mas que adora dar desculpas para não comprar hoje.
+Você está sem comprar da Ambev há 30 dias. Você diz coisas como: "Choveu no fds", "Estou com um pouquinho no estoque", "Semana que vem eu peço pelo app".
+Regras:
+1. Responda em no MÁXIMO 2 frases. Seja amigável, chamando o vendedor de "campeão" ou "meu querido".
+2. Fuja do fechamento empurrando para a semana que vem.
+3. Só ceda se o vendedor criar um gatilho de escassez (ex: aumento de preço, feriado chegando, corte logístico hoje).
+4. NUNCA saia do personagem.`
+        },
+        {
+            id: 'marcos',
+            name: 'Marcos - O Rei da Devolução',
+            diffClass: 'diff-hard', difficulty: 'Nível Crítico',
+            desc: 'Finge que fecha o pedido para se livrar do vendedor, mas recusa na entrega. Fuja de custos logísticos.',
+            prompt: `Você é "Marcos", dono de um restaurante. Sua tática para se livrar de vendedores chatos é dizer "pode mandar umas 5 caixas". Mas no fundo, você planeja recusar a entrega quando o caminhão chegar, alegando que o boleto ficou curto ou faltou espaço.
+Regras:
+1. Responda em no MÁXIMO 2 frases.
+2. Seja fácil para dizer o primeiro "sim", mas demonstre falta de compromisso (ex: "Bota aí qualquer coisa que eu recebo lá na hora").
+3. Se o vendedor não tentar "amarrar" o compromisso (confirmar vencimento, espaço físico, data de entrega), finja concordar. 
+4. O objetivo do vendedor é garantir que você não vai devolver. Resista a se comprometer formalmente.
+5. NUNCA saia do personagem.`
+        }
+    ];
+
+    const API_URL = '/api/generate'; // Usa o mesmo endpoint do copiloto (Gemini)
+    const MAX_TURNS = 10;
+    
+    let currentPersona = null;
+    let turnsLeft = MAX_TURNS;
+    let chatHistory = [];
+    
+    // ---------------- INITIALIZATION ----------------
+    function renderPersonas() {
+        const grid = document.getElementById('personas-screen');
+        PERSONAS.forEach(p => {
+            grid.innerHTML += `
+                <div class="persona-card" onclick="startSimulation('${p.id}')">
+                    <h3>${p.name}</h3>
+                    <span class="difficulty ${p.diffClass}">${p.difficulty}</span>
+                    <p>${p.desc}</p>
+                    <button class="action-btn" style="height:40px; margin-top:10px;">Selecionar Cliente ➔</button>
+                </div>
+            `;
+        });
+    }
+
+    renderPersonas();
+
+    // ---------------- SIMULATION LOGIC ----------------
+    function startSimulation(personaId) {
+        currentPersona = PERSONAS.find(p => p.id === personaId);
+        turnsLeft = MAX_TURNS;
+        chatHistory = [];
+        
+        document.getElementById('personas-screen').style.display = 'none';
+        document.getElementById('chat-screen').style.display = 'flex';
+        
+        document.getElementById('chat-persona-name').innerText = currentPersona.name;
+        document.getElementById('chat-persona-desc').innerText = currentPersona.desc;
+        updateTurnCounter();
+        
+        // Initial greeting
+        addMessage('bot', 'Oi. O que você quer hoje? Já adianto que estou sem tempo.');
+    }
+
+    function updateTurnCounter() {
+        document.getElementById('turn-counter').innerText = `Turnos Restantes: ${turnsLeft}/${MAX_TURNS}`;
+        if(turnsLeft <= 3) document.getElementById('turn-counter').style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
+    }
+
+    function addMessage(sender, text) {
+        const msgDiv = document.createElement('div');
+        msgDiv.className = `msg ${sender}`;
+        
+        let html = `<span>${text}</span>`;
+        if (sender === 'bot') {
+            html += `<br><button class="tts-btn" onclick="speakText(this.previousElementSibling.previousElementSibling.innerText)">🔊 Ouvir Fala</button>`;
+        }
+        
+        msgDiv.innerHTML = html;
+        document.getElementById('chat-messages').appendChild(msgDiv);
+        document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
+        
+        if(text) {
+            chatHistory.push({ role: sender === 'bot' ? 'model' : 'user', content: text });
+        }
+    }
+
+    async function sendMessage() {
+        const inputEl = document.getElementById('user-input');
+        const text = inputEl.value.trim();
+        if (!text) return;
+
+        addMessage('user', text);
+        inputEl.value = '';
+        turnsLeft--;
+        updateTurnCounter();
+
+        if (turnsLeft <= 0) {
+            endSimulation();
+            return;
+        }
+
+        // Bloquear input
+        inputEl.disabled = true;
+        document.getElementById('send-btn').disabled = true;
+        document.getElementById('chat-loading').style.display = 'flex';
+
+        // Construir prompt para LLM
+        const prompt = buildSimPrompt();
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt }),
+            });
+            const data = await response.json();
+            addMessage('bot', data.response || "Desculpe, tive um problema de conexão.");
+        } catch(e) {
+            addMessage('bot', "Erro na comunicação com a API.");
+        }
+
+        // Liberar input
+        inputEl.disabled = false;
+        document.getElementById('send-btn').disabled = false;
+        document.getElementById('chat-loading').style.display = 'none';
+        inputEl.focus();
+    }
+
+    function buildSimPrompt() {
+        let conversation = chatHistory.map(m => `${m.role === 'user' ? 'VENDEDOR' : 'CLIENTE'}: ${m.content}`).join('\\n');
+        return `${currentPersona.prompt}\\n\\n[HISTÓRICO DA CONVERSA AQUI]\\n${conversation}\\n\\nResponda apenas com a próxima fala do CLIENTE.`;
+    }
+
+    // ---------------- COACH REPORT LOGIC ----------------
+    async function endSimulation() {
+        document.getElementById('chat-screen').style.display = 'none';
+        document.getElementById('coach-screen').style.display = 'block';
+        
+        const coachPrompt = `Você é um Treinador de Vendas Expert (Coach) da Ambev/BEES. 
+Avalie a transcrição abaixo da negociação entre um Vendedor (nosso usuário) e o Cliente (Persona: ${currentPersona.name}). 
+O vendedor teve ${MAX_TURNS - turnsLeft} turnos de interação.
+
+TRANSCRIÇÃO DA NEGOCIAÇÃO:
+${chatHistory.map(m => `${m.role === 'user' ? 'VENDEDOR' : 'CLIENTE'}: ${m.content}`).join('\\n')}
+
+Você deve gerar um relatório RIGOROSO, analítico e focado em produtividade de campo. Use formatação Markdown.
+ESTRUTURA OBRIGATÓRIA DA RESPOSTA:
+<h3>💪 Pontos Fortes</h3>
+(Liste o que o vendedor fez bem)
+
+<h3>⚠️ Oportunidades Perdidas</h3>
+(Onde ele cedeu fácil, faltou ancoragem, faltou gatilho de escassez, ou não contornou bem a objeção)
+
+<h3>🚀 Como Melhorar na Prática</h3>
+(Dê exemplos práticos de falas (roteiro) que funcionariam perfeitamente contra essa persona específica.)`;
+
+        try {
+            const response = await fetch(API_URL, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ prompt: coachPrompt }),
+            });
+            const data = await response.json();
+            
+            document.getElementById('coach-loading').style.display = 'none';
+            const reportContent = document.getElementById('coach-report-content');
+            reportContent.style.display = 'block';
+            
+            // Basic Markdown Parsing
+            let htmlReport = data.response
+                .replace(/### (.*?)\\n/g, '<h4>$1</h4>')
+                .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')
+                .replace(/\\n/g, '<br>');
+                
+            reportContent.innerHTML = `
+                <div class="coach-report">
+                    <h2>🎓 Relatório do Treinador IA <button class="tts-btn" style="margin-left:15px; font-size:1rem;" onclick="speakText(this.parentElement.parentElement.innerText)">🔊 Ouvir Feedback</button></h2>
+                    <div class="report-section">${htmlReport}</div>
+                </div>
+            `;
+        } catch(e) {
+            document.getElementById('coach-loading').innerHTML = "Erro ao gerar relatório do Coach.";
+        }
+    }
+
+    // ---------------- SPEECH RECOGNITION (MIC) ----------------
+    let recognition;
+    let isRecording = false;
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        recognition = new SpeechRecognition();
+        recognition.lang = 'pt-BR';
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = (event) => {
+            const transcript = event.results[0][0].transcript;
+            const inputEl = document.getElementById('user-input');
+            inputEl.value = (inputEl.value + ' ' + transcript).trim();
+        };
+
+        recognition.onerror = (event) => {
+            console.error('Erro no microfone:', event.error);
+            stopMic();
+        };
+        
+        recognition.onend = () => { stopMic(); };
+    }
+
+    function toggleMic() {
+        if (!recognition) {
+            alert('Seu navegador não suporta reconhecimento de voz.');
+            return;
+        }
+        if (isRecording) { stopMic(); } 
+        else { startMic(); }
+    }
+
+    function startMic() {
+        isRecording = true;
+        document.getElementById('mic-btn').classList.add('recording');
+        recognition.start();
+    }
+
+    function stopMic() {
+        isRecording = false;
+        document.getElementById('mic-btn').classList.remove('recording');
+        recognition.stop();
+    }
+
+    // ---------------- TEXT TO SPEECH (TTS) ----------------
+    function speakText(text) {
+        if (!('speechSynthesis' in window)) {
+            alert('Seu navegador não suporta Text-to-Speech.');
+            return;
+        }
+        window.speechSynthesis.cancel(); // Parar fala atual se houver
+        const utterance = new SpeechSynthesisUtterance(text.replace(/🔊.*$/g, '')); // Remover texto do botão
+        utterance.lang = 'pt-BR';
+        utterance.rate = 1.1; // Fala levemente mais rápida (foco em produtividade)
+        window.speechSynthesis.speak(utterance);
+    }
+</script>
+
+</body>
+</html>"""
+
+with open('simulador.html', 'w', encoding='utf-8') as f:
+    f.write(html_content)
+
+print("simulator created successfully")
