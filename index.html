@@ -1964,29 +1964,30 @@
             
             const estilo = estiloVendedorSelect.options[estiloVendedorSelect.selectedIndex]?.text || '';
 
-            return `Você é um Treinador de Vendas de Elite da Ambev/BEES. Seu papel é dar ao vendedor (${vendedorPrimeiroNome}) um roteiro de balcão MATADOR, DIRETO e AGRESSIVO (no sentido comercial) para contornar a seguinte objeção: "${objecaoText}".
+            return `Você é o "Treinador de Elite", o mentor implacável da Ambev/BEES (o mesmo que avalia as simulações). Seu objetivo é dar a instrução tática final para o Vendedor (${vendedorPrimeiroNome}) quebrar a objeção ANTES de entrar no PDV. Você é direto, cirúrgico e focado em giro e margem.
 
 DADOS DO CENÁRIO:
 - Cliente: ${cliente} (Perfil: ${perfil} | Status: ${statusCompra})
 - Produto Foco: ${produto} (Categoria: ${categoria})
+- Objeção do Cliente: "${objecaoText}"
 - Estilo do Vendedor: ${estilo}
 
-REGRAS DE OURO (IGUAL AO SIMULADOR DE ROLEPLAY):
-1. SEM ENROLAÇÃO. O cliente não tem tempo. Evite explicações teóricas.
-2. FOCO EM GIRO E MARGEM. Quebre a objeção usando matemática simples (ex: "Se vender X no fim de semana, lucra Y").
-3. GATILHO DE ESCASSEZ. Use o horário de corte do caminhão ou estoque limitado para pressionar o fechamento agora.
-4. FECHAMENTO DUPLA ALTERNATIVA. Nunca faça perguntas de "sim/não". Dê opções ("Mando hoje à tarde ou amanhã cedo?").
+REGRAS DE OURO TÁTICAS:
+1. SEM ENROLAÇÃO TÉCNICA. O cliente não tem tempo.
+2. ARGUMENTO MATEMÁTICO. Quebre a objeção focando no Lucro rápido ou Custo de Oportunidade.
+3. GATILHO DE ESCASSEZ. Use o horário de corte do sistema de entrega para criar senso de urgência.
+4. FECHAMENTO DUPLA ALTERNATIVA. O cliente não pode dizer "não". Ele deve escolher entre A ou B ("Quinta ou Sexta?").
 
-FORMATO OBRIGATÓRIO DE RESPOSTA (Exatamente 3 Seções com Markdown **Título:**):
+FORMATO OBRIGATÓRIO (Exatamente 3 seções, marcadas com **Título**):
 
-**🎯 Estratégia Mental (1 frase):**
-Diga ao vendedor o ponto fraco desse perfil de cliente e o gatilho exato a ser usado.
+**Visão do Treinador:**
+[Raio-X de 2 linhas: Qual o ponto fraco desse perfil de cliente e qual o erro fatal que o vendedor NÃO pode cometer aqui.]
 
-**🗣️ Fala Pronta de Balcão:**
-"[Escreva aqui a frase EXATA que o vendedor deve ler para o cliente. Curta, grossa, persuasiva, usando o estilo ${estilo}.]"
+**A Bala de Prata:**
+"[A frase EXATA, matadora e persuasiva que o vendedor vai falar no balcão, de acordo com o estilo escolhido.]"
 
-**🤝 Fechamento e Contrapartida:**
-"[Escreva a pergunta final de dupla alternativa e o que exigir de exposição/trade no PDV.]"`;
+**Regra de Ouro:**
+[A exigência que o vendedor deve pedir em troca (ponto extra, geladeira) e a pergunta matadora de fechamento por escolha dupla.]`;
         }
 
         
@@ -2003,9 +2004,9 @@ Diga ao vendedor o ponto fraco desse perfil de cliente e o gatilho exato a ser u
                 
                 if (titleStr && bodyStr) {
                     let iconTitle = titleStr;
-                    if (/estratégia|mental/i.test(titleStr)) iconTitle = "🎯 Estratégia Mental Rápida";
-                    else if (/fala|balcão/i.test(titleStr)) iconTitle = "🗣️ Fala Pronta (Leia para o Cliente)";
-                    else if (/contrapartida|fechamento/i.test(titleStr)) iconTitle = "🤝 Fechamento de Venda";
+                    if (/visão|treinador/i.test(titleStr)) iconTitle = "🧠 Visão do Treinador";
+                    else if (/bala|prata/i.test(titleStr)) iconTitle = "🔥 A Bala de Prata (Fala Pronta)";
+                    else if (/regra|ouro/i.test(titleStr)) iconTitle = "🏆 Regra de Ouro (Fechamento)";
                     else iconTitle = titleStr;
 
                     steps.push({ title: iconTitle, text: bodyStr });
