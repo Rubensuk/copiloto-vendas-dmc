@@ -1188,9 +1188,9 @@
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.75rem;">
                     <div style="display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: var(--text-primary);">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary-accent)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 3v18h18"/><path d="m19 9-5 5-4-4-3 3"/></svg>
-                        Metas & Portfólio (Araguaína/TO)
+                        Metas & Portfólio Score 5
                     </div>
-                    <span class="badge" style="background: rgba(0, 255, 136, 0.15); color: var(--primary-accent); font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 12px; font-weight: 600;">Aba Export • Tempo Real</span>
+                    <button class="badge" onclick="this.innerText='⏳ Atualizando...'; carregarDadosDrive().then(() => this.innerText='🔄 Atualizar Dados');" style="background: rgba(0, 255, 136, 0.15); color: var(--primary-accent); font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--primary-accent); transition: all 0.2s;">🔄 Atualizar Dados</button>
                 </div>
 
                 <div class="calc-grid-2">
