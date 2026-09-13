@@ -1625,9 +1625,8 @@
                             consolidado[rn].pdvs += 1;
                             consolidado[rn].rows.push(row);
                             
-                            const kpis = parseInt(row['KPIs OK']) || 0;
-                            consolidado[rn].kpis_ok_sum += kpis;
-                            if (kpis === 5) {
+                            const bateu = parseFloat(row['BATEU META']) || 0;
+                            if (bateu === 1) {
                                 consolidado[rn].meta += 1;
                             }
                         });
@@ -1772,6 +1771,7 @@
                     let real_rgb = real_int + real_300 + real_1000;
                     
                     if (base === 'HIGH END') {
+                        agg.count_he += 1;
                         agg.meta_600 += meta_600; agg.real_600 += real_600;
                         agg.meta_ln += meta_ln; agg.real_ln += real_ln;
                         
@@ -1797,6 +1797,7 @@
                             <tbody>${mix_items}</tbody>
                         </table>`;
                     } else if (base === 'CORE') {
+                        agg.count_core += 1;
                         agg.meta_600 += meta_int; agg.real_600 += real_int;
                         agg.meta_rgb += meta_rgb; agg.real_rgb += real_rgb;
                         agg.meta_300 += meta_300; agg.real_300 += real_300;
