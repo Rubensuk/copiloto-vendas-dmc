@@ -1679,9 +1679,9 @@
             // GERAR TABELA DE METAS E PORTFOLIO (ESTRUTURA STREAMLIT)
             const listContainer = document.getElementById('pdv-list-container');
             if (listContainer) {
-                const HE_600 = {'SPT 600': 'Spaten 600ml', 'STL 600': 'Stella Artois 600ml', 'STL PG 600': 'Stella Puro Glúten 600ml', 'BUD 600': 'Budweiser 600ml', 'COR 600': 'Corona 600ml', 'ORI 600 ': 'Original 600ml', 'OUTROS 600': 'Outros 600ml'};
-                const HE_LN = {'COR LN': 'Corona Long Neck', 'STL LN': 'Stella Artois Long Neck', 'STL PG LN': 'Stella Puro Glúten Long Neck', 'SPT LN': 'Spaten Long Neck', 'MIC LN': 'Michelob Ultra Long Neck', 'OUTROS LN': 'Outros Long Neck', 'BUD LN': 'Budweiser Long Neck'};
-                const CORE_600 = {'AP 600': 'Antarctica 600ml', 'BC 600': 'Brahma 600ml', 'BUD 600 ': 'Budweiser 600ml', 'ORI 600': 'Original 600ml', 'SK 600': 'Skol 600ml', 'SPT 600 ': 'Spaten 600ml', 'STL 600 ': 'Stella Artois 600ml', 'STL PG 600 ': 'Stella Puro Glúten 600ml', ' OUTROS 600 ': 'Outros 600ml'};
+                const HE_600 = {'SPT 600': 'Spaten 600ml', 'SPT 601': 'Stella Artois 600ml', 'SPT 602': 'Stella Puro Glúten 600ml', 'SPT 603': 'Budweiser 600ml', 'SPT 604': 'Corona 600ml', 'SPT 605': 'Original 600ml', 'SPT 606': 'Outros 600ml'};
+                const HE_LN = {'SPT 607': 'Corona Long Neck', 'SPT 608': 'Stella Artois Long Neck', 'SPT 609': 'Stella Puro Glúten Long Neck', 'SPT 610': 'Spaten Long Neck', 'SPT 611': 'Michelob Ultra Long Neck', 'SPT 612': 'Outros Long Neck', 'SPT 613': 'Budweiser Long Neck'};
+                const CORE_600 = {'SPT 617': 'Antarctica 600ml', 'SPT 618': 'Brahma 600ml', 'SPT 619': 'Budweiser 600ml', 'SPT 620': 'Original 600ml', 'SPT 621': 'Skol 600ml', 'SPT 622': 'Spaten 600ml', 'SPT 623': 'Stella Artois 600ml', 'SPT 624': 'Stella Puro Glúten 600ml', ' OUTROS 600 ': 'Outros 600ml'};
                 const CORE_300 = {'AP 300': 'Antarctica 300ml', 'BC 300': 'Brahma 300ml', 'BUD 300': 'Budweiser 300ml', 'ORI 300': 'Original 300ml', 'SK 300': 'Skol 300ml', 'OUTROS 300': 'Outros 300ml'};
                 const CORE_1000 = {'AP 1000': 'Antarctica 1000ml', 'BC 1000': 'Brahma 1000ml', 'BUD 1000': 'Budweiser 1000ml', 'ORI 1000': 'Original 1000ml', 'SK 1000': 'Skol 1000ml', 'OUTROS 1000': 'Outros 1000ml'};
                 
@@ -1817,7 +1817,7 @@
                         
                         for (let col in CORE_600) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), CORE_600[col], safeInt(row[col])); }
                         for (let col in CORE_300) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), CORE_300[col], safeInt(row[col])); }
-                        for (let col in CORE_1000) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), CORE_1000[col], safeInt(row[col])); }
+                        
                         
                         inner_html += `<div style="margin-top:15px; font-weight:bold;">📦 Mix de Produtos (Core)</div>
                         <table style="width:100%; border-collapse:collapse; margin-top:5px; background:var(--table-header-bg, rgba(0,0,0,0.1)); border-radius:5px; overflow:hidden;">
