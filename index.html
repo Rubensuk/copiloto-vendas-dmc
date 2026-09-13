@@ -1214,31 +1214,26 @@
                     </div>
                 </div>
 
-                <!-- 5 Métricas de Topo (Score 5 Executivo) -->
-                <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 0.6rem; margin-top: 1rem;">
+                <!-- 4 Métricas de Topo (Score 5 Executivo) -->
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin-top: 1rem;">
                     <div style="background: rgba(0, 255, 136, 0.08); border: 1px solid rgba(0, 255, 136, 0.2); padding: 0.75rem; border-radius: 10px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: var(--primary-accent); font-weight: 600;">⭐ Score 5 (%)</div>
-                        <div id="rn-score-5" style="font-size: 1.2rem; font-weight: 700; color: #00ff88; margin-top: 0.1rem;">75.0%</div>
-                    </div>
-                    <div style="background: rgba(0, 255, 136, 0.05); border: 1px solid rgba(0, 255, 136, 0.15); padding: 0.75rem; border-radius: 10px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: var(--primary-accent); font-weight: 600;">🏆 Score 5 (PDVs)</div>
-                        <div id="rn-score5-pdvs" style="font-size: 1.2rem; font-weight: 700; color: #00ff88; margin-top: 0.1rem;">36 PDVs</div>
+                        <div style="font-size: 0.7rem; color: var(--primary-accent); font-weight: 600;">⭐ Score 5 (PDVs)</div>
+                        <div id="rn-score5-pdvs" style="font-size: 1.2rem; font-weight: 700; color: #00ff88; margin-top: 0.1rem;">0 de 0</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.75rem; border-radius: 10px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: var(--text-secondary);">📍 PDVs Rota</div>
-                        <div id="rn-total-pdvs" style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-top: 0.1rem;">48</div>
+                        <div style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 600;">🟡 PDVs Core</div>
+                        <div id="rn-pdvs-core" style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-top: 0.1rem;">0</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.75rem; border-radius: 10px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: var(--text-secondary);">✅ Bateram</div>
-                        <div id="rn-meta-batida" style="font-size: 1.2rem; font-weight: 700; color: #00ff88; margin-top: 0.1rem;">36</div>
+                        <div style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 600;">💎 PDVs High End</div>
+                        <div id="rn-pdvs-he" style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-top: 0.1rem;">0</div>
                     </div>
                     <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.75rem; border-radius: 10px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: var(--text-secondary);">❌ Fora</div>
-                        <div id="rn-fora-meta" style="font-size: 1.2rem; font-weight: 700; color: #ff5555; margin-top: 0.1rem;">12</div>
+                        <div style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 600;">✅ Bateram Meta (Geral)</div>
+                        <div id="rn-meta-batida" style="font-size: 1.2rem; font-weight: 700; color: #00ff88; margin-top: 0.1rem;">0 PDVs</div>
                     </div>
                 </div>
 
-                
                 <!-- Métricas Agregadas (Barras de Progresso) -->
                 <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin-top: 1rem;">
                     <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.75rem; border-radius: 10px;">
@@ -1679,17 +1674,7 @@
             if (!dbRN[code]) return;
             const data = dbRN[code];
 
-            const score5El = document.getElementById('rn-score-5');
-            const score5PdvsEl = document.getElementById('rn-score5-pdvs');
-            const totalEl = document.getElementById('rn-total-pdvs');
-            const metaEl = document.getElementById('rn-meta-batida');
-            const foraEl = document.getElementById('rn-fora-meta');
-
-            if (score5El) score5El.innerText = `${data.pct.toFixed(1)}%`;
-            if (score5PdvsEl) score5PdvsEl.innerText = `${data.meta} PDVs`;
-            if (totalEl) totalEl.innerText = data.pdvs;
-            if (metaEl) metaEl.innerText = `${data.meta}`;
-            if (foraEl) foraEl.innerText = `${data.pdvs - data.meta}`;
+            
 
             
             // GERAR TABELA DE METAS E PORTFOLIO (ESTRUTURA STREAMLIT)
@@ -1752,7 +1737,8 @@
                     meta_rgb: 0, real_rgb: 0,
                     meta_600: 0, real_600: 0,
                     meta_ln: 0, real_ln: 0,
-                    meta_300: 0, real_300: 0
+                    meta_300: 0, real_300: 0,
+                    count_core: 0, count_he: 0
                 };
                 
                 data.rows.forEach(row => {
@@ -1884,6 +1870,16 @@
                 if (el600Bar) el600Bar.innerHTML = barraSmallHTML(pct_agg_600);
                 if (elLnBar)  elLnBar.innerHTML = barraSmallHTML(pct_agg_ln);
                 if (el300Bar) el300Bar.innerHTML = barraSmallHTML(pct_agg_300);
+                
+                const score5PdvsEl = document.getElementById('rn-score5-pdvs');
+                const pdvsCoreEl = document.getElementById('rn-pdvs-core');
+                const pdvsHeEl = document.getElementById('rn-pdvs-he');
+                const metaBatidaEl = document.getElementById('rn-meta-batida');
+                
+                if (score5PdvsEl) score5PdvsEl.innerText = `${data.meta} de ${data.pdvs}`;
+                if (pdvsCoreEl) pdvsCoreEl.innerText = `${agg.count_core}`;
+                if (pdvsHeEl) pdvsHeEl.innerText = `${agg.count_he}`;
+                if (metaBatidaEl) metaBatidaEl.innerText = `${data.meta} PDVs`;
             }
     
             // Gaps zerados por enquanto pois a base real é apenas Score 5
