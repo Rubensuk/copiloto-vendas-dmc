@@ -181,21 +181,43 @@ if df.empty:
 # ─────────────────────────────────────────────────────────────────────────────
 rns_disponiveis = sorted([int(x) for x in df['RN'].dropna().unique()])
 
-# Toggle de Tema
-query_params = st.query_params
-current_theme = query_params.get("theme", "dark")
-index_tema = 0 if current_theme == "light" else 1
-
-tema_selecionado = st.sidebar.radio("🎨 Tema do App:", ["Claro", "Escuro"], index=index_tema)
-
-if tema_selecionado == "Claro" and current_theme != "light":
-    st.query_params["theme"] = "light"
-    st.rerun()
-elif tema_selecionado == "Escuro" and current_theme != "dark":
-    st.query_params["theme"] = "dark"
-    st.rerun()
-
+# Toggle de Tema manual
+tema_selecionado = st.sidebar.radio("🎨 Tema do App:", ["Claro", "Escuro"], index=0)
 is_dark = (tema_selecionado == "Escuro")
+
+if is_dark:
+    bg_main = "#0e1117"
+    bg_sec = "#262730"
+    text_col = "#fafafa"
+else:
+    bg_main = "#ffffff"
+    bg_sec = "#f0f2f6"
+    text_col = "#31333F"
+
+# Injeta CSS global para forçar o tema em toda a tela (Streamlit nativo)
+st.markdown(f"""
+<style>
+    /* Fundos principais */
+    .stApp {{ background-color: {bg_main} !important; }}
+    [data-testid="stHeader"] {{ background-color: {bg_main} !important; }}
+    [data-testid="stSidebar"] {{ background-color: {bg_sec} !important; }}
+    
+    /* Textos nativos do Streamlit */
+    .stMarkdown p, .stMarkdown h1, .stMarkdown h2, .stMarkdown h3, .stMarkdown h4, .stMarkdown h5,
+    [data-testid="stMetricLabel"] *, [data-testid="stMetricValue"] *, 
+    .stRadio label, .stSelectbox label, .stTextInput label {{
+        color: {text_col} !important;
+    }}
+    
+    /* Inputs */
+    div[data-baseweb="select"] > div, div[data-baseweb="base-input"] {{
+        background-color: {bg_sec} !important;
+    }}
+    div[data-baseweb="select"] *, div[data-baseweb="base-input"] * {{
+        color: {text_col} !important;
+    }}
+</style>
+""", unsafe_allow_html=True)
 
 # Variáveis de cor dinâmicas para o HTML customizado
 html_bg_row = "rgba(255,255,255,0.03)" if is_dark else "rgba(0,0,0,0.03)"
