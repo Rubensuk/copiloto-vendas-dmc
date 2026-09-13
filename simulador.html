@@ -544,6 +544,74 @@ Gere um relatório rigoroso em Markdown com a seguinte estrutura:
 
         // Run Init
         window.onload = initApp;
+    
+        // Ranking Logic
+        const btnVerRanking = document.getElementById('btn-ver-ranking');
+        const btnAtualizarRanking = document.getElementById('btn-atualizar-ranking');
+        
+        async function carregarRanking() {
+            const listDiv = document.getElementById('ranking-list');
+            listDiv.innerHTML = '<div class="flex justify-center items-center h-full"><span class="text-teal-400">Carregando pódio...</span></div>';
+            
+            if (!WEBHOOK_URL) {
+                listDiv.innerHTML = '<div class="text-center text-red-400 mt-10">WebHook do Google Sheets não configurado!</div>';
+                return;
+            }
+            
+            try {
+                const res = await fetch(WEBHOOK_URL);
+                const data = await res.json();
+                
+                if (!data || data.length === 0) {
+                    listDiv.innerHTML = '<div class="text-center text-gray-400 mt-10">Nenhuma pontuação registrada ainda. Seja o primeiro!</div>';
+                    return;
+                }
+                
+                let htmlStr = '<div class="space-y-3">';
+                data.forEach((item, index) => {
+                    let positionClass = "bg-gray-700 text-gray-400";
+                    if (index === 0) positionClass = "bg-yellow-500 text-yellow-900 font-black shadow-lg shadow-yellow-500/20 transform scale-105";
+                    else if (index === 1) positionClass = "bg-gray-300 text-gray-800 font-bold";
+                    else if (index === 2) positionClass = "bg-orange-400 text-orange-900 font-bold";
+                    
+                    let medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}º`;
+                    
+                    htmlStr += `
+                        <div class="${positionClass} rounded-xl p-4 flex items-center justify-between transition-all">
+                            <div class="flex items-center gap-4">
+                                <span class="text-2xl w-8 text-center">${medal}</span>
+                                <div>
+                                    <div class="text-lg uppercase tracking-wider">${item.nome}</div>
+                                    <div class="text-xs opacity-75">RN ${item.rn} • Batalhou com ${item.persona}</div>
+                                </div>
+                            </div>
+                            <div class="text-3xl font-black">${item.nota}</div>
+                        </div>
+                    `;
+                });
+                htmlStr += '</div>';
+                listDiv.innerHTML = htmlStr;
+            } catch(e) {
+                listDiv.innerHTML = `<div class="text-center text-red-400 mt-10">Erro ao carregar ranking: ${e.message}</div>`;
+            }
+        }
+
+        if (btnVerRanking) {
+            btnVerRanking.addEventListener('click', () => {
+                document.getElementById('coach-screen').classList.add('hidden');
+                document.getElementById('coach-screen').classList.remove('flex');
+                
+                document.getElementById('ranking-screen').classList.remove('hidden');
+                document.getElementById('ranking-screen').classList.add('flex');
+                
+                carregarRanking();
+            });
+        }
+        
+        if (btnAtualizarRanking) {
+            btnAtualizarRanking.addEventListener('click', carregarRanking);
+        }
+    
     </script>
 </body>
 </html>
