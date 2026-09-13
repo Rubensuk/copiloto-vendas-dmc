@@ -256,8 +256,6 @@ st.markdown("---")
 # ─────────────────────────────────────────────────────────────────────────────
 st.markdown("### 📋 Clientes — Meta & Mix de Portfólio")
 
-st.warning("⚠️ **AVISO:** Se as palavras 'High End' e 'Long Neck' estiverem aparecendo como 'Topo de Linha' ou 'Pescoço Longo', **desative o Tradutor Automático do seu navegador**. Ele quebra o visual do site!")
-
 col_busca1, col_busca2 = st.columns([2, 1])
 with col_busca1:
     busca = st.text_input("🔍 Filtrar por Nome do PDV ou Chave:", "")
