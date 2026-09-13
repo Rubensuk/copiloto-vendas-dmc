@@ -92,7 +92,7 @@ CORE_1000 = {
 # FUNÇÕES AUXILIARES
 # ─────────────────────────────────────────────────────────────────────────────
 
-def barra_progresso_html(percentual, label=""):
+def barra_progresso_html(percentual, label="", is_dark=True):
     """Gera uma barra de progresso com gradiente vermelho→amarelo→verde."""
     pct = min(max(percentual, 0), 100)
     if pct < 40:
@@ -102,13 +102,15 @@ def barra_progresso_html(percentual, label=""):
     else:
         cor = '#22c55e'   # verde
 
+    bg_bar = "#2a2a3a" if is_dark else "#e2e8f0"
+
     html = f"""
     <div style="margin: 4px 0;">
         <div style="display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 2px;">
             <span><b>{label}</b></span>
             <span style="color: {cor}; font-weight: 700;">{pct:.0f}%</span>
         </div>
-        <div style="background: #2a2a3a; border-radius: 6px; height: 18px; overflow: hidden;">
+        <div style="background: {bg_bar}; border-radius: 6px; height: 18px; overflow: hidden;">
             <div style="width: {pct}%; height: 100%; background: {cor}; border-radius: 6px; transition: width 0.3s;"></div>
         </div>
     </div>
@@ -235,19 +237,19 @@ pct_300 = (real_300_total / meta_300_total * 100) if meta_300_total > 0 else 0
 
 with m1:
     st.metric("📦 RGB (Vasilhames)", f"{real_rgb_total}/{meta_rgb_total} cxs")
-    st.markdown(barra_progresso_html(pct_rgb, "Atingimento RGB"), unsafe_allow_html=True)
+    st.markdown(barra_progresso_html(pct_rgb, "Atingimento RGB", is_dark), unsafe_allow_html=True)
 
 with m2:
     st.metric("🍺 600ml (Inteira + High End)", f"{real_600_he + real_int_core}/{meta_600_he + meta_int_core} SKUs")
-    st.markdown(barra_progresso_html(pct_600, "Atingimento 600ml"), unsafe_allow_html=True)
+    st.markdown(barra_progresso_html(pct_600, "Atingimento 600ml", is_dark), unsafe_allow_html=True)
 
 with m3:
     st.metric("🍾 Long Neck", f"{real_ln_total}/{meta_ln_total} cxs")
-    st.markdown(barra_progresso_html(pct_ln, "Atingimento Long Neck"), unsafe_allow_html=True)
+    st.markdown(barra_progresso_html(pct_ln, "Atingimento Long Neck", is_dark), unsafe_allow_html=True)
 
 with m4:
     st.metric("🥃 300ml", f"{real_300_total}/{meta_300_total} cxs")
-    st.markdown(barra_progresso_html(pct_300, "Atingimento 300ml"), unsafe_allow_html=True)
+    st.markdown(barra_progresso_html(pct_300, "Atingimento 300ml", is_dark), unsafe_allow_html=True)
 
 st.markdown("---")
 
@@ -295,8 +297,8 @@ if df_exib.empty:
     st.info("Nenhum cliente encontrado.")
 else:
     # ── CABEÇALHO DA TABELA DE CLIENTES ──
-    header_html = """
-    <div style="display:flex; padding:10px 15px; background:rgba(0,0,0,0.1); font-weight:bold; font-size:0.9rem; border-bottom:2px solid rgba(255,255,255,0.1); margin-bottom:5px;">
+    header_html = f"""
+    <div style="display:flex; padding:10px 15px; background:{html_bg_header}; font-weight:bold; font-size:0.9rem; border-bottom:2px solid {html_border}; margin-bottom:5px; color:{html_text};">
         <div style="flex: 2;">🏪 NOME DO PDV</div>
         <div style="flex: 1;">📊 SEGMENTO</div>
         <div style="flex: 1;">🎯 STATUS</div>
@@ -335,13 +337,13 @@ else:
             pct_600_c = (real_600 / meta_600 * 100) if meta_600 > 0 else 0
             pct_ln_c  = (real_ln / meta_ln * 100) if meta_ln > 0 else 0
 
-            inner_html += barra_progresso_html(pct_600_c, f"🍺 600ml — Meta: {meta_600} | Real: {real_600} | Falta: {max(0, meta_600 - real_600)}")
-            inner_html += barra_progresso_html(pct_ln_c,  f"🍾 Long Neck — Meta: {meta_ln} | Real: {real_ln} | Falta: {max(0, meta_ln - real_ln)}")
+            inner_html += barra_progresso_html(pct_600_c, f"🍺 600ml — Meta: {meta_600} | Real: {real_600} | Falta: {max(0, meta_600 - real_600)}", is_dark)
+            inner_html += barra_progresso_html(pct_ln_c,  f"🍾 Long Neck — Meta: {meta_ln} | Real: {real_ln} | Falta: {max(0, meta_ln - real_ln)}", is_dark)
 
             mix_items = []
             def format_row(sq, nome, val):
                 qtd = safe_int(val)
-                return f'<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px 12px;text-align:center;">{sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;">{nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;">{qtd}</td></tr>'
+                return f'<tr style="border-bottom:1px solid {html_border};"><td style="padding:6px 12px;text-align:center;">{sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;color:{html_text};">{nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;color:{html_text};">{qtd}</td></tr>'
 
             for col, nome in HE_600.items():
                 if col in df.columns:
@@ -354,9 +356,9 @@ else:
                     vendeu = pd.notna(val) and safe_int(val) > 0
                     mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
 
-            inner_html += f'''<div style="margin-top:15px; font-weight:bold;">📦 Mix de Produtos (High End)</div>
-            <table style="width:100%; border-collapse:collapse; margin-top:5px; background:rgba(0,0,0,0.1); border-radius:5px; overflow:hidden;">
-                <thead style="background:rgba(255,255,255,0.05);font-size:0.9rem;">
+            inner_html += f'''<div style="margin-top:15px; font-weight:bold; color:{html_text};">📦 Mix de Produtos (High End)</div>
+            <table style="width:100%; border-collapse:collapse; margin-top:5px; background:{html_bg_header}; border-radius:5px; overflow:hidden;">
+                <thead style="background:{html_bg_table_header};font-size:0.9rem;color:{html_text};">
                     <tr><th style="padding:8px;text-align:center;width:15%;">Status</th><th style="padding:8px;text-align:left;width:65%;">Produto</th><th style="padding:8px;text-align:center;width:20%;">Vendida</th></tr>
                 </thead>
                 <tbody>{"".join(mix_items)}</tbody>
@@ -374,14 +376,14 @@ else:
             pct_rgb_c = (real_rgb / meta_rgb * 100) if meta_rgb > 0 else 0
             pct_300_c = (real_300 / meta_300 * 100) if meta_300 > 0 else 0
 
-            inner_html += barra_progresso_html(pct_int_c, f"🍺 Inteira (600ml) — Meta: {meta_int} | Real: {real_int} | Falta: {max(0, meta_int - real_int)}")
-            inner_html += barra_progresso_html(pct_rgb_c, f"📦 RGB (Vasilhames) — Meta: {meta_rgb} | Real: {real_rgb} | Falta: {max(0, meta_rgb - real_rgb)}")
-            inner_html += barra_progresso_html(pct_300_c, f"🥃 300ml — Meta: {meta_300} | Real: {real_300} | Falta: {max(0, meta_300 - real_300)}")
+            inner_html += barra_progresso_html(pct_int_c, f"🍺 Inteira (600ml) — Meta: {meta_int} | Real: {real_int} | Falta: {max(0, meta_int - real_int)}", is_dark)
+            inner_html += barra_progresso_html(pct_rgb_c, f"📦 RGB (Vasilhames) — Meta: {meta_rgb} | Real: {real_rgb} | Falta: {max(0, meta_rgb - real_rgb)}", is_dark)
+            inner_html += barra_progresso_html(pct_300_c, f"🥃 300ml — Meta: {meta_300} | Real: {real_300} | Falta: {max(0, meta_300 - real_300)}", is_dark)
 
             mix_items = []
             def format_row(sq, nome, val):
                 qtd = safe_int(val)
-                return f'<tr style="border-bottom:1px solid rgba(255,255,255,0.05);"><td style="padding:6px 12px;text-align:center;">{sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;">{nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;">{qtd}</td></tr>'
+                return f'<tr style="border-bottom:1px solid {html_border};"><td style="padding:6px 12px;text-align:center;">{sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;color:{html_text};">{nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;color:{html_text};">{qtd}</td></tr>'
 
             for col, nome in CORE_600.items():
                 if col in df.columns:
@@ -399,27 +401,27 @@ else:
                     vendeu = pd.notna(val) and safe_int(val) > 0
                     mix_items.append(format_row(gerar_quadrado(vendeu), nome, val))
 
-            inner_html += f'''<div style="margin-top:15px; font-weight:bold;">📦 Mix de Produtos (Core)</div>
-            <table style="width:100%; border-collapse:collapse; margin-top:5px; background:rgba(0,0,0,0.1); border-radius:5px; overflow:hidden;">
-                <thead style="background:rgba(255,255,255,0.05);font-size:0.9rem;">
+            inner_html += f'''<div style="margin-top:15px; font-weight:bold; color:{html_text};">📦 Mix de Produtos (Core)</div>
+            <table style="width:100%; border-collapse:collapse; margin-top:5px; background:{html_bg_header}; border-radius:5px; overflow:hidden;">
+                <thead style="background:{html_bg_table_header};font-size:0.9rem;color:{html_text};">
                     <tr><th style="padding:8px;text-align:center;width:15%;">Status</th><th style="padding:8px;text-align:left;width:65%;">Produto</th><th style="padding:8px;text-align:center;width:20%;">Vendida</th></tr>
                 </thead>
                 <tbody>{"".join(mix_items)}</tbody>
             </table>'''
 
         else:
-            inner_html += "<div>Segmento Vitrine</div>"
+            inner_html += f"<div style='color:{html_text};'>Segmento Vitrine</div>"
 
         # HTML do "Expander" (details/summary) customizado
         row_html = f"""
-<details style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; margin-bottom: 8px; font-family: sans-serif;">
+<details style="background: {html_bg_row}; border: 1px solid {html_border}; border-radius: 8px; margin-bottom: 8px; font-family: sans-serif; color: {html_text};">
     <summary style="padding: 12px 15px; cursor: pointer; display: flex; align-items: center; list-style: none;">
         <div style="flex: 2; font-weight: bold;">{icone} {row.get('NOME PDV', 'PDV')} <span style="font-size:0.75rem; color:#888; font-weight:normal; margin-left:5px;">{row.get('CHAVE PDV', '')}</span></div>
         <div style="flex: 1; font-size: 0.9rem;">{base}</div>
         <div style="flex: 1; font-size: 0.9rem; font-weight: bold;">{status_txt}</div>
-        <div style="flex: 2; text-align: right; font-size: 0.9rem; color: #aaa;">{meta_info}</div>
+        <div style="flex: 2; text-align: right; font-size: 0.9rem; color: #888;">{meta_info}</div>
     </summary>
-    <div style="padding: 15px; border-top: 1px solid rgba(255,255,255,0.05);">
+    <div style="padding: 15px; border-top: 1px solid {html_border};">
         {inner_html}
     </div>
 </details>
