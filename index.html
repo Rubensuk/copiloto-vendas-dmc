@@ -2176,11 +2176,7 @@ Não adicione saudações, introduções ou explicações fora dessa estrutura d
                 // MODO IA REAL
                 const prompt = getRawPrompt();
                 try {
-                    let endpoint = "/api/generate";
-                    if (window.location.protocol === 'file:') {
-                        // Se estiver rodando como arquivo local (duplo clique), aponta para a API implantada na Vercel
-                        endpoint = "https://copiloto-vendas-omega.vercel.app/api/generate";
-                    }
+                    const endpoint = "https://copiloto-vendas-omega.vercel.app/api/generate";
 
                     const response = await fetch(endpoint, {
                         method: "POST",
