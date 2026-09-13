@@ -181,6 +181,29 @@ if df.empty:
 # ─────────────────────────────────────────────────────────────────────────────
 rns_disponiveis = sorted([int(x) for x in df['RN'].dropna().unique()])
 
+# Toggle de Tema
+query_params = st.query_params
+current_theme = query_params.get("theme", "dark")
+index_tema = 0 if current_theme == "light" else 1
+
+tema_selecionado = st.sidebar.radio("🎨 Tema do App:", ["Claro", "Escuro"], index=index_tema)
+
+if tema_selecionado == "Claro" and current_theme != "light":
+    st.query_params["theme"] = "light"
+    st.rerun()
+elif tema_selecionado == "Escuro" and current_theme != "dark":
+    st.query_params["theme"] = "dark"
+    st.rerun()
+
+is_dark = (tema_selecionado == "Escuro")
+
+# Variáveis de cor dinâmicas para o HTML customizado
+html_bg_row = "rgba(255,255,255,0.03)" if is_dark else "rgba(0,0,0,0.03)"
+html_border = "rgba(255,255,255,0.1)" if is_dark else "rgba(0,0,0,0.1)"
+html_bg_header = "rgba(0,0,0,0.1)" if is_dark else "rgba(0,0,0,0.05)"
+html_bg_table_header = "rgba(255,255,255,0.05)" if is_dark else "rgba(0,0,0,0.05)"
+html_text = "#ffffff" if is_dark else "#333333"
+
 st.sidebar.header("🔍 Filtros de Operação")
 rn_selecionado = st.sidebar.selectbox("Selecione o Roteiro (RN):", rns_disponiveis, format_func=lambda x: str(x))
 
