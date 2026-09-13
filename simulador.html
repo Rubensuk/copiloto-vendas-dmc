@@ -3,439 +3,550 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DMC Simulador de Vendas - Treinamento</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg-dark: #0f111a;
-            --card-bg: #1a1d2d;
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --primary-accent: #00ff88;
-            --secondary-accent: #3b82f6;
-            --danger-accent: #ef4444;
-            --border-light: rgba(255, 255, 255, 0.08);
+    <title>DMC Simulador de Vendas com IA</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Inter', 'sans-serif'] },
+                    colors: {
+                        darkbg: '#0f111a',
+                        cardbg: '#1a1d2d',
+                    },
+                    animation: {
+                        'fade-in-up': 'fadeInUp 0.3s ease-out forwards',
+                        'pulse-ring': 'pulseRing 2s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                    },
+                    keyframes: {
+                        fadeInUp: {
+                            '0%': { opacity: '0', transform: 'translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' }
+                        },
+                        pulseRing: {
+                            '0%': { boxShadow: '0 0 0 0 rgba(239, 68, 68, 0.7)' },
+                            '70%': { boxShadow: '0 0 0 10px rgba(239, 68, 68, 0)' },
+                            '100%': { boxShadow: '0 0 0 0 rgba(239, 68, 68, 0)' }
+                        }
+                    }
+                }
+            }
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Plus Jakarta Sans', sans-serif; }
-        body { background: var(--bg-dark); color: var(--text-primary); padding: 20px; line-height: 1.6; }
-        
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 1px solid var(--border-light); padding-bottom: 20px; }
-        .header h1 { font-family: 'Outfit', sans-serif; font-size: 1.8rem; background: linear-gradient(90deg, #fff, #94a3b8); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .nav-btn { background: rgba(0, 255, 136, 0.1); color: var(--primary-accent); text-decoration: none; padding: 8px 16px; border-radius: 20px; font-weight: 600; font-size: 0.9rem; border: 1px solid var(--primary-accent); transition: 0.2s; }
-        .nav-btn:hover { background: var(--primary-accent); color: var(--bg-dark); }
-        
-        .container { max-width: 900px; margin: 0 auto; }
-        
-        /* Personas Screen */
-        #personas-screen { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .persona-card { background: var(--card-bg); border: 1px solid var(--border-light); border-radius: 12px; padding: 20px; cursor: pointer; transition: transform 0.2s, border-color 0.2s; display: flex; flex-direction: column; gap: 10px; }
-        .persona-card:hover { transform: translateY(-5px); border-color: var(--secondary-accent); }
-        .persona-card h3 { font-family: 'Outfit'; color: var(--secondary-accent); display: flex; align-items: center; gap: 10px; }
-        .persona-card p { font-size: 0.9rem; color: var(--text-secondary); flex-grow: 1; }
-        .difficulty { font-size: 0.75rem; font-weight: bold; padding: 4px 8px; border-radius: 8px; display: inline-block; align-self: flex-start; }
-        .diff-hard { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-        .diff-med { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-        
-        /* Chat Screen */
-        #chat-screen { display: none; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-light); overflow: hidden; height: 75vh; flex-direction: column; }
-        .chat-header { padding: 15px 20px; border-bottom: 1px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2); }
-        .turn-counter { background: rgba(59, 130, 246, 0.2); color: var(--secondary-accent); padding: 5px 12px; border-radius: 15px; font-size: 0.85rem; font-weight: bold; }
-        
-        .chat-messages { flex-grow: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-        .msg { max-width: 80%; padding: 12px 18px; border-radius: 15px; line-height: 1.4; font-size: 0.95rem; }
-        .msg.bot { align-self: flex-start; background: #2a2d40; border-bottom-left-radius: 4px; }
-        .msg.user { align-self: flex-end; background: var(--secondary-accent); color: white; border-bottom-right-radius: 4px; }
-        
-        .chat-input { padding: 15px 20px; border-top: 1px solid var(--border-light); display: flex; gap: 10px; align-items: flex-end; background: rgba(0,0,0,0.2); }
-        .chat-input textarea { flex-grow: 1; background: #0f111a; border: 1px solid var(--border-light); border-radius: 8px; padding: 12px; color: white; resize: none; outline: none; font-family: inherit; font-size: 0.95rem; height: 50px; }
-        .chat-input textarea:focus { border-color: var(--secondary-accent); }
-        
-        .action-btn { background: var(--secondary-accent); color: white; border: none; padding: 0 20px; border-radius: 8px; font-weight: 600; cursor: pointer; transition: 0.2s; height: 50px; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .action-btn:hover { background: #2563eb; }
-        .action-btn:disabled { background: #475569; cursor: not-allowed; }
-        
-        .mic-btn { background: #334155; padding: 0 15px; border: none; border-radius: 8px; cursor: pointer; transition: 0.2s; height: 50px; display: flex; align-items: center; justify-content: center; }
-        .mic-btn:hover { background: #475569; }
-        .mic-btn.recording { background: var(--danger-accent); animation: pulse 1.5s infinite; }
-        
-        .end-btn { background: transparent; color: var(--danger-accent); border: 1px solid var(--danger-accent); }
-        .end-btn:hover { background: rgba(239, 68, 68, 0.1); }
-        
-        /* Coach Screen */
-        #coach-screen { display: none; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border-light); padding: 30px; }
-        .coach-report h2 { color: var(--primary-accent); display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
-        .report-section { margin-bottom: 20px; background: rgba(255,255,255,0.02); padding: 20px; border-radius: 8px; border-left: 4px solid var(--secondary-accent); }
-        .report-section.pontos-fortes { border-left-color: var(--primary-accent); }
-        .report-section.perdidas { border-left-color: var(--danger-accent); }
-        .report-section h4 { margin-bottom: 10px; font-size: 1.1rem; }
-        
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-        
-        .loading { display: none; align-items: center; gap: 10px; color: var(--secondary-accent); font-weight: bold; justify-content: center; padding: 20px; }
-        .spinner { width: 24px; height: 24px; border: 3px solid rgba(59, 130, 246, 0.3); border-top-color: var(--secondary-accent); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { to { transform: rotate(360deg); } }
-        
-        .tts-btn { background: rgba(255,255,255,0.1); color: white; border: none; padding: 5px 10px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; margin-top: 10px; display: inline-flex; align-items: center; gap: 5px; }
-        .tts-btn:hover { background: rgba(255,255,255,0.2); }
+    </script>
+    <style>
+        body { background-color: #0f111a; color: #f8fafc; overflow-x: hidden; }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        .recording { animation: pulse-ring 2s infinite; background-color: #ef4444 !important; color: white !important; }
+        .hide-scroll::-webkit-scrollbar { display: none; }
+        .hide-scroll { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 </head>
-<body>
+<body class="antialiased selection:bg-blue-500/30 selection:text-blue-200">
 
-<div class="container">
-    <div class="header">
-        <h1>🎮 Simulador de Objeções (Treinamento)</h1>
-        <a href="index.html" class="nav-btn">⬅ Voltar ao Painel</a>
-    </div>
-
-    <!-- TELA 1: SELEÇÃO DE PERSONAS -->
-    <div id="personas-screen"></div>
-
-    <!-- TELA 2: CHAT INTERATIVO -->
-    <div id="chat-screen">
-        <div class="chat-header">
-            <div>
-                <h3 id="chat-persona-name" style="font-family:'Outfit';">Cliente</h3>
-                <span id="chat-persona-desc" style="font-size:0.8rem; color:var(--text-secondary);"></span>
+    <!-- HEADER GERAL -->
+    <header class="fixed top-0 w-full z-50 bg-darkbg/80 backdrop-blur-md border-b border-slate-800 transition-transform duration-300" id="main-header">
+        <div class="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center font-bold text-white shadow-lg shadow-blue-600/20">D</div>
+                <span class="font-semibold tracking-tight">DMC Sales Copilot</span>
             </div>
-            <div style="display:flex; gap: 10px;">
-                <button class="action-btn end-btn" onclick="endSimulation()">Encerrar</button>
-                <div class="turn-counter" id="turn-counter">Turnos: 15/15</div>
+            <div class="flex items-center gap-4">
+                <span class="text-sm font-medium text-slate-400 hidden md:block">Simulador de Vendas com IA</span>
+                <a href="index.html" class="px-4 py-2 text-sm font-medium text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-full transition-colors border border-slate-700">
+                    Voltar ao Painel
+                </a>
             </div>
         </div>
-        
-        <div class="chat-messages" id="chat-messages">
-            <!-- Messages go here -->
-        </div>
-        
-        <div class="loading" id="chat-loading">
-            <div class="spinner"></div> Processando resposta do cliente...
-        </div>
-        
-        <div class="chat-input" id="chat-input-area">
-            <button class="mic-btn" id="mic-btn" onclick="toggleMic()" title="Falar (Ditado)">🎤</button>
-            <textarea id="user-input" placeholder="Digite ou fale sua abordagem de vendas..." onkeydown="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"></textarea>
-            <button class="action-btn" id="send-btn" onclick="sendMessage()">Enviar ➔</button>
-        </div>
-    </div>
+    </header>
 
-    <!-- TELA 3: COACH REPORT -->
-    <div id="coach-screen">
-        <div class="loading" id="coach-loading" style="display:flex; flex-direction:column;">
-            <div class="spinner" style="width:40px; height:40px;"></div>
-            <p style="margin-top:10px;">Treinador IA analisando a negociação...</p>
-        </div>
-        <div id="coach-report-content" style="display:none;">
-            <!-- Report goes here -->
-        </div>
-        <button class="action-btn" style="margin-top:20px; width:100%;" onclick="location.reload()">🔄 Iniciar Nova Simulação</button>
-    </div>
-</div>
+    <!-- TELA 1: VITRINE / SELEÇÃO DE PERSONA -->
+    <main id="landing-screen" class="pt-16 min-h-screen flex flex-col justify-between">
+        
+        <!-- Hero Section Dinâmica -->
+        <section class="flex-grow flex items-center py-12 md:py-20 px-6">
+            <div class="max-w-6xl mx-auto w-full grid md:grid-cols-12 gap-12 items-center">
+                
+                <!-- Avatar Esquerda -->
+                <div class="md:col-span-5 flex justify-center md:justify-end">
+                    <div class="relative w-48 h-48 md:w-80 md:h-80 rounded-full bg-slate-800 border-4 border-slate-700 shadow-2xl flex items-center justify-center text-7xl md:text-9xl transition-transform duration-500 hover:scale-105" id="hero-avatar">
+                        🧔🏻‍♂️
+                    </div>
+                </div>
 
-<script>
-    // ---------------- PERSONAS DATABASE ----------------
-    const PERSONAS = [
-        {
-            initialMessage: 'Oi. O que você quer hoje? Já adianto que estou sem tempo.',
-            id: 'zeca',
-            name: 'Zeca - O Comerciante Colérico',
-            diffClass: 'diff-hard', difficulty: 'Nível Difícil',
-            desc: '60 anos. Detesta vendedores, enxerga tudo como custo e exige justificativa financeira imediata.',
-            prompt: `Você é "Zeca", dono de um bar movimentado de 60 anos. Você é colérico, impaciente e tem repulsa a vendedores que "falam bonito". 
-Você enxerga tudo como custo. Se te oferecem um produto novo, você diz que não tem margem, que encalha ou que não tem espaço. 
-Regras:
-1. Responda em no MÁXIMO 2 ou 3 frases curtas e grossas.
-2. Seja resistente nas primeiras interações. Só ceda se o vendedor der um argumento MATADOR sobre giro rápido ou margem de lucro real.
-3. Não seja bonzinho. Exija números e praticidade.
-4. NUNCA saia do personagem. Apenas responda com a sua fala direta.`
-        },
-        {
-            initialMessage: 'Olá. Se for para oferecer produto novo, já aviso que estou sem espaço na geladeira.',
-            id: 'bibi',
-            name: 'Bibi - A Gerente Desconfiada',
-            diffClass: 'diff-med', difficulty: 'Nível Intermediário',
-            desc: 'Foca muito na concorrência e tem medo de arriscar novos produtos no mix. Pede muitas provas.',
-            prompt: `Você é "Bibi", gerente de uma loja de conveniência. Você é metódica e muito desconfiada. 
-Seu maior medo é comprar produto que fica parado na prateleira, pois seu espaço é minúsculo. 
-Regras:
-1. Responda em no MÁXIMO 2 ou 3 frases.
-2. Peça provas de que o produto vende. Fale que "a marca concorrente já me atende bem".
-3. Só aceite a venda se o vendedor focar em teste de aceitação, combo ou argumento de giro garantido com marketing.
-4. NUNCA saia do personagem.`
-        },
-        {
-            initialMessage: 'Fala, campeão! Tudo bem? Hoje o movimento tá meio devagar por aqui...',
-            id: 'joao',
-            name: 'João - O Inativo das Desculpas',
-            diffClass: 'diff-hard', difficulty: 'Nível Evasivo',
-            desc: 'Simpático, mas mestre em dar desculpas para adiar a compra: "movimento caiu", "ainda tenho".',
-            prompt: `Você é "João", um dono de padaria/lanchonete muito simpático, mas que adora dar desculpas para não comprar hoje.
-Você está sem comprar da Ambev há 30 dias. Você diz coisas como: "Choveu no fds", "Estou com um pouquinho no estoque", "Semana que vem eu peço pelo app".
-Regras:
-1. Responda em no MÁXIMO 2 frases. Seja amigável, chamando o vendedor de "campeão" ou "meu querido".
-2. Fuja do fechamento empurrando para a semana que vem.
-3. Só ceda se o vendedor criar um gatilho de escassez (ex: aumento de preço, feriado chegando, corte logístico hoje).
-4. NUNCA saia do personagem.`
-        },
-        {
-            initialMessage: 'E aí... Escuta, aquele último pedido veio com o boleto muito curto, viu?',
-            id: 'marcos',
-            name: 'Marcos - O Rei da Devolução',
-            diffClass: 'diff-hard', difficulty: 'Nível Crítico',
-            desc: 'Finge que fecha o pedido para se livrar do vendedor, mas recusa na entrega. Fuja de custos logísticos.',
-            prompt: `Você é "Marcos", dono de um restaurante. Sua tática para se livrar de vendedores chatos é dizer "pode mandar umas 5 caixas". Mas no fundo, você planeja recusar a entrega quando o caminhão chegar, alegando que o boleto ficou curto ou faltou espaço.
-Regras:
-1. Responda em no MÁXIMO 2 frases.
-2. Seja fácil para dizer o primeiro "sim", mas demonstre falta de compromisso (ex: "Bota aí qualquer coisa que eu recebo lá na hora").
-3. Se o vendedor não tentar "amarrar" o compromisso (confirmar vencimento, espaço físico, data de entrega), finja concordar. 
-4. O objetivo do vendedor é garantir que você não vai devolver. Resista a se comprometer formalmente.
-5. NUNCA saia do personagem.`
+                <!-- Textos Direita -->
+                <div class="md:col-span-7 flex flex-col items-center md:items-start text-center md:text-left">
+                    <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-tight mb-4" id="hero-title">
+                        Consegue vender para o Zeca?
+                    </h1>
+                    <p class="text-xl md:text-2xl text-slate-400 font-light mb-6" id="hero-subtitle">
+                        60 anos · Dono de Bar (Raiz)
+                    </p>
+                    
+                    <!-- Badges -->
+                    <div class="flex flex-wrap gap-3 justify-center md:justify-start mb-8" id="hero-badges">
+                        <span class="px-4 py-1.5 bg-red-500/10 text-red-400 rounded-full text-sm font-semibold border border-red-500/20">Difícil</span>
+                        <span class="px-4 py-1.5 bg-orange-500/10 text-orange-400 rounded-full text-sm font-semibold border border-orange-500/20">Colérico</span>
+                        <span class="px-4 py-1.5 bg-blue-500/10 text-blue-400 rounded-full text-sm font-semibold border border-blue-500/20">Visita Presencial</span>
+                    </div>
+
+                    <p class="text-lg text-slate-300 leading-relaxed max-w-xl mb-10" id="hero-desc">
+                        Você tem 15 falas para chegar ao objetivo: marcar uma reunião. No fim, um treinador de IA diz exatamente onde você perdeu.
+                    </p>
+
+                    <button onclick="startChallenge()" class="group relative px-8 py-4 bg-blue-600 hover:bg-blue-500 text-white text-lg font-bold rounded-2xl shadow-lg shadow-blue-600/30 transition-all hover:-translate-y-1 overflow-hidden">
+                        <span class="relative z-10 flex items-center gap-2">
+                            Iniciar Desafio
+                            <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Seção: Escolha seu cliente -->
+        <section class="border-t border-slate-800 bg-darkbg/50 px-6 py-10">
+            <div class="max-w-6xl mx-auto">
+                <h3 class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-6 ml-2">Escolha outro perfil para treinar</h3>
+                <div class="flex gap-5 overflow-x-auto pb-6 pt-2 px-2 hide-scroll" id="persona-list">
+                    <!-- Cards inseridos via JS -->
+                </div>
+            </div>
+        </section>
+    </main>
+
+
+    <!-- TELA 2: CHAT DA SIMULAÇÃO -->
+    <main id="chat-screen" class="hidden h-screen flex flex-col bg-darkbg">
+        
+        <!-- Header Fixo do Chat -->
+        <header class="flex items-center justify-between px-4 py-3 bg-cardbg border-b border-slate-800 shadow-sm z-10">
+            <div class="flex items-center gap-4">
+                <button onclick="location.reload()" class="p-2 text-slate-400 hover:text-white hover:bg-slate-800 rounded-full transition-colors" title="Sair do Desafio">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                </button>
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center text-xl shadow-inner border border-slate-700" id="chat-header-avatar">🧔🏻‍♂️</div>
+                    <div>
+                        <h2 class="text-white font-semibold leading-tight" id="chat-header-name">Zeca Nogueira</h2>
+                        <div class="flex gap-2 mt-0.5" id="chat-header-badges">
+                            <!-- Inserido dinamicamente -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex items-center gap-4">
+                <button onclick="endChallenge()" class="hidden md:block text-sm font-semibold text-slate-400 hover:text-red-400 transition-colors">Avaliar Agora</button>
+                <div class="px-4 py-1.5 bg-slate-800 border border-slate-700 rounded-full text-sm font-bold text-slate-200 flex items-center gap-2 shadow-inner" id="turn-counter">
+                    <span class="w-2 h-2 rounded-full bg-blue-500 animate-pulse"></span>
+                    15/15 Turnos
+                </div>
+            </div>
+        </header>
+
+        <!-- Área de Mensagens -->
+        <div id="chat-messages" class="flex-grow overflow-y-auto p-4 md:p-8 space-y-6">
+            <!-- As mensagens aparecerão aqui -->
+        </div>
+
+        <div id="chat-loading" class="hidden items-center gap-3 justify-center py-4 text-blue-400 font-medium">
+            <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            Zeca está digitando...
+        </div>
+
+        <!-- Input Area Fixa -->
+        <footer class="p-4 bg-cardbg border-t border-slate-800">
+            <div class="max-w-4xl mx-auto relative flex items-center">
+                <button id="mic-btn" onclick="toggleMic()" class="absolute left-2 w-10 h-10 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center transition-all z-10" title="Gravar Áudio (Voz para Texto)">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"></path></svg>
+                </button>
+                
+                <textarea id="user-input" rows="1" class="w-full bg-darkbg border border-slate-700 focus:border-blue-500 rounded-full py-4 pl-14 pr-16 text-slate-100 placeholder-slate-500 outline-none resize-none shadow-inner leading-relaxed transition-colors" placeholder="Digite ou fale sua abordagem de vendas..." onkeydown="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"></textarea>
+                
+                <button id="send-btn" onclick="sendMessage()" class="absolute right-2 w-10 h-10 rounded-full bg-blue-600 text-white hover:bg-blue-500 flex items-center justify-center transition-colors shadow-lg z-10" title="Enviar Mensagem">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path></svg>
+                </button>
+            </div>
+            <div class="text-center mt-2 md:hidden">
+                <button onclick="endChallenge()" class="text-xs text-slate-500 hover:text-red-400">Encerrar e Avaliar Agora</button>
+            </div>
+        </footer>
+    </main>
+
+    <!-- TELA 3: FEEDBACK COACH -->
+    <main id="coach-screen" class="hidden h-screen overflow-y-auto bg-darkbg p-6 md:p-12">
+        <div class="max-w-4xl mx-auto mt-8 md:mt-0">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                <h2 class="text-3xl font-extrabold text-white tracking-tight flex items-center gap-3">
+                    <span class="text-4xl">🎓</span> Relatório do Treinador IA
+                </h2>
+                <button onclick="speakText(document.getElementById('coach-report-content').innerText)" class="px-5 py-2.5 bg-slate-800 hover:bg-slate-700 text-white rounded-xl font-medium transition-colors flex items-center gap-2 border border-slate-700 shadow-sm">
+                    <svg class="w-5 h-5 text-blue-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"></path></svg>
+                    Ouvir Feedback
+                </button>
+            </div>
+            
+            <div id="coach-loading" class="flex flex-col items-center justify-center py-32 text-blue-500">
+                <svg class="animate-spin h-12 w-12 mb-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                <p class="text-xl font-medium">Analisando sua negociação...</p>
+                <p class="text-sm text-slate-500 mt-2">Aguarde, gerando insights práticos.</p>
+            </div>
+            
+            <div id="coach-report-content" class="hidden bg-cardbg border border-slate-800 rounded-2xl p-6 md:p-10 shadow-2xl leading-relaxed text-slate-300">
+                <!-- Conteúdo do relatório gerado -->
+            </div>
+            
+            <div class="mt-12 mb-20 text-center" id="coach-footer" style="display: none;">
+                <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-500 text-white font-bold py-4 px-10 rounded-2xl shadow-lg transition-transform hover:-translate-y-1">
+                    🔄 Treinar Novamente
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <!-- SCRIPTS E LÓGICA -->
+    <script>
+        const PERSONAS = [
+            {
+                id: 'zeca',
+                name: 'Zeca Nogueira',
+                title: 'Consegue vender o seu portfólio para o Zeca?',
+                subtitle: '60 anos · Dono de Bar (Raiz)',
+                avatar: '🧔🏻‍♂️',
+                badges: [
+                    { text: 'Difícil', classes: 'bg-red-500/10 text-red-400 border-red-500/20' },
+                    { text: 'Colérico', classes: 'bg-orange-500/10 text-orange-400 border-orange-500/20' },
+                    { text: 'Visita Presencial', classes: 'bg-blue-500/10 text-blue-400 border-blue-500/20' }
+                ],
+                rules: 'Você tem 15 falas para chegar ao objetivo: marcar uma reunião. No fim, um treinador de IA diz exatamente onde você perdeu.',
+                initialMessage: 'Oi. O que você quer hoje? Já adianto que estou sem tempo.',
+                prompt: `Você é "Zeca", dono de um bar movimentado de 60 anos. Você é colérico, impaciente e tem repulsa a vendedores que "falam bonito". Você enxerga tudo como custo. Se te oferecem um produto novo, você diz que não tem margem, que encalha ou que não tem espaço. Regras: 1. Responda em no MÁXIMO 2 ou 3 frases curtas e grossas. 2. Seja resistente nas primeiras interações. Só ceda se o vendedor der um argumento MATADOR sobre giro rápido ou margem de lucro real. 3. Não seja bonzinho. Exija números e praticidade. 4. NUNCA saia do personagem. Apenas responda com a sua fala direta.`
+            },
+            {
+                id: 'bibi',
+                name: 'Bibi Soares',
+                title: 'Consegue aprovar mix novo com a Bibi?',
+                subtitle: '42 anos · Gerente de Conveniência',
+                avatar: '👩🏻‍💼',
+                badges: [
+                    { text: 'Intermediário', classes: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20' },
+                    { text: 'Desconfiada', classes: 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' },
+                    { text: 'Reunião Agendada', classes: 'bg-blue-500/10 text-blue-400 border-blue-500/20' }
+                ],
+                rules: 'A Bibi é cética com inovações. Você tem 15 falas para aprovar a entrada de 2 produtos premium na geladeira dela.',
+                initialMessage: 'Olá. Se for para oferecer produto novo, já aviso que estou sem espaço físico na geladeira.',
+                prompt: `Você é "Bibi", gerente de uma loja de conveniência. Você é metódica e muito desconfiada. Seu maior medo é comprar produto que fica parado na prateleira, pois seu espaço é minúsculo. Regras: 1. Responda em no MÁXIMO 2 ou 3 frases. 2. Peça provas de que o produto vende. Fale que "a marca concorrente já me atende bem". 3. Só aceite a venda se o vendedor focar em teste de aceitação, combo ou argumento de giro garantido com marketing. 4. NUNCA saia do personagem.`
+            },
+            {
+                id: 'joao',
+                name: 'João Batista',
+                title: 'Consegue reativar a compra do João hoje?',
+                subtitle: '55 anos · Dono de Padaria/Lanchonete',
+                avatar: '👨🏽‍🦲',
+                badges: [
+                    { text: 'Evasivo', classes: 'bg-purple-500/10 text-purple-400 border-purple-500/20' },
+                    { text: 'Procrastinador', classes: 'bg-teal-500/10 text-teal-400 border-teal-500/20' },
+                    { text: 'Abordagem na Rota', classes: 'bg-blue-500/10 text-blue-400 border-blue-500/20' }
+                ],
+                rules: 'Ele parou de comprar há 30 dias. Seu objetivo em 10 falas é emitir um pedido na hora e cortar as desculpas dele.',
+                initialMessage: 'Fala, campeão! Tudo bem? Hoje o movimento tá meio devagar por aqui...',
+                prompt: `Você é "João", um dono de padaria/lanchonete muito simpático, mas que adora dar desculpas para não comprar hoje. Você está sem comprar da Ambev há 30 dias. Você diz coisas como: "Choveu no fds", "Estou com um pouquinho no estoque", "Semana que vem eu peço pelo app". Regras: 1. Responda em no MÁXIMO 2 frases. Seja amigável, chamando o vendedor de "campeão" ou "meu querido". 2. Fuja do fechamento empurrando para a semana que vem. 3. Só ceda se o vendedor criar um gatilho de escassez forte (ex: aumento de preço amanhã, feriado chegando, corte logístico). 4. NUNCA saia do personagem.`
+            },
+            {
+                id: 'marcos',
+                name: 'Marcos Silva',
+                title: 'Consegue evitar a recusa de entrega do Marcos?',
+                subtitle: '48 anos · Dono de Restaurante',
+                avatar: '🧑🏻‍🔧',
+                badges: [
+                    { text: 'Crítico', classes: 'bg-pink-500/10 text-pink-400 border-pink-500/20' },
+                    { text: 'Inseguro', classes: 'bg-slate-500/10 text-slate-400 border-slate-500/20' },
+                    { text: 'Pós-Venda/Fechamento', classes: 'bg-blue-500/10 text-blue-400 border-blue-500/20' }
+                ],
+                rules: 'O Marcos aceita o pedido fácil, mas devolve na entrega. Use suas 15 falas para criar um compromisso inquebrável com ele hoje.',
+                initialMessage: 'E aí... Escuta, aquele último pedido veio com o boleto muito curto, viu? Mas bota aí umas 5 caixas.',
+                prompt: `Você é "Marcos", dono de um restaurante. Sua tática para se livrar de vendedores chatos é dizer "pode mandar umas 5 caixas". Mas no fundo, você planeja recusar a entrega quando o caminhão chegar, alegando que o boleto ficou curto ou faltou espaço. Regras: 1. Responda em no MÁXIMO 2 frases. 2. Seja fácil para dizer o primeiro "sim", mas demonstre falta de compromisso real. 3. Se o vendedor não tentar "amarrar" o compromisso (confirmar vencimento, espaço físico na data de entrega), finja concordar de forma evasiva. 4. O objetivo do vendedor é garantir que você não vai devolver. Resista a se comprometer formalmente. 5. NUNCA saia do personagem.`
+            }
+        ];
+
+        let API_URL = '/api/generate';
+        if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:") {
+            API_URL = "https://dmc-copilot.vercel.app/api/generate";
         }
-    ];
 
-    let API_URL = '/api/generate';
-    if (window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" || window.location.protocol === "file:") {
-        API_URL = "https://dmc-copilot.vercel.app/api/generate";
-    } // Usa o mesmo endpoint do copiloto (Gemini)
-    const MAX_TURNS = 10;
-    
-    let currentPersona = null;
-    let turnsLeft = MAX_TURNS;
-    let chatHistory = [];
-    
-    // ---------------- INITIALIZATION ----------------
-    function renderPersonas() {
-        const grid = document.getElementById('personas-screen');
-        PERSONAS.forEach(p => {
-            grid.innerHTML += `
-                <div class="persona-card" onclick="startSimulation('${p.id}')">
-                    <h3>${p.name}</h3>
-                    <span class="difficulty ${p.diffClass}">${p.difficulty}</span>
-                    <p>${p.desc}</p>
-                    <button class="action-btn" style="height:40px; margin-top:10px;">Selecionar Cliente ➔</button>
+        const MAX_TURNS = 15;
+        let currentPersona = PERSONAS[0];
+        let turnsLeft = MAX_TURNS;
+        let chatHistory = [];
+
+        // Inicia UI
+        function initApp() {
+            renderPersonaSelector();
+            selectPersona(PERSONAS[0].id);
+        }
+
+        // Renderiza os cards do carrossel na Vitrine
+        function renderPersonaSelector() {
+            const list = document.getElementById('persona-list');
+            list.innerHTML = '';
+            PERSONAS.forEach(p => {
+                const isActive = p.id === currentPersona.id;
+                list.innerHTML += `
+                    <div onclick="selectPersona('${p.id}')" class="flex-shrink-0 w-64 p-5 rounded-2xl cursor-pointer border-2 transition-all duration-300 ${isActive ? 'border-blue-500 bg-blue-900/20 shadow-lg shadow-blue-500/10' : 'border-slate-800 bg-cardbg hover:border-slate-600'}">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-12 h-12 rounded-full bg-slate-800 flex items-center justify-center text-2xl border border-slate-700">${p.avatar}</div>
+                            <div>
+                                <h4 class="font-bold text-slate-200">${p.name.split(' ')[0]}</h4>
+                                <span class="text-xs font-semibold ${p.badges[0].classes.split(' ')[1]}">${p.badges[0].text}</span>
+                            </div>
+                        </div>
+                        <p class="text-xs text-slate-400 leading-relaxed line-clamp-3">${p.desc || p.rules}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Seleciona Persona e atualiza Hero Section
+        function selectPersona(id) {
+            currentPersona = PERSONAS.find(p => p.id === id);
+            
+            document.getElementById('hero-avatar').innerText = currentPersona.avatar;
+            document.getElementById('hero-title').innerText = currentPersona.title;
+            document.getElementById('hero-subtitle').innerText = currentPersona.subtitle;
+            document.getElementById('hero-desc').innerText = currentPersona.rules;
+            
+            const badgesContainer = document.getElementById('hero-badges');
+            badgesContainer.innerHTML = currentPersona.badges.map(b => 
+                `<span class="px-4 py-1.5 rounded-full text-sm font-semibold border ${b.classes}">${b.text}</span>`
+            ).join('');
+            
+            renderPersonaSelector(); // Update borders
+        }
+
+        // Botão "Iniciar Desafio"
+        function startChallenge() {
+            document.getElementById('landing-screen').classList.add('hidden');
+            document.getElementById('main-header').classList.add('-translate-y-full'); // Esconde header main
+            document.getElementById('chat-screen').classList.remove('hidden');
+            
+            // Setup Header do Chat
+            document.getElementById('chat-header-avatar').innerText = currentPersona.avatar;
+            document.getElementById('chat-header-name').innerText = currentPersona.name;
+            document.getElementById('chat-header-badges').innerHTML = currentPersona.badges.slice(0,2).map(b => 
+                `<span class="text-[0.65rem] uppercase font-bold tracking-wider ${b.classes.split(' ')[1]}">${b.text}</span>`
+            ).join('<span class="text-slate-600 px-1">•</span>');
+            
+            // Reset state
+            turnsLeft = MAX_TURNS;
+            chatHistory = [];
+            document.getElementById('chat-messages').innerHTML = '';
+            
+            updateTurnCounter();
+            addMessage('bot', currentPersona.initialMessage);
+        }
+
+        function updateTurnCounter() {
+            const counter = document.getElementById('turn-counter');
+            counter.innerHTML = `<span class="w-2 h-2 rounded-full ${turnsLeft <= 3 ? 'bg-red-500 animate-pulse' : 'bg-blue-500 animate-pulse'}"></span> ${turnsLeft}/${MAX_TURNS} Turnos`;
+            if (turnsLeft <= 3) {
+                counter.classList.replace('text-slate-200', 'text-red-400');
+            }
+        }
+
+        function addMessage(sender, text) {
+            const chatContainer = document.getElementById('chat-messages');
+            const isBot = sender === 'bot';
+            const avatar = isBot ? currentPersona.avatar : '👤';
+            const bubbleClasses = isBot 
+                ? 'bg-slate-800 text-slate-200 rounded-tl-sm border border-slate-700' 
+                : 'bg-blue-600 text-white rounded-tr-sm shadow-md shadow-blue-900/20';
+            const align = isBot ? '' : 'flex-row-reverse';
+            
+            let audioBtn = isBot ? `
+                <button onclick="speakText(this.parentElement.innerText.split('Ouvir Fala')[0])" class="mt-3 flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-white transition-colors">
+                    <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20"><path d="M9.383 3.076A1 1 0 0110 4v12a1 1 0 01-1.707.707L4.586 13H2a1 1 0 01-1-1V8a1 1 0 011-1h2.586l3.707-3.707a1 1 0 011.09-.217zM14.657 2.929a1 1 0 011.414 0A9.972 9.972 0 0119 10a9.972 9.972 0 01-2.929 7.071 1 1 0 01-1.414-1.414A7.971 7.971 0 0017 10c0-2.21-.894-4.208-2.343-5.657a1 1 0 010-1.414zm-2.829 2.828a1 1 0 011.415 0A5.983 5.983 0 0115 10a5.984 5.984 0 01-1.757 4.243 1 1 0 01-1.415-1.415A3.984 3.984 0 0013 10a3.983 3.983 0 00-1.172-2.828 1 1 0 010-1.415z"></path></svg>
+                    Ouvir Fala
+                </button>` : '';
+
+            const msgHTML = `
+                <div class="flex gap-4 ${align} animate-fade-in-up">
+                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-xl shrink-0 ${isBot ? 'bg-slate-700' : 'bg-blue-800 border border-blue-500'}">
+                        ${avatar}
+                    </div>
+                    <div class="p-5 rounded-3xl max-w-[85%] md:max-w-2xl leading-relaxed text-[0.95rem] ${bubbleClasses}">
+                        <p>${text}</p>
+                        ${audioBtn}
+                    </div>
                 </div>
             `;
-        });
-    }
-
-    renderPersonas();
-
-    // ---------------- SIMULATION LOGIC ----------------
-    function startSimulation(personaId) {
-        currentPersona = PERSONAS.find(p => p.id === personaId);
-        turnsLeft = MAX_TURNS;
-        chatHistory = [];
-        
-        document.getElementById('personas-screen').style.display = 'none';
-        document.getElementById('chat-screen').style.display = 'flex';
-        
-        document.getElementById('chat-persona-name').innerText = currentPersona.name;
-        document.getElementById('chat-persona-desc').innerText = currentPersona.desc;
-        updateTurnCounter();
-        
-        // Initial greeting
-        addMessage('bot', currentPersona.initialMessage);
-    }
-
-    function updateTurnCounter() {
-        document.getElementById('turn-counter').innerText = `Turnos Restantes: ${turnsLeft}/${MAX_TURNS}`;
-        if(turnsLeft <= 3) document.getElementById('turn-counter').style.backgroundColor = 'rgba(239, 68, 68, 0.2)';
-    }
-
-    function addMessage(sender, text) {
-        const msgDiv = document.createElement('div');
-        msgDiv.className = `msg ${sender}`;
-        
-        let html = `<span>${text}</span>`;
-        if (sender === 'bot') {
-            html += `<br><button class="tts-btn" onclick="speakText(this.previousElementSibling.previousElementSibling.innerText)">🔊 Ouvir Fala</button>`;
-        }
-        
-        msgDiv.innerHTML = html;
-        document.getElementById('chat-messages').appendChild(msgDiv);
-        document.getElementById('chat-messages').scrollTop = document.getElementById('chat-messages').scrollHeight;
-        
-        if(text) {
-            chatHistory.push({ role: sender === 'bot' ? 'model' : 'user', content: text });
-        }
-    }
-
-    async function sendMessage() {
-        const inputEl = document.getElementById('user-input');
-        const text = inputEl.value.trim();
-        if (!text) return;
-
-        addMessage('user', text);
-        inputEl.value = '';
-        turnsLeft--;
-        updateTurnCounter();
-
-        if (turnsLeft <= 0) {
-            endSimulation();
-            return;
-        }
-
-        // Bloquear input
-        inputEl.disabled = true;
-        document.getElementById('send-btn').disabled = true;
-        document.getElementById('chat-loading').style.display = 'flex';
-
-        // Construir prompt para LLM
-        const prompt = buildSimPrompt();
-
-        try {
-            const response = await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt }),
-            });
-            if (!response.ok) {
-                const errText = await response.text();
-                console.error("API Error Response:", response.status, errText);
-                throw new Error("HTTP error " + response.status);
+            chatContainer.insertAdjacentHTML('beforeend', msgHTML);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            if (text) {
+                chatHistory.push({ role: sender === 'bot' ? 'model' : 'user', content: text });
             }
-            const data = await response.json();
-            if (data.error) {
-                console.error("API Payload Error:", data.error);
-                throw new Error(data.error);
-            }
-            addMessage('bot', data.result || "Desculpe, a IA retornou uma resposta vazia.");
-        } catch(e) {
-            console.error("Fetch Error:", e);
-            addMessage('bot', "Desculpe, tive um problema de conexão. Detalhes no console.");
         }
 
-        // Liberar input
-        inputEl.disabled = false;
-        document.getElementById('send-btn').disabled = false;
-        document.getElementById('chat-loading').style.display = 'none';
-        inputEl.focus();
-    }
+        async function sendMessage() {
+            const inputEl = document.getElementById('user-input');
+            const text = inputEl.value.trim();
+            if (!text) return;
 
-    function buildSimPrompt() {
-        let conversation = chatHistory.map(m => `${m.role === 'user' ? 'VENDEDOR' : 'CLIENTE'}: ${m.content}`).join('\\n');
-        return `${currentPersona.prompt}\\n\\n[HISTÓRICO DA CONVERSA AQUI]\\n${conversation}\\n\\nResponda apenas com a próxima fala do CLIENTE.`;
-    }
+            addMessage('user', text);
+            inputEl.value = '';
+            
+            // Auto resize fix para a text-area
+            inputEl.style.height = 'auto';
+            
+            turnsLeft--;
+            updateTurnCounter();
 
-    // ---------------- COACH REPORT LOGIC ----------------
-    async function endSimulation() {
-        document.getElementById('chat-screen').style.display = 'none';
-        document.getElementById('coach-screen').style.display = 'block';
-        
-        const coachPrompt = `Você é um Treinador de Vendas Expert (Coach) da Ambev/BEES. 
-Avalie a transcrição abaixo da negociação entre um Vendedor (nosso usuário) e o Cliente (Persona: ${currentPersona.name}). 
-O vendedor teve ${MAX_TURNS - turnsLeft} turnos de interação.
+            if (turnsLeft <= 0) {
+                endChallenge();
+                return;
+            }
 
-TRANSCRIÇÃO DA NEGOCIAÇÃO:
+            // Lock input
+            inputEl.disabled = true;
+            document.getElementById('send-btn').disabled = true;
+            document.getElementById('chat-loading').classList.remove('hidden');
+            document.getElementById('chat-loading').classList.add('flex');
+            document.getElementById('chat-loading').innerHTML = `
+                <svg class="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+                ${currentPersona.name.split(' ')[0]} está digitando...`;
+
+            // Prompt building
+            let conversation = chatHistory.map(m => `${m.role === 'user' ? 'VENDEDOR' : 'CLIENTE'}: ${m.content}`).join('\\n');
+            const prompt = `${currentPersona.prompt}\\n\\n[HISTÓRICO DA CONVERSA AQUI]\\n${conversation}\\n\\nResponda apenas com a próxima fala do CLIENTE.`;
+
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt }),
+                });
+                if (!response.ok) {
+                    throw new Error("HTTP error " + response.status);
+                }
+                const data = await response.json();
+                if (data.error) throw new Error(data.error);
+                
+                addMessage('bot', data.result || "Sem resposta.");
+            } catch(e) {
+                console.error("Fetch Error:", e);
+                addMessage('bot', "Tive um problema de conexão. Poderia repetir?");
+            }
+
+            // Unlock input
+            inputEl.disabled = false;
+            document.getElementById('send-btn').disabled = false;
+            document.getElementById('chat-loading').classList.add('hidden');
+            document.getElementById('chat-loading').classList.remove('flex');
+            inputEl.focus();
+        }
+
+        async function endChallenge() {
+            document.getElementById('chat-screen').classList.add('hidden');
+            document.getElementById('coach-screen').classList.remove('hidden');
+            
+            const coachPrompt = `Você é um Treinador de Vendas Expert (Coach) da Ambev/BEES. Avalie a transcrição abaixo da negociação entre um Vendedor e o Cliente (Persona: ${currentPersona.name}). O vendedor teve ${MAX_TURNS - turnsLeft} turnos.
+TRANSCRIÇÃO:
 ${chatHistory.map(m => `${m.role === 'user' ? 'VENDEDOR' : 'CLIENTE'}: ${m.content}`).join('\\n')}
 
-Você deve gerar um relatório RIGOROSO, analítico e focado em produtividade de campo. Use formatação Markdown.
-ESTRUTURA OBRIGATÓRIA DA RESPOSTA:
-<h3>💪 Pontos Fortes</h3>
-(Liste o que o vendedor fez bem)
+Gere um relatório rigoroso em Markdown com a seguinte estrutura:
+### 💪 Pontos Fortes
+(o que ele fez bem)
+### ⚠️ Oportunidades Perdidas
+(onde cedeu ou não contornou)
+### 🚀 Como Melhorar na Prática
+(roteiros literais do que dizer para melhorar)`;
 
-<h3>⚠️ Oportunidades Perdidas</h3>
-(Onde ele cedeu fácil, faltou ancoragem, faltou gatilho de escassez, ou não contornou bem a objeção)
-
-<h3>🚀 Como Melhorar na Prática</h3>
-(Dê exemplos práticos de falas (roteiro) que funcionariam perfeitamente contra essa persona específica.)`;
-
-        try {
-            const response = await fetch(API_URL, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ prompt: coachPrompt }),
-            });
-            if (!response.ok) {
-                const errText = await response.text();
-                console.error("Coach API Error Response:", response.status, errText);
-                throw new Error("HTTP error " + response.status);
-            }
-            const data = await response.json();
-            if (data.error) {
-                console.error("Coach API Payload Error:", data.error);
-                throw new Error(data.error);
-            }
-            
-            document.getElementById('coach-loading').style.display = 'none';
-            const reportContent = document.getElementById('coach-report-content');
-            reportContent.style.display = 'block';
-            
-            // Basic Markdown Parsing
-            let htmlReport = data.result
-                .replace(/### (.*?)\\n/g, '<h4>$1</h4>')
-                .replace(/\\*\\*(.*?)\\*\\*/g, '<strong>$1</strong>')
-                .replace(/\\n/g, '<br>');
+            try {
+                const response = await fetch(API_URL, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ prompt: coachPrompt }),
+                });
+                if (!response.ok) throw new Error("HTTP error");
+                const data = await response.json();
                 
-            reportContent.innerHTML = `
-                <div class="coach-report">
-                    <h2>🎓 Relatório do Treinador IA <button class="tts-btn" style="margin-left:15px; font-size:1rem;" onclick="speakText(this.parentElement.parentElement.innerText)">🔊 Ouvir Feedback</button></h2>
-                    <div class="report-section">${htmlReport}</div>
-                </div>
-            `;
-        } catch(e) {
-            document.getElementById('coach-loading').innerHTML = "Erro ao gerar relatório do Coach.";
+                document.getElementById('coach-loading').classList.add('hidden');
+                document.getElementById('coach-footer').style.display = 'block';
+                const reportContent = document.getElementById('coach-report-content');
+                reportContent.classList.remove('hidden');
+                
+                // Markdown To HTML simple parser (Tailwind styled)
+                let htmlReport = (data.result || "Erro ao processar.")
+                    .replace(/### (.*?)\n/g, '<h4 class="text-xl md:text-2xl font-bold text-white mt-10 mb-4 border-l-4 border-blue-500 pl-4">$1</h4>')
+                    .replace(/\*\*(.*?)\*\*/g, '<strong class="text-blue-300 font-semibold">$1</strong>')
+                    .replace(/\n\n/g, '</p><p class="mt-4">')
+                    .replace(/\n/g, '<br>');
+                    
+                reportContent.innerHTML = `<p>${htmlReport}</p>`;
+            } catch(e) {
+                console.error("Coach Error:", e);
+                document.getElementById('coach-loading').innerHTML = `<p class="text-red-400">Erro ao carregar avaliação do treinador.</p>`;
+            }
         }
-    }
 
-    // ---------------- SPEECH RECOGNITION (MIC) ----------------
-    let recognition;
-    let isRecording = false;
-
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        recognition = new SpeechRecognition();
-        recognition.lang = 'pt-BR';
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
-
-        recognition.onresult = (event) => {
-            const transcript = event.results[0][0].transcript;
-            const inputEl = document.getElementById('user-input');
-            inputEl.value = (inputEl.value + ' ' + transcript).trim();
-        };
-
-        recognition.onerror = (event) => {
-            console.error('Erro no microfone:', event.error);
-            stopMic();
-        };
-        
-        recognition.onend = () => { stopMic(); };
-    }
-
-    function toggleMic() {
-        if (!recognition) {
-            alert('Seu navegador não suporta reconhecimento de voz.');
-            return;
+        // MIC (STT) 
+        let recognition;
+        let isRecording = false;
+        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            recognition = new SpeechRecognition();
+            recognition.lang = 'pt-BR';
+            recognition.interimResults = false;
+            
+            recognition.onresult = (event) => {
+                const transcript = event.results[0][0].transcript;
+                const inputEl = document.getElementById('user-input');
+                inputEl.value = (inputEl.value + ' ' + transcript).trim();
+            };
+            recognition.onerror = () => stopMic();
+            recognition.onend = () => stopMic();
         }
-        if (isRecording) { stopMic(); } 
-        else { startMic(); }
-    }
 
-    function startMic() {
-        isRecording = true;
-        document.getElementById('mic-btn').classList.add('recording');
-        recognition.start();
-    }
-
-    function stopMic() {
-        isRecording = false;
-        document.getElementById('mic-btn').classList.remove('recording');
-        recognition.stop();
-    }
-
-    // ---------------- TEXT TO SPEECH (TTS) ----------------
-    function speakText(text) {
-        if (!('speechSynthesis' in window)) {
-            alert('Seu navegador não suporta Text-to-Speech.');
-            return;
+        function toggleMic() {
+            if (!recognition) return alert('Seu navegador não suporta reconhecimento de voz.');
+            isRecording ? stopMic() : startMic();
         }
-        window.speechSynthesis.cancel(); // Parar fala atual se houver
-        const utterance = new SpeechSynthesisUtterance(text.replace(/🔊.*$/g, '')); // Remover texto do botão
-        utterance.lang = 'pt-BR';
-        utterance.rate = 1.1; // Fala levemente mais rápida (foco em produtividade)
-        window.speechSynthesis.speak(utterance);
-    }
-</script>
 
+        function startMic() {
+            isRecording = true;
+            document.getElementById('mic-btn').classList.add('recording');
+            recognition.start();
+        }
+
+        function stopMic() {
+            isRecording = false;
+            document.getElementById('mic-btn').classList.remove('recording');
+            try { recognition.stop(); } catch(e){}
+        }
+
+        // TTS
+        function speakText(text) {
+            if (!('speechSynthesis' in window)) return alert('Seu navegador não suporta síntese de voz.');
+            window.speechSynthesis.cancel();
+            const cleanText = text.replace(/🔊.*?Fala/g, '').replace(/Ouvir Feedback/g, '').trim();
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'pt-BR';
+            utterance.rate = 1.1;
+            window.speechSynthesis.speak(utterance);
+        }
+
+        // Auto-resize textarea
+        document.getElementById('user-input').addEventListener('input', function() {
+            this.style.height = 'auto';
+            let newHeight = Math.min(this.scrollHeight, 120);
+            this.style.height = newHeight + 'px';
+        });
+
+        // Run Init
+        window.onload = initApp;
+    </script>
 </body>
 </html>
