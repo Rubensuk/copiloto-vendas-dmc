@@ -696,6 +696,53 @@
             transform: translateX(22px);
             background-color: #080b10;
         }
+    
+        /* Score 5 Responsive Adjustments */
+        .score5-top-grid, .score5-agg-grid {
+            display: grid;
+            gap: 0.6rem;
+            margin-top: 1rem;
+        }
+        
+        .score5-top-grid { grid-template-columns: repeat(4, 1fr); }
+        .score5-agg-grid { grid-template-columns: repeat(4, 1fr); }
+
+        .pdv-list-header {
+            display: flex; 
+            padding: 10px 15px; 
+            background: rgba(0,0,0,0.1); 
+            font-weight: bold; 
+            font-size: 0.9rem; 
+            border-bottom: 2px solid rgba(255,255,255,0.1); 
+            margin-bottom: 5px;
+        }
+        .pdv-summary {
+            padding: 12px 15px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            list-style: none;
+        }
+
+        @media (max-width: 768px) {
+            .score5-top-grid, .score5-agg-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .pdv-list-header {
+                font-size: 0.75rem;
+                padding: 10px 5px;
+            }
+            .pdv-summary {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.4rem;
+                padding: 10px 10px;
+            }
+            .pdv-summary > div {
+                text-align: left !important;
+                width: 100%;
+            }
+        }
     </style>
 
     <style>
@@ -755,6 +802,53 @@
         .pdv-details {
             padding: 15px; 
             border-top: 1px solid rgba(255,255,255,0.05);
+        }
+    
+        /* Score 5 Responsive Adjustments */
+        .score5-top-grid, .score5-agg-grid {
+            display: grid;
+            gap: 0.6rem;
+            margin-top: 1rem;
+        }
+        
+        .score5-top-grid { grid-template-columns: repeat(4, 1fr); }
+        .score5-agg-grid { grid-template-columns: repeat(4, 1fr); }
+
+        .pdv-list-header {
+            display: flex; 
+            padding: 10px 15px; 
+            background: rgba(0,0,0,0.1); 
+            font-weight: bold; 
+            font-size: 0.9rem; 
+            border-bottom: 2px solid rgba(255,255,255,0.1); 
+            margin-bottom: 5px;
+        }
+        .pdv-summary {
+            padding: 12px 15px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            list-style: none;
+        }
+
+        @media (max-width: 768px) {
+            .score5-top-grid, .score5-agg-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .pdv-list-header {
+                font-size: 0.75rem;
+                padding: 10px 5px;
+            }
+            .pdv-summary {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.4rem;
+                padding: 10px 10px;
+            }
+            .pdv-summary > div {
+                text-align: left !important;
+                width: 100%;
+            }
         }
     </style>
     
@@ -1247,7 +1341,7 @@
                 </div>
 
                 <!-- 4 Métricas de Topo (Score 5 Executivo) -->
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin-top: 1rem;">
+                <div class="score5-top-grid">
                     <div style="background: rgba(0, 255, 136, 0.08); border: 1px solid rgba(0, 255, 136, 0.2); padding: 0.75rem; border-radius: 10px; text-align: center;">
                         <div style="font-size: 0.7rem; color: var(--primary-accent); font-weight: 600;">⭐ Score 5 (PDVs)</div>
                         <div id="rn-score5-pdvs" style="font-size: 1.2rem; font-weight: 700; color: #00ff88; margin-top: 0.1rem;">0 de 0</div>
@@ -1267,7 +1361,7 @@
                 </div>
 
                 <!-- Métricas Agregadas (Barras de Progresso) -->
-                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.6rem; margin-top: 1rem;">
+                <div class="score5-top-grid">
                     <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.75rem; border-radius: 10px;">
                         <div style="font-size: 0.7rem; color: var(--text-secondary);">📦 RGB (Vasilhames)</div>
                         <div id="agg-rgb-text" style="font-size: 1.1rem; font-weight: 700; color: #fff; margin-top: 0.1rem;">0/0 cxs</div>
@@ -1757,7 +1851,7 @@
                 }
 
                 let html_lista = `
-                <div style="display:flex; padding:10px 15px; background:var(--table-header-bg, rgba(0,0,0,0.1)); font-weight:bold; font-size:0.9rem; border-bottom:2px solid var(--table-border, rgba(255,255,255,0.1)); margin-bottom:5px;">
+                <div class="pdv-list-header">
                     <div style="flex: 2;">🏪 NOME DO PDV</div>
                     <div style="flex: 1;">📊 SEGMENTO</div>
                     <div style="flex: 1;">🎯 STATUS</div>
@@ -1883,7 +1977,7 @@
                     
                     html_lista += `
                     <details class="pdv-row pdv-item" data-nome="${row['NOME PDV']?.toLowerCase() || ''}" data-chave="${row['CHAVE PDV'] || ''}" style="background: ${row_bg}; border: 1px solid ${border_color}; border-radius: 8px; margin-bottom: 8px; font-family: sans-serif;">
-                        <summary class="pdv-summary" style="padding: 12px 15px; cursor: pointer; display: flex; align-items: center; list-style: none;">
+                        <summary class="pdv-summary">
                             <div style="flex: 2; font-weight: bold; color: ${text_color};">${icone} ${row['NOME PDV'] || 'PDV'} ${badge_visita}</div>
                             <div style="flex: 1; font-size: 0.9rem; color: ${text_color};">${base}</div>
                             <div style="flex: 1; font-size: 0.9rem; font-weight: bold;">${status_txt}</div>
