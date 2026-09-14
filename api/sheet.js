@@ -11,6 +11,7 @@ export default async function handler(req, res) {
         
         // Retorna o CSV bruto para o frontend processar (ou poderíamos parsear aqui)
         res.setHeader('Content-Type', 'text/csv');
+        res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.status(200).send(csvText);
     } catch (error) {

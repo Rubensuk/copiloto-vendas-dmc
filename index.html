@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DMC Sales Copilot - Inteligência Comercial</title>
@@ -1392,9 +1393,15 @@
                             <option value="SAB">Sábado (SAB)</option>
                         </select>
                     </div>
+                    
                     <div class="calc-input-group">
                         <label for="busca-pdv-input">🔍 Filtrar por Nome do PDV ou Chave</label>
                         <input type="text" id="busca-pdv-input" placeholder="Ex: Bar do Zé ou 10492" oninput="filtrarPDVsPainel()">
+                        <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;" id="quick-filters">
+                            <button onclick="window.filtroStatus='FALTA_META'; filtrarPDVsPainel();" style="background: rgba(255,82,82,0.15); color: #ff5252; border: 1px solid #ff5252; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🔴 Falta Bater Meta</button>
+                            <button onclick="window.filtroStatus='BATEU_META'; filtrarPDVsPainel();" style="background: rgba(0,255,136,0.15); color: #00ff88; border: 1px solid #00ff88; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🟢 Meta Batida</button>
+                            <button onclick="window.filtroStatus='TODOS'; filtrarPDVsPainel();" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">Mostrar Todos</button>
+                        </div>
                     </div>
                 </div>
 
@@ -1983,6 +1990,15 @@
                         let pct_600 = meta_600 > 0 ? (real_600 / meta_600 * 100) : 0;
                         let pct_ln = meta_ln > 0 ? (real_ln / meta_ln * 100) : 0;
                         
+                        
+                        let insight = "";
+                        if (real_int < meta_int) insight = "Falta vender " + (meta_int - real_int) + " cx de 600ml.";
+                        else if (real_rgb < meta_rgb) insight = "Falta vender " + (meta_rgb - real_rgb) + " cx de Vasilhame (RGB).";
+                        else if (real_300 < meta_300) insight = "Falta vender " + (meta_300 - real_300) + " cx de 300ml.";
+                        
+                        if (insight !== "" && bateu === 0) {
+                            inner_html = `<div style="background: rgba(255, 204, 0, 0.15); border-left: 3px solid #ffcc00; padding: 10px; margin-bottom: 12px; border-radius: 4px; font-weight: bold; color: #ffcc00; font-size: 0.9rem;">💡 Foco da Visita: ${insight}</div>` + inner_html;
+                        }
                         inner_html += barraHTML(pct_600, `🍺 600ml — Meta: ${meta_600} | Real: ${real_600} | Falta: ${Math.max(0, meta_600 - real_600)}`);
                         inner_html += barraHTML(pct_ln, `🍾 Long Neck — Meta: ${meta_ln} | Real: ${real_ln} | Falta: ${Math.max(0, meta_ln - real_ln)}`);
                         
@@ -2034,7 +2050,7 @@
                     }
                     
                     html_lista += `
-                    <details class="pdv-row pdv-item" data-nome="${row['NOME PDV']?.toLowerCase() || ''}" data-chave="${row['CHAVE PDV'] || ''}" style="background: ${row_bg}; border: 1px solid ${border_color}; border-radius: 8px; margin-bottom: 8px; font-family: sans-serif;">
+                    <details class="pdv-row pdv-item" data-nome="${row['NOME PDV']?.toLowerCase() || ''}" data-chave="${row['CHAVE PDV'] || ''}" data-bateu="${bateu}" style="background: ${row_bg}; border: 1px solid ${border_color}; border-radius: 8px; margin-bottom: 8px; font-family: sans-serif;">
                         <summary class="pdv-summary">
                             <div style="flex: 2; font-weight: bold; color: ${text_color};">${icone} ${row['NOME PDV'] || 'PDV'} ${badge_visita}</div>
                             <div style="flex: 1; font-size: 0.9rem; color: ${text_color};">${base}</div>
@@ -2098,13 +2114,46 @@
             if (gapLn) gapLn.innerText = `--`;
         }
 
+        
+        window.filtroStatus = 'TODOS';
         function filtrarPDVsPainel() {
             const query = (document.getElementById('busca-pdv-input')?.value || '').trim().toLowerCase();
+            const items = document.querySelectorAll('.pdv-item');
+            let visiveis = 0;
+            
+            items.forEach(item => {
+                const nome = (item.getAttribute('data-nome') || '').toLowerCase();
+                const chave = (item.getAttribute('data-chave') || '').toLowerCase();
+                const bateu = item.getAttribute('data-bateu') === '1';
+                
+                let textMatch = nome.includes(query) || chave.includes(query);
+                let statusMatch = true;
+                
+                if (window.filtroStatus === 'FALTA_META') statusMatch = !bateu;
+                if (window.filtroStatus === 'BATEU_META') statusMatch = bateu;
+                
+                if (textMatch && statusMatch) {
+                    item.style.display = 'block';
+                    visiveis++;
+                } else {
+                    item.style.display = 'none';
+                }
+            });
+            
             const badge = document.getElementById('pdv-filtrado-badge');
             if (badge) {
-                badge.innerText = query ? `Filtro: "${query}"` : 'Todos os PDVs da rota';
+                badge.innerText = `Mostrando ${visiveis} PDVs`;
+            }
+            
+            // Highlight the active quick filter button
+            const btns = document.querySelectorAll('#quick-filters button');
+            if(btns.length > 0) {
+                btns[0].style.opacity = (window.filtroStatus === 'FALTA_META' || window.filtroStatus === 'TODOS') ? '1' : '0.5';
+                btns[1].style.opacity = (window.filtroStatus === 'BATEU_META' || window.filtroStatus === 'TODOS') ? '1' : '0.5';
+                btns[2].style.opacity = (window.filtroStatus === 'TODOS') ? '1' : '0.5';
             }
         }
+
 
         // Inicializa dados carregando do Drive
         carregarDadosDrive();
@@ -2440,5 +2489,14 @@ FORMATO OBRIGATÓRIO (Exatamente 3 seções, marcadas com **Título**):
             });
         });
     </script>
+
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW falhou: ', err));
+            });
+        }
+    </script>
 </body>
+
 </html>

@@ -1,0 +1,15 @@
+{
+  "name": "DMC Sales Copilot",
+  "short_name": "DMC Copilot",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#080b10",
+  "theme_color": "#00ff88",
+  "icons": [
+    {
+      "src": "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48Y2lyY2xlIGN4PSI1MCIgY3k9IjUwIiByPSI0OCIgZmlsbD0iIzAwZmY4OCIvPjx0ZXh0IHg9IjUwIiB5PSI2NCIgZm9udC1mYW1pbHk9ImFyaWFsIiBmb250LXNpemU9IjQwIiBmb250LXdlaWdodD0iYm9sZCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0iIzA4MGIxMCI+RE1DPC90ZXh0Pjwvc3ZnPg==",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml"
+    }
+  ]
+}

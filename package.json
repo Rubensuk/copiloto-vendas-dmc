@@ -6,5 +6,8 @@
   "description": "Sales Copilot front‑end + serverless Gemini API",
   "scripts": {
     "dev": "echo 'no dev server needed'"
+  },
+  "dependencies": {
+    "papaparse": "^5.7.0"
   }
 }
