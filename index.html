@@ -743,6 +743,34 @@
                 width: 100%;
             }
         }
+    
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
+            }
+            .header-actions {
+                flex-direction: column;
+                width: 100%;
+                gap: 8px;
+            }
+            .header-actions > * {
+                width: 100%;
+                justify-content: center;
+                margin-right: 0 !important;
+            }
+            main {
+                margin: 1rem auto;
+                padding: 0 1rem;
+            }
+        }
     </style>
 
     <style>
@@ -850,6 +878,34 @@
                 width: 100%;
             }
         }
+    
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                padding: 1rem;
+                gap: 1rem;
+            }
+            .header-actions {
+                flex-direction: column;
+                width: 100%;
+                gap: 8px;
+            }
+            .header-actions > * {
+                width: 100%;
+                justify-content: center;
+                margin-right: 0 !important;
+            }
+            main {
+                margin: 1rem auto;
+                padding: 0 1rem;
+            }
+        }
     </style>
     
 </head>
@@ -863,7 +919,8 @@
                 <p>Inteligência Comercial</p>
             </div>
         </div>
-        <a href="simulador.html" class="btn-limpar-campos" style="text-decoration: none; margin-right: 10px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid #3b82f6;" title="Ir para o Simulador de Vendas">🎮 Modo Treinamento</a>
+        <div class="header-actions">
+<a href="simulador.html" class="btn-limpar-campos" style="text-decoration: none; margin-right: 10px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid #3b82f6;" title="Ir para o Simulador de Vendas">🎮 Modo Treinamento</a>
         <button id="btn-theme-toggle" type="button" class="btn-limpar-campos" title="Alternar Tema Claro/Escuro" style="margin-right: 10px;">
             <span id="theme-icon">🌙</span>
             <span id="theme-text">Escuro</span>
@@ -876,7 +933,8 @@
             <span>Limpar Campos</span>
         </button>
 
-        <script>
+        </div>
+<script>
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('btn-limpar-campos')?.addEventListener('click', function(e) {
                 if (e) {
