@@ -7,7 +7,26 @@ export default async function handler(req, res) {
             return res.status(response.status).json({ error: 'Erro ao acessar Google Drive' });
         }
         
-        const csvText = await response.text();
+        
+        let csvText = await response.text();
+        
+        // --- INÍCIO DO TRATAMENTO DE CABEÇALHOS DUPLICADOS ---
+        let lines = csvText.split(/\r?\n/);
+        if (lines.length > 0) {
+            let headers = lines[0].split(',');
+            // Índices 19 a 35 são High End (SPT 600 até OUTROS LN ZERO)
+            for(let i = 19; i <= 35; i++) {
+                if(headers[i]) headers[i] = 'HE_' + headers[i].trim();
+            }
+            // Índices 36 a 56 são Core (AP 600 até OUTROS 1000)
+            for(let i = 36; i <= 56; i++) {
+                if(headers[i]) headers[i] = 'CORE_' + headers[i].trim();
+            }
+            lines[0] = headers.join(',');
+            csvText = lines.join('\n');
+        }
+        // --- FIM DO TRATAMENTO ---
+        
         
         // Retorna o CSV bruto para o frontend processar (ou poderíamos parsear aqui)
         res.setHeader('Content-Type', 'text/csv');
