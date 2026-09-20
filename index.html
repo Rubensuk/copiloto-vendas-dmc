@@ -1889,7 +1889,7 @@
                     return sum;
                 }
                 function barraHTML(pct, label) {
-                    let cor = pct < 40 ? '#ef4444' : (pct < 75 ? '#f59e0b' : '#22c55e');
+                    let cor = pct <= 50 ? '#ef4444' : (pct < 100 ? '#f59e0b' : '#22c55e');
                     let bg_bar = document.body.classList.contains('light-mode') ? '#e2e8f0' : '#2a2a3a';
                     return `
                     <div style="margin: 4px 0;">
@@ -1903,7 +1903,7 @@
                     </div>`;
                 }
                 function barraSmallHTML(pct) {
-                    let cor = pct < 40 ? '#ef4444' : (pct < 75 ? '#f59e0b' : '#22c55e');
+                    let cor = pct <= 50 ? '#ef4444' : (pct < 100 ? '#f59e0b' : '#22c55e');
                     let bg_bar = document.body.classList.contains('light-mode') ? '#e2e8f0' : '#2a2a3a';
                     return `
                     <div style="background: ${bg_bar}; border-radius: 4px; height: 10px; overflow: hidden;">
