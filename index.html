@@ -1810,7 +1810,13 @@
                             if (!rn) return;
 
                             if (!consolidado[rn]) {
-                                consolidado[rn] = { pdvs: 0, meta: 0, kpis_ok_sum: 0, rows: [] };
+                                consolidado[rn] = { pdvs: 0, meta: 0, kpis_ok_sum: 0, rows: [], _chaves: new Set() };
+                            }
+                            
+                            const chave = row['CHAVE PDV'];
+                            if (chave) {
+                                if (consolidado[rn]._chaves.has(chave)) return; // Ignora duplicatas exatas
+                                consolidado[rn]._chaves.add(chave);
                             }
 
                             consolidado[rn].pdvs += 1;
