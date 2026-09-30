@@ -2016,10 +2016,15 @@
                         let pct_ln_zero = meta_ln_zero > 0 ? (real_ln_zero / meta_ln_zero * 100) : (real_ln_zero > 0 ? 100 : 0);
                         
                         
+                        let faltas_he = [];
+                        if (real_600 < meta_600) faltas_he.push((meta_600 - real_600) + " cx de 600ml");
+                        if (real_ln < meta_ln) faltas_he.push((meta_ln - real_ln) + " cx de Long Neck");
+                        if (real_ln_zero < meta_ln_zero) faltas_he.push((meta_ln_zero - real_ln_zero) + " cx de Long Neck Zero");
+                        
                         let insight_he = "";
-                        if (real_600 < meta_600) insight_he = "Falta vender " + (meta_600 - real_600) + " cx de 600ml.";
-                        else if (real_ln < meta_ln) insight_he = "Falta vender " + (meta_ln - real_ln) + " cx de Long Neck.";
-                        else if (real_ln_zero < meta_ln_zero) insight_he = "Falta vender " + (meta_ln_zero - real_ln_zero) + " cx de Long Neck Zero.";
+                        if (faltas_he.length > 0) {
+                            insight_he = "Falta vender " + faltas_he.join(" + ") + ".";
+                        }
                         
                         if (insight_he !== "" && bateu === 0) {
                             inner_html = `<div style="background: rgba(255, 204, 0, 0.15); border-left: 3px solid #ffcc00; padding: 10px; margin-bottom: 12px; border-radius: 4px; font-weight: bold; color: #ffcc00; font-size: 0.9rem;">💡 Foco da Visita: ${insight_he}</div>` + inner_html;
@@ -2057,10 +2062,15 @@
                         let pct_300 = meta_300 > 0 ? (real_300 / meta_300 * 100) : (real_300 > 0 ? 100 : 0);
                         
                         
+                        let faltas_core = [];
+                        if (real_int < meta_int) faltas_core.push((meta_int - real_int) + " cx de Inteira (600ml)");
+                        if (real_rgb < meta_rgb) faltas_core.push((meta_rgb - real_rgb) + " cx de Vasilhame (RGB)");
+                        if (real_300 < meta_300) faltas_core.push((meta_300 - real_300) + " cx de 300ml");
+                        
                         let insight_core = "";
-                        if (real_int < meta_int) insight_core = "Falta vender " + (meta_int - real_int) + " cx de Inteira (600ml).";
-                        else if (real_rgb < meta_rgb) insight_core = "Falta vender " + (meta_rgb - real_rgb) + " cx de Vasilhame (RGB).";
-                        else if (real_300 < meta_300) insight_core = "Falta vender " + (meta_300 - real_300) + " cx de 300ml.";
+                        if (faltas_core.length > 0) {
+                            insight_core = "Falta vender " + faltas_core.join(" + ") + ".";
+                        }
                         
                         if (insight_core !== "" && bateu === 0) {
                             inner_html = `<div style="background: rgba(255, 204, 0, 0.15); border-left: 3px solid #ffcc00; padding: 10px; margin-bottom: 12px; border-radius: 4px; font-weight: bold; color: #ffcc00; font-size: 0.9rem;">💡 Foco da Visita: ${insight_core}</div>` + inner_html;
