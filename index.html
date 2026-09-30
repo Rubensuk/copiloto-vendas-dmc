@@ -1877,7 +1877,8 @@
             const listContainer = document.getElementById('pdv-list-container');
             if (listContainer) {
                 const HE_600 = {'HE_SPT 600': 'Spaten 600ml', 'HE_STL 600': 'Stella Artois 600ml', 'HE_STL PG 600': 'Stella Puro Gold 600ml', 'HE_BUD 600': 'Budweiser 600ml', 'HE_COR 600': 'Corona 600ml', 'HE_ORI 600': 'Original 600ml', 'HE_OUTROS 600': 'Outros 600ml'};
-                const HE_LN = {'HE_COR LN': 'Corona LN', 'HE_STL LN': 'Stella Artois LN', 'HE_STL PG LN': 'Stella Puro Gold LN', 'HE_SPT LN': 'Spaten LN', 'HE_MIC LN': 'Michelob Ultra LN', 'HE_OUTROS LN': 'Outros LN', 'HE_BUD LN': 'Budweiser LN', 'HE_BUD LN ZERO': 'Budweiser Zero LN', 'HE_COR LN ZERO': 'Corona Zero LN', 'HE_OUTROS LN ZERO': 'Outros Zero LN'};
+                const HE_LN = {'HE_COR LN': 'Corona LN', 'HE_STL LN': 'Stella Artois LN', 'HE_STL PG LN': 'Stella Puro Gold LN', 'HE_SPT LN': 'Spaten LN', 'HE_MIC LN': 'Michelob Ultra LN', 'HE_BUD LN': 'Budweiser LN', 'HE_OUTROS LN': 'Outros LN'};
+                const HE_LN_ZERO = {'HE_BUD LN ZERO': 'Budweiser Zero LN', 'HE_COR LN ZERO': 'Corona Zero LN', 'HE_OUTROS LN ZERO': 'Outros Zero LN'};
                 const CORE_600 = {'CORE_AP 600': 'Antarctica 600ml', 'CORE_BC 600': 'Brahma 600ml', 'CORE_BUD 600': 'Budweiser 600ml', 'CORE_ORI 600': 'Original 600ml', 'CORE_SK 600': 'Skol 600ml', 'CORE_SPT 600': 'Spaten 600ml', 'CORE_STL 600': 'Stella Artois 600ml', 'CORE_STL PG 600': 'Stella Puro Gold 600ml', 'CORE_OUTROS 600': 'Outros 600ml'};
                 const CORE_300 = {'CORE_AP 300': 'Antarctica 300ml', 'CORE_BC 300': 'Brahma 300ml', 'CORE_BUD 300': 'Budweiser 300ml', 'CORE_ORI 300': 'Original 300ml', 'CORE_SK 300': 'Skol 300ml', 'CORE_OUTROS 300': 'Outros 300ml'};
                 const CORE_1000 = {'CORE_AP 1000': 'Antarctica 1000ml', 'CORE_BC 1000': 'Brahma 1000ml', 'CORE_BUD 1000': 'Budweiser 1000ml', 'CORE_ORI 1000': 'Original 1000ml', 'CORE_SK 1000': 'Skol 1000ml', 'CORE_OUTROS 1000': 'Outros 1000ml'};
@@ -1955,7 +1956,7 @@
                 
                 filteredRows.forEach(row => {
                     agg.count_pdvs = (agg.count_pdvs || 0) + 1;
-                    if (safeInt(row['BATEU META']) === 1) agg.count_bateu_meta = (agg.count_bateu_meta || 0) + 1;
+
 
                     let base = row['BASE'] ? row['BASE'].trim().toUpperCase() : 'CORE';
                     if (!base) base = 'CORE';
@@ -1978,6 +1979,8 @@
                     let real_600 = calcReal(row, HE_600);
                     let meta_ln = safeInt(row['LN']);
                     let real_ln = calcReal(row, HE_LN);
+                    let meta_ln_zero = safeInt(row['LN ZERO']);
+                    let real_ln_zero = calcReal(row, HE_LN_ZERO);
                     let meta_int = safeInt(row['INTEIRA']);
                     let real_int = calcReal(row, CORE_600);
                     let meta_rgb = safeInt(row['RGB']);
@@ -1986,12 +1989,13 @@
                     let real_1000 = calcReal(row, CORE_1000);
                     let real_rgb = real_int + real_300 + real_1000;
                     
-                    let total_meta = base === 'HIGH END' ? (meta_600 + meta_ln) : (meta_int + meta_rgb + meta_300);
-                    let total_real = base === 'HIGH END' ? (real_600 + real_ln) : (real_int + real_rgb + real_300);
+                    let total_meta = base === 'HIGH END' ? (meta_600 + meta_ln + meta_ln_zero) : (meta_int + meta_rgb + meta_300);
+                    let total_real = base === 'HIGH END' ? (real_600 + real_ln + real_ln_zero) : (real_int + real_rgb + real_300);
                     let total_pct = total_meta > 0 ? (total_real / total_meta * 100) : (total_real > 0 ? 100 : 0);
                     
                     if (bateu === 1 || total_pct >= 100) {
                         status_txt = "<span style='color:#22c55e;'>✅ BATEU META</span>";
+                        agg.count_bateu_meta = (agg.count_bateu_meta || 0) + 1;
                     } else if (total_pct > 50) {
                         status_txt = "<span style='color:#f59e0b;'>⚠️ FORA DA META</span>";
                     } else {
@@ -2003,27 +2007,35 @@
                         agg.meta_600 += meta_600; agg.real_600 += real_600;
                         agg.meta_ln += meta_ln; agg.real_ln += real_ln;
                         
-                        meta_info = `600ml: ${meta_600} &nbsp;|&nbsp; Long Neck: ${meta_ln}`;
+                        let tem_zero = meta_ln_zero > 0 || real_ln_zero > 0;
                         
-                        let pct_600 = meta_600 > 0 ? (real_600 / meta_600 * 100) : 0;
-                        let pct_ln = meta_ln > 0 ? (real_ln / meta_ln * 100) : 0;
+                        meta_info = `600ml: ${meta_600} &nbsp;|&nbsp; LN: ${meta_ln}` + (tem_zero ? ` &nbsp;|&nbsp; LN Zero: ${meta_ln_zero}` : "");
+                        
+                        let pct_600 = meta_600 > 0 ? (real_600 / meta_600 * 100) : (real_600 > 0 ? 100 : 0);
+                        let pct_ln = meta_ln > 0 ? (real_ln / meta_ln * 100) : (real_ln > 0 ? 100 : 0);
+                        let pct_ln_zero = meta_ln_zero > 0 ? (real_ln_zero / meta_ln_zero * 100) : (real_ln_zero > 0 ? 100 : 0);
                         
                         
                         let insight_he = "";
                         if (real_600 < meta_600) insight_he = "Falta vender " + (meta_600 - real_600) + " cx de 600ml.";
                         else if (real_ln < meta_ln) insight_he = "Falta vender " + (meta_ln - real_ln) + " cx de Long Neck.";
+                        else if (real_ln_zero < meta_ln_zero) insight_he = "Falta vender " + (meta_ln_zero - real_ln_zero) + " cx de Long Neck Zero.";
                         
                         if (insight_he !== "" && bateu === 0) {
                             inner_html = `<div style="background: rgba(255, 204, 0, 0.15); border-left: 3px solid #ffcc00; padding: 10px; margin-bottom: 12px; border-radius: 4px; font-weight: bold; color: #ffcc00; font-size: 0.9rem;">💡 Foco da Visita: ${insight_he}</div>` + inner_html;
                         }
                         inner_html += barraHTML(pct_600, `🍺 600ml — Meta: ${meta_600} | Real: ${real_600} | Falta: ${Math.max(0, meta_600 - real_600)}`);
                         inner_html += barraHTML(pct_ln, `🍾 Long Neck — Meta: ${meta_ln} | Real: ${real_ln} | Falta: ${Math.max(0, meta_ln - real_ln)}`);
+                        if (tem_zero) {
+                            inner_html += barraHTML(pct_ln_zero, `🧊 Long Neck Zero — Meta: ${meta_ln_zero} | Real: ${real_ln_zero} | Falta: ${Math.max(0, meta_ln_zero - real_ln_zero)}`);
+                        }
                         
                         let mix_items = "";
                         const formatRow = (sq, nome, val) => `<tr style="border-bottom:1px solid ${border_color};"><td style="padding:6px 12px;text-align:center;">${sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;color:${text_color};">${nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;color:${text_color};">${val}</td></tr>`;
                         
                         for (let col in HE_600) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), HE_600[col], safeInt(row[col])); }
                         for (let col in HE_LN) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), HE_LN[col], safeInt(row[col])); }
+                        for (let col in HE_LN_ZERO) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), HE_LN_ZERO[col], safeInt(row[col])); }
                         
                         inner_html += `<div style="margin-top:15px; font-weight:bold;">📦 Mix de Produtos (High End)</div>
                         <table style="width:100%; border-collapse:collapse; margin-top:5px; background:var(--table-header-bg, rgba(0,0,0,0.1)); border-radius:5px; overflow:hidden;">
