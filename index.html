@@ -2925,6 +2925,16 @@
                         <button class="btn-copilot-modern" onclick="chamarCopiloto(${index}, this.previousElementSibling.querySelector('.ai-orb'))">🤖 Gerar Tática no Copiloto</button>
                     </div>`;
 
+                    
+                    let exec_html = `<div style="margin-top: 24px; margin-bottom: 24px;">
+                        <div style="font-weight: bold; margin-bottom: 12px; font-size: 0.95rem; color:var(--text-primary);">🧊 Execução no PDV & Trade</div>
+                        <div class="grid-responsive-3">
+                            ${card_coolers}
+                            ${card_trade}
+                            ${card_cupom}
+                        </div>
+                    </div>`;
+                    
                     inner_html += fat_html + exec_html + btn_copiloto;
 
                     html_lista += `
