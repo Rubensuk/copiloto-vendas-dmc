@@ -1113,7 +1113,73 @@
         transform: scale(0.96);
     }
     /* ----------------------------- */
-    </style>
+    
+    /* --- GV FILTERS AND DASHBOARD --- */
+    .filters-container {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 12px;
+        flex-wrap: wrap;
+    }
+    .filters-container .calc-input-group {
+        flex: 1;
+        min-width: 140px;
+    }
+    @media (max-width: 639px) {
+        .filters-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .filters-container .calc-input-group {
+            min-width: 0;
+        }
+        .filters-container .full-width-mobile {
+            grid-column: span 2;
+        }
+    }
+    .gv-dashboard {
+        background: rgba(30,41,59,0.5); 
+        border: 1px solid rgba(255,255,255,0.05); 
+        border-radius: 12px; 
+        padding: 16px; 
+        margin-bottom: 20px;
+    }
+    .gv-dash-title {
+        font-weight: bold; 
+        font-size: 1.05rem; 
+        color: #fff; 
+        margin-bottom: 16px; 
+        display: flex; 
+        justify-content: space-between; 
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+    .gv-dash-kpi {
+        background: rgba(0,0,0,0.3); 
+        padding: 12px; 
+        border-radius: 8px;
+    }
+    .gv-dash-kpi-title {
+        font-size: 0.7rem; 
+        color: #94a3b8; 
+        font-weight: bold; 
+        margin-bottom: 4px;
+        text-transform: uppercase;
+    }
+    .gv-dash-kpi-val {
+        font-size: 1.2rem; 
+        font-weight: bold; 
+    }
+    .gv-dash-vol {
+        background: rgba(0,0,0,0.2); 
+        padding: 8px; 
+        border-radius: 6px; 
+        text-align: center;
+    }
+    
+</style>
     
 
     <style>
@@ -1635,6 +1701,40 @@
             }
         };
     
+        
+        window.atualizarGVRNs = function() {
+            const gv = document.getElementById('select-gv').value;
+            const rnSelect = document.getElementById('select-rn-code');
+            const options = rnSelect.options;
+            
+            // Show/hide options based on GV
+            for (let i = 0; i < options.length; i++) {
+                if (options[i].value === "TODOS") continue;
+                if (gv === "TODOS" || options[i].classList.contains("gv-" + gv)) {
+                    options[i].style.display = "";
+                } else {
+                    options[i].style.display = "none";
+                }
+            }
+            
+            // Auto-select TODOS if current RN is hidden
+            const currentSelected = rnSelect.options[rnSelect.selectedIndex];
+            if (currentSelected && currentSelected.style.display === "none") {
+                rnSelect.value = "TODOS";
+            }
+            
+            // Update dashboard label
+            const label = document.getElementById('dash-gv-label');
+            if (label) {
+                if (gv === "TODOS") label.innerText = "Geral DMC";
+                else if (gv === "100") label.innerText = "Gerência 1";
+                else if (gv === "200") label.innerText = "Gerência 2";
+                else if (gv === "300") label.innerText = "Gerência 3";
+            }
+            
+            atualizarPainelRN();
+        };
+    
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('btn-limpar-campos')?.addEventListener('click', function(e) {
                 if (e) {
@@ -2046,42 +2146,52 @@
                     <button class="badge" onclick="this.innerText='⏳ Atualizando...'; carregarDadosDrive().then(() => this.innerText='🔄 Atualizar Dados');" style="background: rgba(0, 255, 136, 0.15); color: var(--primary-accent); font-size: 0.75rem; padding: 0.25rem 0.6rem; border-radius: 12px; font-weight: 600; cursor: pointer; border: 1px solid var(--primary-accent); transition: all 0.2s;">🔄 Atualizar Dados</button>
                 </div>
 
-                <div class="calc-grid-2">
+                <div class="filters-container">
+                    <div class="calc-input-group">
+                        <label for="select-gv">GERÊNCIA (GV)</label>
+                        <select id="select-gv" onchange="window.atualizarGVRNs()">
+                            <option value="TODOS">Todas as GVs</option>
+                            <option value="100">GV 1 (Série 100)</option>
+                            <option value="200">GV 2 (Série 200)</option>
+                            <option value="300">GV 3 (Série 300)</option>
+                        </select>
+                    </div>
                     <div class="calc-input-group">
                         <label for="select-rn-code">SELECIONE O (RN)</label>
                         <select id="select-rn-code" onchange="atualizarPainelRN()">
+                            <option value="TODOS">Todos os RNs</option>
                             <!-- Série 100 -->
-                            <option value="111">111</option>
-                            <option value="112">112</option>
-                            <option value="113">113</option>
-                            <option value="115">115</option>
-                            <option value="116">116</option>
-                            <option value="117">117</option>
-                            <option value="118">118</option>
-                            <option value="119">119</option>
-                            <option value="120">120</option>
-                            <option value="121">121</option>
+                            <option class="gv-100" value="111">111</option>
+                            <option class="gv-100" value="112">112</option>
+                            <option class="gv-100" value="113">113</option>
+                            <option class="gv-100" value="115">115</option>
+                            <option class="gv-100" value="116">116</option>
+                            <option class="gv-100" value="117">117</option>
+                            <option class="gv-100" value="118">118</option>
+                            <option class="gv-100" value="119">119</option>
+                            <option class="gv-100" value="120">120</option>
+                            <option class="gv-100" value="121">121</option>
                             <!-- Série 200 -->
-                            <option value="211">211</option>
-                            <option value="212">212</option>
-                            <option value="217">217</option>
-                            <option value="218">218</option>
-                            <option value="220">220</option>
-                            <option value="222">222</option>
+                            <option class="gv-200" value="211">211</option>
+                            <option class="gv-200" value="212">212</option>
+                            <option class="gv-200" value="217">217</option>
+                            <option class="gv-200" value="218">218</option>
+                            <option class="gv-200" value="220">220</option>
+                            <option class="gv-200" value="222">222</option>
                             <!-- Série 300 -->
-                            <option value="311" selected>311</option>
-                            <option value="312">312</option>
-                            <option value="313">313</option>
-                            <option value="314">314</option>
-                            <option value="315">315</option>
-                            <option value="316">316</option>
-                            <option value="317">317</option>
-                            <option value="318">318</option>
-                            <option value="319">319</option>
+                            <option class="gv-300" value="311">311</option>
+                            <option class="gv-300" value="312">312</option>
+                            <option class="gv-300" value="313">313</option>
+                            <option class="gv-300" value="314">314</option>
+                            <option class="gv-300" value="315">315</option>
+                            <option class="gv-300" value="316">316</option>
+                            <option class="gv-300" value="317">317</option>
+                            <option class="gv-300" value="318">318</option>
+                            <option class="gv-300" value="319">319</option>
                         </select>
                     </div>
-                    <div class="calc-input-group" style="margin-left: 10px;">
-                        <label for="select-dia-visita">Dia da Visita</label>
+                    <div class="calc-input-group">
+                        <label for="select-dia-visita">DIA DA VISITA</label>
                         <select id="select-dia-visita" onchange="atualizarPainelRN()">
                             <option value="TODOS">Todos os Dias</option>
                             <option value="SEG">Segunda-feira (SEG)</option>
@@ -2092,38 +2202,71 @@
                             <option value="SAB">Sábado (SAB)</option>
                         </select>
                     </div>
+                    <div class="calc-input-group full-width-mobile">
+                        <label for="busca-pdv-input">🔍 BUSCA / FILTRO</label>
+                        <input type="text" id="busca-pdv-input" placeholder="Ex: Bar do Zé ou Chave" oninput="filtrarPDVsPainel()">
+                    </div>
+                </div>
+                
+                <div style="display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap;" id="quick-filters">
+                    <button onclick="window.filtroStatus='FALTA_META'; filtrarPDVsPainel();" style="background: rgba(255,82,82,0.15); color: #ff5252; border: 1px solid #ff5252; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🔴 Falta Bater Meta</button>
+                    <button onclick="window.filtroStatus='BATEU_META'; filtrarPDVsPainel();" style="background: rgba(0,255,136,0.15); color: #00ff88; border: 1px solid #00ff88; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🟢 Meta Batida</button>
+                    <button onclick="window.filtroStatus='TODOS'; filtrarPDVsPainel();" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">Mostrar Todos</button>
+                </div>
+
+                <div class="gv-dashboard">
+                    <div class="gv-dash-title">
+                        <span>📊 Resumo Consolidado Comercial</span>
+                        <span id="dash-gv-label" style="background: rgba(59,130,246,0.2); color: #60a5fa; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem;">Geral DMC</span>
+                    </div>
                     
-                    <div class="calc-input-group">
-                        <label for="busca-pdv-input">🔍 Filtrar por Nome do PDV ou Chave</label>
-                        <input type="text" id="busca-pdv-input" placeholder="Ex: Bar do Zé ou 10492" oninput="filtrarPDVsPainel()">
-                        <div style="display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap;" id="quick-filters">
-                            <button onclick="window.filtroStatus='FALTA_META'; filtrarPDVsPainel();" style="background: rgba(255,82,82,0.15); color: #ff5252; border: 1px solid #ff5252; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🔴 Falta Bater Meta</button>
-                            <button onclick="window.filtroStatus='BATEU_META'; filtrarPDVsPainel();" style="background: rgba(0,255,136,0.15); color: #00ff88; border: 1px solid #00ff88; padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">🟢 Meta Batida</button>
-                            <button onclick="window.filtroStatus='TODOS'; filtrarPDVsPainel();" style="background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 4px 10px; border-radius: 12px; font-size: 0.75rem; cursor: pointer;">Mostrar Todos</button>
+                    <div class="grid-responsive-3" style="gap: 12px; margin-bottom: 12px;">
+                        <div class="gv-dash-kpi">
+                            <div class="gv-dash-kpi-title">Faturamento (R$)</div>
+                            <div class="gv-dash-kpi-val" style="color: #fbbf24;" id="dash-fat-real">R$ 0,00</div>
+                            <div style="font-size: 0.75rem; color: #ef4444; font-weight: bold; margin-top: 4px;" id="dash-fat-gap">Gap: R$ 0,00</div>
+                        </div>
+                        <div class="gv-dash-kpi">
+                            <div class="gv-dash-kpi-title">Metas Batidas / Carteira</div>
+                            <div class="gv-dash-kpi-val" style="color: #00ff88;" id="dash-pdvs-bateu">0 / 0</div>
+                            <div style="font-size: 0.75rem; color: #94a3b8; font-weight: bold; margin-top: 4px;" id="dash-pdvs-pct">0% de Sucesso</div>
+                        </div>
+                        <div class="gv-dash-kpi">
+                            <div class="gv-dash-kpi-title">Métricas de Mix</div>
+                            <div style="display:flex; justify-content:space-between; margin-top:4px;">
+                                <span style="font-size:0.8rem; color:#cbd5e1;">Core:</span>
+                                <span style="font-size:0.85rem; font-weight:bold; color:#fff;" id="dash-pdvs-core">0</span>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-top:2px;">
+                                <span style="font-size:0.8rem; color:#cbd5e1;">High End:</span>
+                                <span style="font-size:0.85rem; font-weight:bold; color:#fff;" id="dash-pdvs-he">0</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 8px;">
+                        <div class="gv-dash-vol">
+                            <div class="gv-dash-kpi-title">📦 RGB</div>
+                            <div class="gv-dash-kpi-val" style="color: #fff;" id="dash-rgb-val">0/0</div>
+                            <div style="font-size: 0.7rem; color: #64748b; margin-top: 2px;" id="dash-rgb-pct">0%</div>
+                        </div>
+                        <div class="gv-dash-vol">
+                            <div class="gv-dash-kpi-title">🍺 600ml</div>
+                            <div class="gv-dash-kpi-val" style="color: #fff;" id="dash-600-val">0/0</div>
+                            <div style="font-size: 0.7rem; color: #64748b; margin-top: 2px;" id="dash-600-pct">0%</div>
+                        </div>
+                        <div class="gv-dash-vol">
+                            <div class="gv-dash-kpi-title">🍾 Long Neck</div>
+                            <div class="gv-dash-kpi-val" style="color: #fff;" id="dash-ln-val">0/0</div>
+                            <div style="font-size: 0.7rem; color: #64748b; margin-top: 2px;" id="dash-ln-pct">0%</div>
+                        </div>
+                        <div class="gv-dash-vol">
+                            <div class="gv-dash-kpi-title">🥃 300ml</div>
+                            <div class="gv-dash-kpi-val" style="color: #fff;" id="dash-300-val">0/0</div>
+                            <div style="font-size: 0.7rem; color: #64748b; margin-top: 2px;" id="dash-300-pct">0%</div>
                         </div>
                     </div>
                 </div>
-
-                <!-- 4 Métricas de Topo (Score 5 Executivo) -->
-                <div class="score5-top-grid">
-                    <div style="background: rgba(0, 255, 136, 0.08); border: 1px solid rgba(0, 255, 136, 0.2); padding: 0.75rem; border-radius: 10px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: var(--primary-accent); font-weight: 600;">⭐ Score 5 (PDVs)</div>
-                        <div id="rn-score5-pdvs" style="font-size: 1.2rem; font-weight: 700; color: #00ff88; margin-top: 0.1rem;">0 de 0</div>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.75rem; border-radius: 10px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 600;">🟡 PDVs Core</div>
-                        <div id="rn-pdvs-core" style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-top: 0.1rem;">0</div>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.75rem; border-radius: 10px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 600;">💎 PDVs High End</div>
-                        <div id="rn-pdvs-he" style="font-size: 1.2rem; font-weight: 700; color: #fff; margin-top: 0.1rem;">0</div>
-                    </div>
-                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 0.75rem; border-radius: 10px; text-align: center;">
-                        <div style="font-size: 0.7rem; color: var(--text-secondary); font-weight: 600;">✅ Bateram Meta (Geral)</div>
-                        <div id="rn-meta-batida" style="font-size: 1.2rem; font-weight: 700; color: #00ff88; margin-top: 0.1rem;">0 PDVs</div>
-                    </div>
-                </div>
-
                 <!-- Lista Expandível de Clientes (Substitui Matriz de Gaps) -->
                 <div id="pdv-list-container" style="margin-top: 1rem;"></div>
             </div>
@@ -2625,7 +2768,7 @@
                     <div style="flex: 2; text-align:right;">📋 METAS</div>
                 </div>`;
                 
-                let agg = {
+                let agg = { fat_meta: 0, fat_real: 0, count_pdvs: 0, count_bateu_meta: 0,
                     meta_rgb: 0, real_rgb: 0,
                     meta_600: 0, real_600: 0,
                     meta_ln: 0, real_ln: 0,
@@ -2652,6 +2795,15 @@
                 window.appFilteredRows = filteredRows;
                 filteredRows.forEach((row, index) => {
                     agg.count_pdvs = (agg.count_pdvs || 0) + 1;
+                    let parseBRL = (val) => {
+                        if (!val) return 0;
+                        if (typeof val === 'number') return val;
+                        let str = val.toString().trim().replace(/\./g, '').replace(',', '.');
+                        let num = parseFloat(str); return isNaN(num) ? 0 : num;
+                    };
+                    agg.fat_meta += parseBRL(row['META TASK']);
+                    agg.fat_real += parseBRL(row['REAL TASK']);
+    
 
 
                     let base = row['BASE'] ? row['BASE'].trim().toUpperCase() : 'CORE';
@@ -2959,40 +3111,53 @@
                 listContainer.innerHTML = html_lista;
                 
                 // Atualizar as barras agregadas
-                let pct_agg_rgb = agg.meta_rgb > 0 ? (agg.real_rgb / agg.meta_rgb * 100) : (agg.real_rgb > 0 ? 100 : 0);
-                let pct_agg_600 = agg.meta_600 > 0 ? (agg.real_600 / agg.meta_600 * 100) : (agg.real_600 > 0 ? 100 : 0);
-                let pct_agg_ln  = agg.meta_ln > 0 ? (agg.real_ln / agg.meta_ln * 100) : (agg.real_ln > 0 ? 100 : 0);
-                let pct_agg_300 = agg.meta_300 > 0 ? (agg.real_300 / agg.meta_300 * 100) : (agg.real_300 > 0 ? 100 : 0);
                 
-                const elRgbText = document.getElementById('agg-rgb-text');
-                const el600Text = document.getElementById('agg-600-text');
-                const elLnText  = document.getElementById('agg-ln-text');
-                const el300Text = document.getElementById('agg-300-text');
+                let pct_agg_rgb = agg.meta_rgb > 0 ? Math.round((agg.real_rgb / agg.meta_rgb) * 100) : 0;
+                let pct_agg_600 = agg.meta_600 > 0 ? Math.round((agg.real_600 / agg.meta_600) * 100) : 0;
+                let pct_agg_ln  = agg.meta_ln > 0 ? Math.round((agg.real_ln / agg.meta_ln) * 100) : 0;
+                let pct_agg_300 = agg.meta_300 > 0 ? Math.round((agg.real_300 / agg.meta_300) * 100) : 0;
                 
-                if (elRgbText) elRgbText.innerText = `${agg.real_rgb}/${agg.meta_rgb} cxs`;
-                if (el600Text) el600Text.innerText = `${agg.real_600}/${agg.meta_600} SKUs`;
-                if (elLnText)  elLnText.innerText = `${agg.real_ln}/${agg.meta_ln} cxs`;
-                if (el300Text) el300Text.innerText = `${agg.real_300}/${agg.meta_300} cxs`;
+                let formatBRL = (v) => v.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 
-                const elRgbBar = document.getElementById('agg-rgb-bar');
-                const el600Bar = document.getElementById('agg-600-bar');
-                const elLnBar  = document.getElementById('agg-ln-bar');
-                const el300Bar = document.getElementById('agg-300-bar');
+                let elFatReal = document.getElementById('dash-fat-real');
+                let elFatGap = document.getElementById('dash-fat-gap');
+                if (elFatReal) elFatReal.innerText = `R$ ${formatBRL(agg.fat_real)}`;
+                if (elFatGap) {
+                    let gap = agg.fat_meta - agg.fat_real;
+                    if (gap > 0) { elFatGap.innerText = `Faltam R$ ${formatBRL(gap)}`; elFatGap.style.color = '#ef4444'; }
+                    else { elFatGap.innerText = `✅ Meta Batida (+R$ ${formatBRL(Math.abs(gap))})`; elFatGap.style.color = '#10b981'; }
+                }
                 
-                if (elRgbBar) elRgbBar.innerHTML = barraSmallHTML(pct_agg_rgb);
-                if (el600Bar) el600Bar.innerHTML = barraSmallHTML(pct_agg_600);
-                if (elLnBar)  elLnBar.innerHTML = barraSmallHTML(pct_agg_ln);
-                if (el300Bar) el300Bar.innerHTML = barraSmallHTML(pct_agg_300);
+                let elPdvsBateu = document.getElementById('dash-pdvs-bateu');
+                let elPdvsPct = document.getElementById('dash-pdvs-pct');
+                if (elPdvsBateu) elPdvsBateu.innerText = `${agg.count_bateu_meta} / ${agg.count_pdvs}`;
+                if (elPdvsPct) elPdvsPct.innerText = agg.count_pdvs > 0 ? `${Math.round((agg.count_bateu_meta / agg.count_pdvs)*100)}% de Sucesso` : `0%`;
                 
-                const score5PdvsEl = document.getElementById('rn-score5-pdvs');
-                const pdvsCoreEl = document.getElementById('rn-pdvs-core');
-                const pdvsHeEl = document.getElementById('rn-pdvs-he');
-                const metaBatidaEl = document.getElementById('rn-meta-batida');
+                let elDashCore = document.getElementById('dash-pdvs-core');
+                let elDashHe = document.getElementById('dash-pdvs-he');
+                if (elDashCore) elDashCore.innerText = agg.count_core;
+                if (elDashHe) elDashHe.innerText = agg.count_he;
                 
-                if (score5PdvsEl) score5PdvsEl.innerText = `${agg.count_bateu_meta || 0} de ${agg.count_pdvs || 0}`;
-                if (pdvsCoreEl) pdvsCoreEl.innerText = `${agg.count_core}`;
-                if (pdvsHeEl) pdvsHeEl.innerText = `${agg.count_he}`;
-                if (metaBatidaEl) metaBatidaEl.innerText = `${agg.count_bateu_meta || 0} PDVs`;
+                let elDashRgb = document.getElementById('dash-rgb-val');
+                let elDashRgbPct = document.getElementById('dash-rgb-pct');
+                if (elDashRgb) elDashRgb.innerText = `${agg.real_rgb}/${agg.meta_rgb}`;
+                if (elDashRgbPct) elDashRgbPct.innerText = `${pct_agg_rgb}%`;
+                
+                let elDash600 = document.getElementById('dash-600-val');
+                let elDash600Pct = document.getElementById('dash-600-pct');
+                if (elDash600) elDash600.innerText = `${agg.real_600}/${agg.meta_600}`;
+                if (elDash600Pct) elDash600Pct.innerText = `${pct_agg_600}%`;
+                
+                let elDashLn = document.getElementById('dash-ln-val');
+                let elDashLnPct = document.getElementById('dash-ln-pct');
+                if (elDashLn) elDashLn.innerText = `${agg.real_ln}/${agg.meta_ln}`;
+                if (elDashLnPct) elDashLnPct.innerText = `${pct_agg_ln}%`;
+                
+                let elDash300 = document.getElementById('dash-300-val');
+                let elDash300Pct = document.getElementById('dash-300-pct');
+                if (elDash300) elDash300.innerText = `${agg.real_300}/${agg.meta_300}`;
+                if (elDash300Pct) elDash300Pct.innerText = `${pct_agg_300}%`;
+    Vs`;
             }
     
             // Gaps zerados por enquanto pois a base real é apenas Score 5
