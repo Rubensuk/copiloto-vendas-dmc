@@ -2811,14 +2811,14 @@
                 window.appFilteredRows = filteredRows;
                 filteredRows.forEach((row, index) => {
                     agg.count_pdvs = (agg.count_pdvs || 0) + 1;
-                    let parseBRL = (val) => {
+                    let parseBRLFat = (val) => {
                         if (!val) return 0;
                         if (typeof val === 'number') return val;
                         let str = val.toString().trim().replace(/\./g, '').replace(',', '.');
                         let num = parseFloat(str); return isNaN(num) ? 0 : num;
                     };
-                    agg.fat_meta += parseBRL(row['META TASK']);
-                    agg.fat_real += parseBRL(row['REAL TASK']);
+                    agg.fat_meta += parseBRLFat(row['META TASK']);
+                    agg.fat_real += parseBRLFat(row['REAL TASK']);
     
 
 
@@ -3173,7 +3173,6 @@
                 let elDash300Pct = document.getElementById('dash-300-pct');
                 if (elDash300) elDash300.innerText = `${agg.real_300}/${agg.meta_300}`;
                 if (elDash300Pct) elDash300Pct.innerText = `${pct_agg_300}%`;
-    Vs`;
             }
     
             // Gaps zerados por enquanto pois a base real é apenas Score 5
