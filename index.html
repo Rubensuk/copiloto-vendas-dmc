@@ -2077,8 +2077,13 @@
                     
                     
                     // --- NOVOS DADOS DE FATURAMENTO E EXECUÇÃO ---
-                    let meta_task = parseFloat(row['META TASK']) || 0;
-                    let real_task = parseFloat(row['REAL TASK']) || 0;
+                    function parseBRL(val) {
+                        if (!val) return 0;
+                        let clean = String(val).replace(/\./g, '').replace(',', '.');
+                        return parseFloat(clean) || 0;
+                    }
+                    let meta_task = parseBRL(row['META TASK']);
+                    let real_task = parseBRL(row['REAL TASK']);
                     let possui_task = row['POSSUI TASK'] ? row['POSSUI TASK'].trim().toUpperCase() : 'N';
                     let comprador = parseInt(row['COMPR']) || 0;
                     let coolers = parseInt(row['COOLERS']) || 0;
@@ -2092,7 +2097,8 @@
 
                     if (possui_task === 'S') {
                         let pct_task = meta_task > 0 ? (real_task / meta_task) * 100 : (real_task > 0 ? 100 : 0);
-                        fat_html += barraHTML(pct_task, `💪 Desafio BEES Force — Meta: R$ ${meta_task.toFixed(2)} | Real: R$ ${real_task.toFixed(2)} | Falta: R$ ${Math.max(0, meta_task - real_task).toFixed(2)}`);
+                        let formatBRL = (v) => v.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                        fat_html += barraHTML(pct_task, `💪 Desafio BEES Force — Meta: R$ ${formatBRL(meta_task)} | Real: R$ ${formatBRL(real_task)} | Falta: R$ ${formatBRL(Math.max(0, meta_task - real_task))}`);
                     } else {
                         fat_html += `<div style="font-size: 0.85rem; color: #888; font-style: italic;">Sem task ativa no BEES Force.</div>`;
                     }
@@ -2292,7 +2298,7 @@ REGRAS DE OURO TÁTICAS:
                     instrucoes_extras += "- PDV NÃO COMPRADOR NO MÊS: Sua prioridade tática absoluta é a Positivação de Segurança. Insira no argumento a necessidade de vender 1 cx de Cerveja Líder + 1 cx NAB para reativar.\n";
                 }
                 if (pdv.possui_task === 'S' && pdv.real_task < pdv.meta_task) {
-                    let falta_rs = (pdv.meta_task - pdv.real_task).toFixed(2);
+                    let falta_rs = (pdv.meta_task - pdv.real_task).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                     instrucoes_extras += `- DESAFIO BEES FORCE ATIVO: Falta R$ ${falta_rs} para bater a meta da Task. Calcule rapidamente quantas caixas do produto foco cobrem esse valor e coloque essa matemática na fala de fechamento.\n`;
                 }
                 if (pdv.coolers > 0) {
