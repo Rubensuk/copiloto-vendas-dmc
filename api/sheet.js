@@ -1,17 +1,25 @@
+import Papa from 'papaparse';
+
 export default async function handler(req, res) {
     try {
-        const url = 'https://docs.google.com/spreadsheets/d/1IHbnIjofO3ozVBrywfb4bzGUsktE3Fu0/export?format=csv&gid=378465162';
-        const response = await fetch(url);
+        const urlBase = 'https://docs.google.com/spreadsheets/d/1IHbnIjofO3ozVBrywfb4bzGUsktE3Fu0/export?format=csv&gid=378465162';
+        const urlFat = 'https://docs.google.com/spreadsheets/d/1xiDaCjqnlurP-YKXH3RYohyVL-bT1G3K/export?format=csv&gid=1748584987';
         
-        if (!response.ok) {
-            return res.status(response.status).json({ error: 'Erro ao acessar Google Drive' });
+        // Faz o download das duas planilhas em paralelo
+        const [resBase, resFat] = await Promise.all([
+            fetch(urlBase),
+            fetch(urlFat)
+        ]);
+        
+        if (!resBase.ok || !resFat.ok) {
+            return res.status(500).json({ error: 'Erro ao acessar planilhas no Google Drive' });
         }
         
+        let csvBase = await resBase.text();
+        let csvFat = await resFat.text();
         
-        let csvText = await response.text();
-        
-        // --- INÍCIO DO TRATAMENTO DE CABEÇALHOS DUPLICADOS ---
-        let lines = csvText.split(/\r?\n/);
+        // --- TRATAMENTO DE CABEÇALHOS DUPLICADOS DA BASE ---
+        let lines = csvBase.split(/\r?\n/);
         if (lines.length > 0) {
             let headers = lines[0].split(',');
             // Índices 19 a 35 são High End (SPT 600 até OUTROS LN ZERO)
@@ -23,18 +31,47 @@ export default async function handler(req, res) {
                 if(headers[i]) headers[i] = 'CORE_' + headers[i].trim();
             }
             lines[0] = headers.join(',');
-            csvText = lines.join('\n');
+            csvBase = lines.join('\n');
         }
         // --- FIM DO TRATAMENTO ---
         
+        // Fazer o parse de ambas as planilhas
+        const parsedBase = Papa.parse(csvBase, { header: true, skipEmptyLines: true });
+        const parsedFat = Papa.parse(csvFat, { header: true, skipEmptyLines: true });
         
-        // Retorna o CSV bruto para o frontend processar (ou poderíamos parsear aqui)
-        res.setHeader('Content-Type', 'text/csv');
+        // Indexar a planilha de Faturamento pela CHAVE PDV para cruzamento rápido
+        const dictFat = {};
+        for (const row of parsedFat.data) {
+            if (row['CHAVE PDV']) {
+                dictFat[row['CHAVE PDV'].trim()] = row;
+            }
+        }
+        
+        // Identificar colunas do Faturamento que serão unidas (evitando duplicar chaves primárias)
+        const fatHeaders = parsedFat.meta.fields || [];
+        const ignoreHeaders = ['CHAVE PDV', 'NOME PDV', 'GEO', 'RN', 'COMERCIAL', 'OPERAÇÃO', 'GV', 'VISITA', 'BASE', 'id_ano_mes'];
+        
+        // Cruzar os dados da Base com o Faturamento
+        for (let row of parsedBase.data) {
+            const chave = row['CHAVE PDV'] ? row['CHAVE PDV'].trim() : null;
+            const fatData = chave ? dictFat[chave] : null;
+            
+            for (const h of fatHeaders) {
+                if (!ignoreHeaders.includes(h)) {
+                    row[h] = fatData && fatData[h] !== undefined ? fatData[h] : '';
+                }
+            }
+        }
+        
+        // Reverter o JSON mesclado de volta para CSV (mantendo a mesma interface para o Front-end)
+        const finalCsv = Papa.unparse(parsedBase.data);
+        
+        res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
         res.setHeader('Access-Control-Allow-Origin', '*');
-        res.status(200).send(csvText);
+        res.status(200).send(finalCsv);
     } catch (error) {
-        console.error('Erro:', error);
+        console.error('Erro na API:', error);
         res.status(500).json({ error: 'Erro interno no servidor' });
     }
 }
