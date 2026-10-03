@@ -2129,7 +2129,7 @@
                         real_task: real_task,
                         coolers: coolers,
                         falta_volume: falta_volume_app
-                    }));
+                    })).replace(/'/g, "%27");
 
                     let btn_copiloto = `<div style="margin-top: 20px; text-align: center;">
                         <button onclick="prepararCopiloto('${copiloto_data_str}')" style="background: #6366f1; color: white; border: none; padding: 10px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; width: 100%;">🤖 Gerar Tática no Copiloto</button>
@@ -2271,8 +2271,9 @@
             
             // Auto-ativa o gerador de tática após 600ms
             setTimeout(() => {
-                if (typeof gerarResposta === 'function') {
-                    gerarResposta();
+                const btnGen = document.getElementById('generate-btn');
+                if (btnGen) {
+                    btnGen.click();
                 }
             }, 600);
         }
