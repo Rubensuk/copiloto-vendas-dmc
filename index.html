@@ -2822,8 +2822,8 @@ body[data-modulo="conversor"] #modulo-conversor-section {
             
             widget.style.display = 'block';
             
-            const pts = row['PTs'] || '0';
-            const rk = row['RK'] || '-';
+            // Coluna H (PTs) da planilha data pontos RN.xlsx
+            const pts = row['PTs'] !== undefined && row['PTs'] !== null && row['PTs'] !== '' ? row['PTs'] : '0';
             const compr = row['Compr'] || '0';
             const task = row['Task Fat.'] || '0';
             const coolers = row['Coolers'] || '0';
@@ -2842,8 +2842,7 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                         </div>
                     </div>
                     <div style="display: flex; gap: 8px; align-items: center;">
-                        <span style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; padding: 3px 10px; border-radius: 20px; font-weight: 800; font-size: 0.8rem;">🏆 ${rk}º Lugar</span>
-                        <span style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid #6366f1; padding: 3px 10px; border-radius: 20px; font-weight: 800; font-size: 0.8rem;">🎯 ${pts} Pontos</span>
+                        <span class="score5-pts-badge" style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1.5px solid #10b981; padding: 4px 14px; border-radius: 20px; font-weight: 800; font-size: 0.9rem; box-shadow: 0 0 12px rgba(16, 185, 129, 0.25);">🎯 ${pts} Pontos</span>
                     </div>
                 </div>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px;">

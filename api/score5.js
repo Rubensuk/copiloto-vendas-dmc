@@ -10,7 +10,11 @@ export default async function handler(req, res) {
         }
         
         const csvData = await response.text();
-        const parsed = Papa.parse(csvData, { header: true, skipEmptyLines: true });
+        const parsed = Papa.parse(csvData, { 
+            header: true, 
+            skipEmptyLines: true,
+            transformHeader: h => h.trim()
+        });
         
         res.setHeader('Content-Type', 'application/json; charset=utf-8');
         res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
