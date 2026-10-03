@@ -2682,15 +2682,31 @@
 
         function atualizarPainelRN() {
             const selectRN = document.getElementById('select-rn-code');
-            const code = selectRN ? selectRN.value : "111";
+            const code = selectRN ? selectRN.value : "TODOS";
+            const selectGV = document.getElementById('select-gv');
+            const gv = selectGV ? selectGV.value : "TODOS";
             
-            // Se os dados não chegaram ainda ou RN não existe, não faz nada
-            if (!dbRN[code]) return;
-            const data = dbRN[code];
+            let data = { rows: [] };
+            
+            if (code === "TODOS") {
+                // Soma todas as rotas (ou apenas as da GV selecionada)
+                for (let rnKey in dbRN) {
+                    if (gv !== "TODOS" && !rnKey.startsWith(gv[0])) continue;
+                    if (dbRN[rnKey] && dbRN[rnKey].rows) {
+                        data.rows = data.rows.concat(dbRN[rnKey].rows);
+                    }
+                }
+            } else {
+                if (!dbRN[code]) return;
+                data = dbRN[code];
+            }
+            
+            if (!data || !data.rows || data.rows.length === 0) {
+                const listContainer = document.getElementById('pdv-list-container');
+                if (listContainer) listContainer.innerHTML = '<div style="padding: 20px; text-align: center; color: #fff;">Nenhum PDV encontrado para este filtro.</div>';
+                return;
+            }
 
-            
-
-            
             // GERAR TABELA DE METAS E PORTFOLIO (ESTRUTURA STREAMLIT)
             const listContainer = document.getElementById('pdv-list-container');
             if (listContainer) {
