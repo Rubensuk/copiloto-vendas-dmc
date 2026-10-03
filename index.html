@@ -2021,13 +2021,16 @@
                         for (let col in HE_LN) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), HE_LN[col], safeInt(row[col])); }
                         for (let col in HE_LN_ZERO) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), HE_LN_ZERO[col], safeInt(row[col])); }
                         
-                        inner_html += `<div style="margin-top:15px; font-weight:bold;">📦 Mix de Produtos (High End)</div>
-                        <table style="width:100%; border-collapse:collapse; margin-top:5px; background:var(--table-header-bg, rgba(0,0,0,0.1)); border-radius:5px; overflow:hidden;">
-                            <thead style="background:${thead_bg};font-size:0.9rem;">
-                                <tr><th style="padding:8px;text-align:center;width:15%;">Status</th><th style="padding:8px;text-align:left;width:65%;">Produto</th><th style="padding:8px;text-align:center;width:20%;">Vendida</th></tr>
-                            </thead>
-                            <tbody>${mix_items}</tbody>
-                        </table>`;
+                        inner_html += `
+                        <details style="margin-top:15px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid ${border_color};">
+                            <summary style="padding: 10px; font-weight: bold; cursor: pointer; outline: none;">📦 Exibir Mix de Produtos (High End)</summary>
+                            <table style="width:100%; border-collapse:collapse; border-top: 1px solid ${border_color}; background:var(--table-header-bg, transparent);">
+                                <thead style="background:${thead_bg};font-size:0.9rem;">
+                                    <tr><th style="padding:8px;text-align:center;width:15%;">Status</th><th style="padding:8px;text-align:left;width:65%;">Produto</th><th style="padding:8px;text-align:center;width:20%;">Vendida</th></tr>
+                                </thead>
+                                <tbody>${mix_items}</tbody>
+                            </table>
+                        </details>`;
                     } else if (base === 'CORE') {
                         agg.count_core += 1;
                         agg.meta_600 += meta_int; agg.real_600 += real_int;
@@ -2066,13 +2069,16 @@
                         for (let col in CORE_300) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), CORE_300[col], safeInt(row[col])); }
                         
                         
-                        inner_html += `<div style="margin-top:15px; font-weight:bold;">📦 Mix de Produtos (Core)</div>
-                        <table style="width:100%; border-collapse:collapse; margin-top:5px; background:var(--table-header-bg, rgba(0,0,0,0.1)); border-radius:5px; overflow:hidden;">
-                            <thead style="background:${thead_bg};font-size:0.9rem;">
-                                <tr><th style="padding:8px;text-align:center;width:15%;">Status</th><th style="padding:8px;text-align:left;width:65%;">Produto</th><th style="padding:8px;text-align:center;width:20%;">Vendida</th></tr>
-                            </thead>
-                            <tbody>${mix_items}</tbody>
-                        </table>`;
+                        inner_html += `
+                        <details style="margin-top:15px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid ${border_color};">
+                            <summary style="padding: 10px; font-weight: bold; cursor: pointer; outline: none;">📦 Exibir Mix de Produtos (Core)</summary>
+                            <table style="width:100%; border-collapse:collapse; border-top: 1px solid ${border_color}; background:var(--table-header-bg, transparent);">
+                                <thead style="background:${thead_bg};font-size:0.9rem;">
+                                    <tr><th style="padding:8px;text-align:center;width:15%;">Status</th><th style="padding:8px;text-align:left;width:65%;">Produto</th><th style="padding:8px;text-align:center;width:20%;">Vendida</th></tr>
+                                </thead>
+                                <tbody>${mix_items}</tbody>
+                            </table>
+                        </details>`;
                     } else {
                         inner_html += `<div>Segmento Vitrine</div>`;
                     }
