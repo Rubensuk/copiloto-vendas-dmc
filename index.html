@@ -2179,14 +2179,16 @@
                     }
                     fat_html += `</div>`;
 
-                    let coolers_badge = coolers > 0 ? `<span style="background:rgba(59,130,246,0.2); color:#60a5fa; border:1px solid #3b82f6; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:bold; box-shadow:0 0 8px rgba(59,130,246,0.3);">❄️ ${coolers} Geladeira(s) Ambev</span>` : `<span style="background:rgba(255,255,255,0.03); color:#64748b; border:1px solid rgba(255,255,255,0.05); padding:4px 8px; border-radius:6px; font-size:0.8rem; opacity:0.5;">❄️ 0 Geladeira(s)</span>`;
+                    let inactive_style = `background:rgba(30, 41, 59, 0.8); color:#cbd5e1; border:1px solid rgba(71, 85, 105, 0.6); padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:500;`;
+                    
+                    let coolers_badge = coolers > 0 ? `<span style="background:rgba(59,130,246,0.2); color:#60a5fa; border:1px solid #3b82f6; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:bold; box-shadow:0 0 8px rgba(59,130,246,0.3);">❄️ ${coolers} Geladeira(s) Ambev</span>` : `<span style="${inactive_style}">❄️ 0 Geladeiras</span>`;
                     
                     let trade_val = mat_trade ? parseInt(mat_trade) : 0;
                     let cupom_val = dig_coup ? parseInt(dig_coup) : 0;
                     
-                    let mat_trade_badge = trade_val > 0 ? `<span style="background:rgba(168,85,247,0.2); color:#c084fc; border:1px solid #a855f7; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:bold; box-shadow:0 0 8px rgba(168,85,247,0.3);">🎨 Trade: ${trade_val}</span>` : `<span style="background:rgba(255,255,255,0.03); color:#64748b; border:1px solid rgba(255,255,255,0.05); padding:4px 8px; border-radius:6px; font-size:0.8rem; opacity:0.5;">🎨 Trade: 0</span>`;
+                    let mat_trade_badge = trade_val > 0 ? `<span style="background:rgba(168,85,247,0.2); color:#c084fc; border:1px solid #a855f7; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:bold; box-shadow:0 0 8px rgba(168,85,247,0.3);">🎨 Trade: ${trade_val}</span>` : `<span style="${inactive_style}">🎨 Trade: 0</span>`;
                     
-                    let dig_coup_badge = cupom_val > 0 ? `<span style="background:rgba(234,179,8,0.2); color:#facc15; border:1px solid #eab308; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:bold; box-shadow:0 0 8px rgba(234,179,8,0.3);">🎫 Cupom Digital: ${cupom_val}</span>` : `<span style="background:rgba(255,255,255,0.03); color:#64748b; border:1px solid rgba(255,255,255,0.05); padding:4px 8px; border-radius:6px; font-size:0.8rem; opacity:0.5;">🎫 Cupom Digital: 0</span>`;
+                    let dig_coup_badge = cupom_val > 0 ? `<span style="background:rgba(234,179,8,0.2); color:#facc15; border:1px solid #eab308; padding:4px 8px; border-radius:6px; font-size:0.8rem; font-weight:bold; box-shadow:0 0 8px rgba(234,179,8,0.3);">🎫 Cupom Digital: ${cupom_val}</span>` : `<span style="${inactive_style}">🎟️ Cupom Digital: 0</span>`;
                     
                     let exec_html = `<div style="margin-top: 20px;">
                         <div style="font-weight: bold; margin-bottom: 10px; font-size: 0.95rem;">🧊 Execução no PDV & Trade</div>
@@ -2207,7 +2209,7 @@
                         falta_volume: falta_volume_app
                     })).replace(/'/g, "%27");
 
-                    let btn_copiloto = `<div style="margin-top: 20px; text-align: center;">
+                    let btn_copiloto = `<div style="margin-top: 24px; margin-bottom: 8px; text-align: center;">
                         <button onclick="prepararCopiloto('${copiloto_data_str}')" style="background: linear-gradient(90deg, #4f46e5, #6366f1, #8b5cf6); background-size: 200% auto; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 900; font-size: 1.05rem; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); text-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: all 0.3s ease; animation: gradientPulse 3s ease infinite;">🤖 Gerar Tática no Copiloto</button>
                     </div>`;
 
@@ -2221,7 +2223,7 @@
                             <div style="flex: 1; font-size: 0.9rem; font-weight: bold;">${status_txt}</div>
                             <div style="flex: 2; text-align: right; font-size: 0.9rem; color: #888;">${meta_info}</div>
                         </summary>
-                        <div class="pdv-details" style="padding: 15px; border-top: 1px solid ${border_color}; color: ${text_color};">
+                        <div class="pdv-details" style="padding: 15px; padding-bottom: 30px; border-top: 1px solid ${border_color}; color: ${text_color};">
                             ${inner_html}
                         </div>
                     </details>`;
