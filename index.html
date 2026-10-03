@@ -1108,6 +1108,356 @@
     }
 }
 
+
+/* --- HUB DE MÓDULOS INICIAL (GRID 2 EM 2) --- */
+.hub-modulos-wrapper {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.hub-header-intro {
+    margin-bottom: 1.25rem;
+    text-align: left;
+}
+
+.hub-header-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.7rem;
+    font-weight: 800;
+    color: #10b981;
+    background: rgba(16, 185, 129, 0.12);
+    border: 1px solid rgba(16, 185, 129, 0.25);
+    padding: 3px 10px;
+    border-radius: 9999px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.5rem;
+}
+
+.hub-header-title {
+    font-size: 1.35rem;
+    font-weight: 900;
+    color: var(--text-primary);
+    line-height: 1.2;
+    margin-bottom: 0.25rem;
+}
+
+.hub-header-sub {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+}
+
+.hub-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    width: 100%;
+}
+
+.hub-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 1.25rem;
+    border-radius: 1.25rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    position: relative;
+    overflow: hidden;
+    min-height: 160px;
+    user-select: none;
+}
+
+.hub-card:hover {
+    transform: translateY(-4px);
+}
+
+.hub-card:active {
+    transform: scale(0.98);
+}
+
+.hub-card-full {
+    grid-column: span 2;
+}
+
+@media (max-width: 640px) {
+    .hub-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+    .hub-card-full {
+        grid-column: span 1;
+    }
+    .hub-card {
+        padding: 1rem;
+        min-height: 140px;
+    }
+}
+
+.hub-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.85rem;
+}
+
+.hub-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.35rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hub-card-tag {
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 3px 8px;
+    border-radius: 6px;
+}
+
+.hub-card-info {
+    margin-bottom: 0.85rem;
+}
+
+.hub-card-title {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 0.2rem;
+    line-height: 1.25;
+}
+
+.hub-card-subtitle {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    line-height: 1.4;
+}
+
+.hub-card-bottom {
+    display: flex;
+    align-items: center;
+}
+
+.hub-action-link {
+    font-size: 0.75rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    transition: gap 0.2s ease;
+}
+
+.hub-card:hover .hub-arrow {
+    transform: translateX(4px);
+}
+
+.hub-arrow {
+    display: inline-block;
+    transition: transform 0.2s ease;
+}
+
+/* 1. Emerald / Score 5 */
+.hub-card-emerald {
+    background: linear-gradient(135deg, rgba(6, 78, 59, 0.45) 0%, rgba(15, 23, 42, 0.85) 60%, rgba(15, 23, 42, 0.95) 100%);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+.hub-card-emerald:hover {
+    border-color: #10b981;
+    box-shadow: 0 0 25px rgba(16, 185, 129, 0.3), 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+.hub-icon-emerald {
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.35);
+    color: #34d399;
+}
+.hub-tag-emerald {
+    background: rgba(16, 185, 129, 0.15);
+    color: #6ee7b7;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.hub-card-emerald .hub-action-link {
+    color: #34d399;
+}
+
+/* 2. Indigo / Simulador de Objeções */
+.hub-card-indigo {
+    background: linear-gradient(135deg, rgba(49, 46, 129, 0.45) 0%, rgba(15, 23, 42, 0.85) 60%, rgba(15, 23, 42, 0.95) 100%);
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+.hub-card-indigo:hover {
+    border-color: #6366f1;
+    box-shadow: 0 0 25px rgba(99, 102, 241, 0.3), 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+.hub-icon-indigo {
+    background: rgba(99, 102, 241, 0.2);
+    border: 1px solid rgba(99, 102, 241, 0.35);
+    color: #818cf8;
+}
+.hub-tag-indigo {
+    background: rgba(99, 102, 241, 0.15);
+    color: #a5b4fc;
+    border: 1px solid rgba(99, 102, 241, 0.3);
+}
+.hub-card-indigo .hub-action-link {
+    color: #818cf8;
+}
+
+/* 3. Cyan / Rentabilidade */
+.hub-card-cyan {
+    background: linear-gradient(135deg, rgba(8, 51, 68, 0.5) 0%, rgba(15, 23, 42, 0.85) 60%, rgba(15, 23, 42, 0.95) 100%);
+    border: 1px solid rgba(6, 182, 212, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+.hub-card-cyan:hover {
+    border-color: #06b6d4;
+    box-shadow: 0 0 25px rgba(6, 182, 212, 0.3), 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+.hub-icon-cyan {
+    background: rgba(6, 182, 212, 0.2);
+    border: 1px solid rgba(6, 182, 212, 0.35);
+    color: #22d3ee;
+}
+.hub-tag-cyan {
+    background: rgba(6, 182, 212, 0.15);
+    color: #67e8f9;
+    border: 1px solid rgba(6, 182, 212, 0.3);
+}
+.hub-card-cyan .hub-action-link {
+    color: #22d3ee;
+}
+
+/* 4. Amber / Conversor HCT */
+.hub-card-amber {
+    background: linear-gradient(135deg, rgba(69, 26, 3, 0.5) 0%, rgba(15, 23, 42, 0.85) 60%, rgba(15, 23, 42, 0.95) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+.hub-card-amber:hover {
+    border-color: #f59e0b;
+    box-shadow: 0 0 25px rgba(245, 158, 11, 0.3), 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+.hub-icon-amber {
+    background: rgba(245, 158, 11, 0.2);
+    border: 1px solid rgba(245, 158, 11, 0.35);
+    color: #fbbf24;
+}
+.hub-tag-amber {
+    background: rgba(245, 158, 11, 0.15);
+    color: #fde68a;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.hub-card-amber .hub-action-link {
+    color: #fbbf24;
+}
+
+/* 5. Rose / Treinamento */
+.hub-card-rose {
+    background: linear-gradient(135deg, rgba(76, 5, 25, 0.5) 0%, rgba(15, 23, 42, 0.85) 60%, rgba(15, 23, 42, 0.95) 100%);
+    border: 1px solid rgba(244, 63, 94, 0.4);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+}
+.hub-card-rose:hover {
+    border-color: #f43f5e;
+    box-shadow: 0 0 25px rgba(244, 63, 94, 0.3), 0 8px 30px rgba(0, 0, 0, 0.4);
+}
+.hub-icon-rose {
+    background: rgba(244, 63, 94, 0.2);
+    border: 1px solid rgba(244, 63, 94, 0.35);
+    color: #fb7185;
+}
+.hub-tag-rose {
+    background: rgba(244, 63, 94, 0.15);
+    color: #fecdd3;
+    border: 1px solid rgba(244, 63, 94, 0.3);
+}
+.hub-card-rose .hub-action-link {
+    color: #fb7185;
+}
+
+/* Light mode overrides para o Hub */
+body.light-mode .hub-header-badge {
+    background: #ecfdf5 !important;
+    border-color: #a7f3d0 !important;
+    color: #047857 !important;
+}
+
+body.light-mode .hub-card-emerald {
+    background: #ffffff !important;
+    border: 1px solid #a7f3d0 !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08) !important;
+}
+body.light-mode .hub-card-emerald:hover {
+    border-color: #059669 !important;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.15) !important;
+}
+body.light-mode .hub-card-emerald .hub-card-title {
+    color: #065f46 !important;
+}
+
+body.light-mode .hub-card-indigo {
+    background: #ffffff !important;
+    border: 1px solid #c7d2fe !important;
+    box-shadow: 0 2px 8px rgba(99, 102, 241, 0.08) !important;
+}
+body.light-mode .hub-card-indigo:hover {
+    border-color: #4f46e5 !important;
+    box-shadow: 0 6px 20px rgba(99, 102, 241, 0.15) !important;
+}
+body.light-mode .hub-card-indigo .hub-card-title {
+    color: #3730a3 !important;
+}
+
+body.light-mode .hub-card-cyan {
+    background: #ffffff !important;
+    border: 1px solid #a5f3fc !important;
+    box-shadow: 0 2px 8px rgba(6, 182, 212, 0.08) !important;
+}
+body.light-mode .hub-card-cyan:hover {
+    border-color: #0891b2 !important;
+    box-shadow: 0 6px 20px rgba(6, 182, 212, 0.15) !important;
+}
+body.light-mode .hub-card-cyan .hub-card-title {
+    color: #155e75 !important;
+}
+
+body.light-mode .hub-card-amber {
+    background: #ffffff !important;
+    border: 1px solid #fde68a !important;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.08) !important;
+}
+body.light-mode .hub-card-amber:hover {
+    border-color: #d97706 !important;
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.15) !important;
+}
+body.light-mode .hub-card-amber .hub-card-title {
+    color: #92400e !important;
+}
+
+body.light-mode .hub-card-rose {
+    background: #ffffff !important;
+    border: 1px solid #fecdd3 !important;
+    box-shadow: 0 2px 8px rgba(244, 63, 94, 0.08) !important;
+}
+body.light-mode .hub-card-rose:hover {
+    border-color: #e11d48 !important;
+    box-shadow: 0 6px 20px rgba(244, 63, 94, 0.15) !important;
+}
+body.light-mode .hub-card-rose .hub-card-title {
+    color: #9f1239 !important;
+}
+
 </style>
     
 
@@ -1526,6 +1876,94 @@
     </header>
 
     <main>
+
+        <!-- HUB DE MÓDULOS INICIAL (GRID 2 EM 2) -->
+        <div class="hub-modulos-wrapper">
+            <div class="hub-header-intro">
+                <div class="hub-header-badge">⭐ DMC Sales Copilot</div>
+                <h2 class="hub-header-title">Hub de Módulos & Inteligência</h2>
+                <p class="hub-header-sub">Selecione o módulo desejado para acelerar sua rota e destravar metas comerciais</p>
+            </div>
+
+            <div class="hub-grid">
+                <!-- Card 1: Score 5 Operacional -->
+                <div class="hub-card hub-card-emerald" onclick="document.getElementById('painel-rn-araguaina')?.scrollIntoView({behavior:'smooth'})" title="Acessar Metas e Rotas Score 5">
+                    <div class="hub-card-top">
+                        <div class="hub-icon-box hub-icon-emerald">⭐</div>
+                        <span class="hub-card-tag hub-tag-emerald">Score 5</span>
+                    </div>
+                    <div class="hub-card-info">
+                        <div class="hub-card-title">Score 5 Operacional</div>
+                        <div class="hub-card-subtitle">Metas, Rotas e Execução no PDV</div>
+                    </div>
+                    <div class="hub-card-bottom">
+                        <span class="hub-action-link">Acessar Módulo <span class="hub-arrow">→</span></span>
+                    </div>
+                </div>
+
+                <!-- Card 2: Simulador de Objeções -->
+                <div class="hub-card hub-card-indigo" onclick="document.getElementById('copiloto-section')?.scrollIntoView({behavior:'smooth'})" title="Acessar Simulador de Objeções com IA">
+                    <div class="hub-card-top">
+                        <div class="hub-icon-box hub-icon-indigo">🥊</div>
+                        <span class="hub-card-tag hub-tag-indigo">Copiloto IA</span>
+                    </div>
+                    <div class="hub-card-info">
+                        <div class="hub-card-title">Simulador de Objeções</div>
+                        <div class="hub-card-subtitle">Contorno Tático e Argumentos de Venda</div>
+                    </div>
+                    <div class="hub-card-bottom">
+                        <span class="hub-action-link">Acessar Módulo <span class="hub-arrow">→</span></span>
+                    </div>
+                </div>
+
+                <!-- Card 3: Rentabilidade (Aderido) -->
+                <div class="hub-card hub-card-cyan" onclick="document.querySelector('[data-tab=\'tab-rentabilidade\']')?.click(); document.getElementById('painel-rn-araguaina')?.scrollIntoView({behavior:'smooth'})" title="Calcular Margem Aderido vs Preço NAD">
+                    <div class="hub-card-top">
+                        <div class="hub-icon-box hub-icon-cyan">📈</div>
+                        <span class="hub-card-tag hub-tag-cyan">Margens</span>
+                    </div>
+                    <div class="hub-card-info">
+                        <div class="hub-card-title">Rentabilidade (Aderido)</div>
+                        <div class="hub-card-subtitle">Margem Aderido vs Preço NAD</div>
+                    </div>
+                    <div class="hub-card-bottom">
+                        <span class="hub-action-link">Acessar Módulo <span class="hub-arrow">→</span></span>
+                    </div>
+                </div>
+
+                <!-- Card 4: Conversor HCT -->
+                <div class="hub-card hub-card-amber" onclick="document.querySelector('[data-tab=\'tab-conversor\']')?.click(); document.getElementById('painel-rn-araguaina')?.scrollIntoView({behavior:'smooth'})" title="Converter Caixas para Hectolitros">
+                    <div class="hub-card-top">
+                        <div class="hub-icon-box hub-icon-amber">📦</div>
+                        <span class="hub-card-tag hub-tag-amber">Hectolitros</span>
+                    </div>
+                    <div class="hub-card-info">
+                        <div class="hub-card-title">Conversor HCT</div>
+                        <div class="hub-card-subtitle">Conversão de Caixas para Hectolitros</div>
+                    </div>
+                    <div class="hub-card-bottom">
+                        <span class="hub-action-link">Acessar Módulo <span class="hub-arrow">→</span></span>
+                    </div>
+                </div>
+
+                <!-- Card 5: Modo Treinamento (Full Width na base) -->
+                <div class="hub-card hub-card-rose hub-card-full" onclick="window.location.href='simulador.html'" title="Ir para o Simulador de Campo e Desafios Práticos com IA">
+                    <div class="hub-card-top">
+                        <div class="hub-icon-box hub-icon-rose">🎮</div>
+                        <span class="hub-card-tag hub-tag-rose">Desafios Práticos</span>
+                    </div>
+                    <div class="hub-card-info">
+                        <div class="hub-card-title">Modo Treinamento</div>
+                        <div class="hub-card-subtitle">Simulação de Campo & Desafios Práticos com IA</div>
+                    </div>
+                    <div class="hub-card-bottom">
+                        <span class="hub-action-link">Acessar Treinamento <span class="hub-arrow">→</span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
         <!-- Coluna da Esquerda: Configurações e Inputs -->
         <section class="card">
             <div class="card-title">
