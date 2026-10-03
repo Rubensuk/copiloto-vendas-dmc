@@ -779,15 +779,36 @@
             100% { background-position: 0% 50%; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
         }
         
-    /* --- MOBILE-FIRST RIGOROSO --- */
-    .pdv-summary {
-        white-space: normal !important;
-        word-break: break-word !important;
+    /* --- EDGE-TO-EDGE & MOBILE-FIRST RIGOROSO --- */
+    /* Container Main Default (Desktop) */
+    .pdv-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
     }
+    
+    /* Cabeçalho Default (Desktop) */
+    .pdv-summary {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 15px;
+        cursor: pointer;
+        background: var(--card-bg);
+        gap: 12px;
+    }
+    .pdv-header-main { display: flex; align-items: center; gap: 8px; flex: 2; font-weight: bold; }
+    .pdv-nome { font-size: 1rem; }
+    .pdv-base-badge { background: rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; }
+    .pdv-header-tags { display: flex; align-items: center; gap: 8px; flex: 2; }
+    .pdv-status-badge { font-size: 0.9rem; font-weight: bold; }
+    .pdv-header-meta { flex: 2; text-align: right; color: #888; font-size: 0.85rem; }
+    
+    /* Layouts Default */
     .grid-responsive-2 {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 8px;
+        gap: 10px;
         margin-bottom: 12px;
         width: 100%;
         box-sizing: border-box;
@@ -818,87 +839,123 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        width: 100%;
     }
-    
-    /* Responsive overrides */
+
+    /* --- MOBILE OVERRIDES (max-width: 639px) --- */
     @media (max-width: 639px) {
-        /* Container Edge-to-Edge */
+        /* Container Edge-to-Edge Absoluto */
         main {
-            margin: 0.5rem auto !important;
-            padding: 0 8px !important;
+            margin: 0 !important;
+            padding: 8px 6px !important;
             width: 100% !important;
             max-width: 100% !important;
+            overflow-x: hidden;
         }
         
-        /* Lista e Cartões ocupando tudo */
         .pdv-list {
             padding: 0 !important;
             border-radius: 12px;
-            overflow: hidden;
         }
         .pdv-card {
-            border-radius: 0 !important;
+            border-radius: 8px !important;
             margin-bottom: 8px !important;
             border-left: 4px solid var(--card-border) !important;
         }
         
-        /* Ajuste de Espaçamento Interno */
+        /* Cabeçalho Stack Responsivo (Mobile) */
         .pdv-summary {
-            padding: 12px 10px !important;
+            padding: 12px !important;
             flex-direction: column !important;
             align-items: flex-start !important;
-            gap: 8px !important;
+            gap: 6px !important;
+            white-space: normal !important;
         }
-        .pdv-summary > div {
-            text-align: left !important;
-            width: 100% !important;
+        .pdv-header-main {
             flex: none !important;
-        }
-        .pdv-summary > div:first-child {
+            width: 100% !important;
             display: flex;
             flex-wrap: wrap;
             gap: 6px;
-            align-items: center;
+            line-height: 1.2;
+        }
+        .pdv-nome {
+            font-size: 0.95rem !important;
+            word-break: break-word !important;
+        }
+        .pdv-base-badge {
+            font-size: 0.7rem !important;
+            padding: 1px 6px !important;
+        }
+        .pdv-header-tags {
+            flex: none !important;
+            width: 100% !important;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-top: 2px;
+        }
+        .pdv-status-badge {
+            font-size: 0.75rem !important;
+        }
+        .pdv-header-meta {
+            flex: none !important;
+            width: 100% !important;
+            text-align: left !important;
+            font-size: 0.75rem !important;
+            color: #94a3b8 !important;
+            margin-top: 2px;
         }
         
+        /* Ajuste de Espaçamento Interno do PDV */
         .pdv-details {
-            padding: 12px 8px !important;
-            padding-bottom: 16px !important;
+            padding: 12px 10px !important;
+            padding-bottom: 24px !important;
         }
         
-        /* Modificadores de Box */
+        /* Modificadores de Box P-3 */
         .fat-card-container {
-            padding: 10px !important;
+            padding: 12px !important;
         }
         .missao-banner {
-            padding: 10px !important;
+            padding: 12px !important;
+        }
+        .missao-banner > div:nth-child(2) {
+            font-size: 0.85rem !important; /* Ajuste para caber bem o texto Falta vender... */
+        }
+        .missao-banner > div:nth-child(3) {
+            font-size: 0.7rem !important; /* Subtexto itálico */
         }
         
-        /* Grids para stack no mobile */
+        /* Grids para stack 1 Coluna no mobile */
         .grid-responsive-2 { grid-template-columns: 1fr !important; gap: 8px !important; }
         .grid-responsive-3 { grid-template-columns: 1fr !important; gap: 8px !important; }
         
-        /* Trade stack flex row */
+        /* Trade stack flex row 1 coluna */
         .trade-card {
             flex-direction: row !important;
             justify-content: space-between !important;
             align-items: center !important;
             text-align: left !important;
-            padding: 8px 10px !important;
+            padding: 10px !important;
         }
         .trade-card > div:first-child { margin-bottom: 0 !important; }
         .trade-card > div:nth-child(2) { margin-bottom: 0 !important; flex: 1; margin-left: 8px; }
         
-        /* Fat */
+        /* Faturamento Ajustado */
         .fat-card-header {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 6px !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
         }
         .fat-val-row {
-            flex-direction: column !important;
-            align-items: flex-start !important;
-            gap: 4px !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+        .fat-falta-rs {
+            font-size: 0.85rem !important;
+            margin-top: 4px;
         }
     }
     /* ----------------------------- */
@@ -2528,10 +2585,15 @@
                     html_lista += `
                     <details class="pdv-row pdv-item" data-nome="${row['NOME PDV']?.toLowerCase() || ''}" data-chave="${row['CHAVE PDV'] || ''}" data-bateu="${bateu}" style="background: ${row_bg}; border: 1px solid ${border_color}; border-radius: 8px; margin-bottom: 8px; font-family: sans-serif;">
                         <summary class="pdv-summary">
-                            <div style="flex: 2; font-weight: bold; color: ${text_color};">${icone} ${row['NOME PDV'] || 'PDV'} ${badge_visita}</div>
-                            <div style="flex: 1; font-size: 0.9rem; color: ${text_color};">${base}</div>
-                            <div style="flex: 1; font-size: 0.9rem; font-weight: bold;">${status_txt}</div>
-                            <div style="flex: 2; text-align: right; font-size: 0.9rem; color: #888;">${meta_info}</div>
+                            <div class="pdv-header-main">
+                                <span class="pdv-nome" style="color: ${text_color};">${icone} ${row['NOME PDV'] || 'PDV'}</span>
+                                <span class="pdv-base-badge">${base}</span>
+                            </div>
+                            <div class="pdv-header-tags">
+                                ${badge_visita}
+                                <span class="pdv-status-badge">${status_txt}</span>
+                            </div>
+                            <div class="pdv-header-meta">${meta_info}</div>
                         </summary>
                         <div class="pdv-details" style="padding: 15px; padding-bottom: 30px; border-top: 1px solid ${border_color}; color: ${text_color};">
                             ${inner_html}
