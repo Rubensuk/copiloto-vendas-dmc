@@ -1779,6 +1779,7 @@ body.light-mode .hub-card-rose .hub-card-title {
                 const clienteInput = document.getElementById('cliente');
                 if (clienteInput) clienteInput.value = data.nome;
                 
+                window.navegarModulo('simulador');
                 const copilotSection = document.getElementById('copiloto-section');
                 if (copilotSection) copilotSection.scrollIntoView({ behavior: 'smooth' });
                 
@@ -1877,8 +1878,17 @@ body.light-mode .hub-card-rose .hub-card-title {
 
     <main>
 
+        
+        <!-- BOTÃO DE RETORNO AO MENU PRINCIPAL -->
+        <div id="btn-voltar-menu-container" style="display: none; width: 100%; margin-bottom: 1.25rem;">
+            <button type="button" class="btn-voltar-menu" onclick="window.navegarModulo('dashboard')" title="Voltar ao Hub de Módulos">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+                <span>Voltar ao Menu Principal</span>
+            </button>
+        </div>
+
         <!-- HUB DE MÓDULOS INICIAL (GRID 2 EM 2) -->
-        <div class="hub-modulos-wrapper">
+        <div class="hub-modulos-wrapper" id="hub-modulos-section">
             <div class="hub-header-intro">
                 <div class="hub-header-badge">⭐ DMC Sales Copilot</div>
                 <h2 class="hub-header-title">Hub de Módulos & Inteligência</h2>
@@ -1887,7 +1897,7 @@ body.light-mode .hub-card-rose .hub-card-title {
 
             <div class="hub-grid">
                 <!-- Card 1: Score 5 Operacional -->
-                <div class="hub-card hub-card-emerald" onclick="document.getElementById('painel-rn-araguaina')?.scrollIntoView({behavior:'smooth'})" title="Acessar Metas e Rotas Score 5">
+                <div class="hub-card hub-card-emerald" onclick="window.navegarModulo('score5')" title="Acessar Metas e Rotas Score 5">
                     <div class="hub-card-top">
                         <div class="hub-icon-box hub-icon-emerald">⭐</div>
                         <span class="hub-card-tag hub-tag-emerald">Score 5</span>
@@ -1902,7 +1912,7 @@ body.light-mode .hub-card-rose .hub-card-title {
                 </div>
 
                 <!-- Card 2: Simulador de Objeções -->
-                <div class="hub-card hub-card-indigo" onclick="document.getElementById('copiloto-section')?.scrollIntoView({behavior:'smooth'})" title="Acessar Simulador de Objeções com IA">
+                <div class="hub-card hub-card-indigo" onclick="window.navegarModulo('simulador')" title="Acessar Simulador de Objeções com IA">
                     <div class="hub-card-top">
                         <div class="hub-icon-box hub-icon-indigo">🥊</div>
                         <span class="hub-card-tag hub-tag-indigo">Copiloto IA</span>
@@ -1917,7 +1927,7 @@ body.light-mode .hub-card-rose .hub-card-title {
                 </div>
 
                 <!-- Card 3: Rentabilidade (Aderido) -->
-                <div class="hub-card hub-card-cyan" onclick="document.querySelector('[data-tab=\'tab-rentabilidade\']')?.click(); document.getElementById('painel-rn-araguaina')?.scrollIntoView({behavior:'smooth'})" title="Calcular Margem Aderido vs Preço NAD">
+                <div class="hub-card hub-card-cyan" onclick="window.navegarModulo('rentabilidade')" title="Calcular Margem Aderido vs Preço NAD">
                     <div class="hub-card-top">
                         <div class="hub-icon-box hub-icon-cyan">📈</div>
                         <span class="hub-card-tag hub-tag-cyan">Margens</span>
@@ -1932,7 +1942,7 @@ body.light-mode .hub-card-rose .hub-card-title {
                 </div>
 
                 <!-- Card 4: Conversor HCT -->
-                <div class="hub-card hub-card-amber" onclick="document.querySelector('[data-tab=\'tab-conversor\']')?.click(); document.getElementById('painel-rn-araguaina')?.scrollIntoView({behavior:'smooth'})" title="Converter Caixas para Hectolitros">
+                <div class="hub-card hub-card-amber" onclick="window.navegarModulo('conversor')" title="Converter Caixas para Hectolitros">
                     <div class="hub-card-top">
                         <div class="hub-icon-box hub-icon-amber">📦</div>
                         <span class="hub-card-tag hub-tag-amber">Hectolitros</span>
@@ -1947,7 +1957,7 @@ body.light-mode .hub-card-rose .hub-card-title {
                 </div>
 
                 <!-- Card 5: Modo Treinamento (Full Width na base) -->
-                <div class="hub-card hub-card-rose hub-card-full" onclick="window.location.href='simulador.html'" title="Ir para o Simulador de Campo e Desafios Práticos com IA">
+                <div class="hub-card hub-card-rose hub-card-full" onclick="window.navegarModulo('treinamento')" title="Ir para o Simulador de Campo e Desafios Práticos com IA">
                     <div class="hub-card-top">
                         <div class="hub-icon-box hub-icon-rose">🎮</div>
                         <span class="hub-card-tag hub-tag-rose">Desafios Práticos</span>
@@ -1965,7 +1975,7 @@ body.light-mode .hub-card-rose .hub-card-title {
 
 
         <!-- Coluna da Esquerda: Configurações e Inputs -->
-        <section class="card">
+        <section class="card" id="cenario-section">
             <div class="card-title">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
                 Configurar o Cenário
@@ -3331,6 +3341,7 @@ body.light-mode .hub-card-rose .hub-card-title {
                 const clienteInput = document.getElementById('cliente');
                 if (clienteInput) clienteInput.value = data.nome;
                 
+                window.navegarModulo('simulador');
                 const copilotSection = document.getElementById('copiloto-section');
                 if (copilotSection) copilotSection.scrollIntoView({ behavior: 'smooth' });
                 
@@ -4235,6 +4246,107 @@ body.light-mode [style*="color:#64748b"] {
 })();
 </script>
 <!-- LIGHT-MODE-SOL:END -->
+
+
+<style>
+/* --- ESTILOS DO BOTÃO VOLTAR E ROTEAMENTO POR ESTADO --- */
+.btn-voltar-menu {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #10b981;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid rgba(30, 41, 59, 0.9);
+    border-radius: 0.75rem;
+    padding: 0.6rem 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-voltar-menu:hover {
+    color: #34d399;
+    border-color: rgba(16, 185, 129, 0.4);
+    background: rgba(15, 23, 42, 0.95);
+    transform: translateX(-2px);
+}
+
+body.light-mode .btn-voltar-menu {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #047857 !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .btn-voltar-menu:hover {
+    border-color: #059669 !important;
+    color: #065f46 !important;
+}
+</style>
+
+<script>
+/* ROTEAMENTO POR ESTADO (ISOLAMENTO DE MÓDULOS) */
+window.moduloAtivo = 'dashboard';
+
+window.navegarModulo = function(modulo) {
+    window.moduloAtivo = modulo;
+    
+    const hub = document.getElementById('hub-modulos-section');
+    const btnVoltar = document.getElementById('btn-voltar-menu-container');
+    const cenario = document.getElementById('cenario-section');
+    const copiloto = document.getElementById('copiloto-section');
+    const calculadoras = document.getElementById('calculadoras-section');
+    const score5 = document.getElementById('painel-rn-araguaina');
+    
+    // Ocultar tudo inicialmente
+    if (hub) hub.style.display = 'none';
+    if (btnVoltar) btnVoltar.style.display = 'none';
+    if (cenario) cenario.style.display = 'none';
+    if (copiloto) copiloto.style.display = 'none';
+    if (calculadoras) calculadoras.style.display = 'none';
+    if (score5) score5.style.display = 'none';
+    
+    if (modulo === 'dashboard') {
+        if (hub) hub.style.display = 'block';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+        if (btnVoltar) btnVoltar.style.display = 'block';
+        
+        if (modulo === 'score5') {
+            if (score5) {
+                score5.style.display = 'block';
+                score5.scrollIntoView({ behavior: 'smooth' });
+            }
+        } else if (modulo === 'simulador') {
+            if (cenario) cenario.style.display = 'flex';
+            if (copiloto) copiloto.style.display = 'flex';
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else if (modulo === 'rentabilidade') {
+            if (calculadoras) {
+                calculadoras.style.display = 'block';
+                document.querySelector('[data-tab="tab-rentabilidade"]')?.click();
+                calculadoras.scrollIntoView({ behavior: 'smooth' });
+            }
+        } else if (modulo === 'conversor') {
+            if (calculadoras) {
+                calculadoras.style.display = 'block';
+                document.querySelector('[data-tab="tab-conversor"]')?.click();
+                calculadoras.scrollIntoView({ behavior: 'smooth' });
+            }
+        } else if (modulo === 'treinamento') {
+            window.location.href = 'simulador.html';
+        }
+    }
+};
+
+// Inicia com o Dashboard isolado
+document.addEventListener('DOMContentLoaded', function() {
+    window.navegarModulo('dashboard');
+});
+</script>
 
 </body>
 
