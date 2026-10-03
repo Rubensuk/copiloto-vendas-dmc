@@ -3146,6 +3146,543 @@ FORMATO OBRIGATÓRIO (Exatamente 3 seções, marcadas com **Título**):
             });
         }
     </script>
+
+
+
+
+<!-- LIGHT-MODE-SOL:START -->
+<style id="light-mode-sol">
+/* =====================================================================
+   MODO CLARO PROFISSIONAL (SOL / CAMPO) - BLOCO 100% ISOLADO
+   Todas as regras abaixo atuam EXCLUSIVAMENTE sob 'body.light-mode'.
+   O Modo Escuro não é modificado e permanece 100% intacto.
+   ===================================================================== */
+
+/* 1. Estrutura Geral e Fundo */
+body.light-mode {
+    background-color: #f8fafc !important;          /* bg-slate-50 / slate-100 */
+    color: #0f172a !important;                      /* text-slate-900 */
+    --bg-color: #f8fafc;
+    --card-bg: #ffffff;
+    --card-border: #e2e8f0;                         /* border-slate-200 */
+    --text-primary: #0f172a;                        /* text-slate-900 */
+    --text-secondary: #334155;                      /* text-slate-700 */
+    --primary-accent: #059669;                      /* emerald-600 */
+    --secondary-accent: #4f46e5;                    /* indigo-600 */
+    --accent-glow: rgba(5, 150, 105, 0.15);
+}
+
+body.light-mode header {
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+body.light-mode .logo-text h1 {
+    background: linear-gradient(135deg, #0f172a, #334155) !important;
+    -webkit-background-clip: text !important;
+    -webkit-text-fill-color: transparent !important;
+}
+
+body.light-mode .logo-text p {
+    color: #475569 !important;                      /* text-slate-600 */
+    font-weight: 600 !important;
+}
+
+body.light-mode footer {
+    color: #64748b !important;
+    border-top: 1px solid #e2e8f0 !important;
+}
+
+/* 2. Cards Principais, Modais e Containers */
+body.light-mode .card,
+body.light-mode .calculator-card,
+body.light-mode .output-card,
+body.light-mode .results-container {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;           /* border-slate-200 */
+    border-radius: 1rem !important;                 /* rounded-2xl */
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05) !important;
+    color: #0f172a !important;
+}
+
+/* 3. Tipografia e Rótulos */
+body.light-mode .card-title,
+body.light-mode h1,
+body.light-mode h2,
+body.light-mode h3,
+body.light-mode h4 {
+    color: #0f172a !important;                      /* text-slate-900 */
+    font-weight: 800 !important;
+}
+
+body.light-mode label,
+body.light-mode .form-group label,
+body.light-mode .calc-input-group label,
+body.light-mode .toggle-title,
+body.light-mode .toggle-label {
+    color: #334155 !important;                      /* text-slate-700 */
+    font-weight: 700 !important;
+    font-size: 0.75rem !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+}
+
+body.light-mode .toggle-desc,
+body.light-mode .placeholder-text,
+body.light-mode p {
+    color: #475569 !important;                      /* text-slate-600 */
+    font-weight: 500 !important;
+}
+
+/* 4. Inputs, Selects e Dropdowns */
+body.light-mode input,
+body.light-mode select,
+body.light-mode textarea {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;           /* border-slate-300 */
+    color: #0f172a !important;                      /* text-slate-900 */
+    font-weight: 600 !important;
+    border-radius: 0.5rem !important;
+}
+
+body.light-mode input:focus,
+body.light-mode select:focus,
+body.light-mode textarea:focus {
+    border-color: #4f46e5 !important;               /* focus:border-indigo-600 */
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15) !important; /* focus:ring-2 focus:ring-indigo-100 */
+    outline: none !important;
+}
+
+body.light-mode input::placeholder,
+body.light-mode textarea::placeholder {
+    color: #94a3b8 !important;                      /* placeholder-slate-400 */
+    opacity: 1 !important;
+}
+
+body.light-mode select option {
+    background: #ffffff !important;
+    color: #0f172a !important;
+}
+
+body.light-mode select optgroup {
+    background: #f8fafc !important;
+    color: #334155 !important;
+    font-weight: 700 !important;
+}
+
+/* 5. Top Metrics (Cards de Topo: Score 5, Core, High End, Bateram Meta) */
+body.light-mode .score5-top-grid > div {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-mode .score5-top-grid > div:first-child {
+    background: #ecfdf5 !important;                 /* emerald-50 */
+    border: 1px solid #a7f3d0 !important;
+}
+body.light-mode .score5-top-grid > div:first-child > div:first-child {
+    color: #065f46 !important;
+}
+body.light-mode #rn-score5-pdvs {
+    color: #047857 !important;                      /* emerald-700 */
+}
+
+body.light-mode #rn-pdvs-core,
+body.light-mode #rn-pdvs-he {
+    color: #0f172a !important;
+}
+
+body.light-mode .score5-top-grid > div:last-child {
+    background: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+}
+body.light-mode .score5-top-grid > div:last-child > div:first-child {
+    color: #065f46 !important;
+}
+body.light-mode #rn-meta-batida {
+    color: #047857 !important;
+}
+
+/* 6. Cards de PDV (Linhas de Clientes: ADEGA RODRIGUES, etc.) */
+body.light-mode .pdv-row {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;           /* border-slate-200 */
+    border-radius: 12px !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
+    color: #0f172a !important;
+    margin-bottom: 10px !important;
+}
+
+body.light-mode .pdv-summary {
+    color: #0f172a !important;
+}
+
+body.light-mode .pdv-nome {
+    color: #0f172a !important;                      /* text-slate-900 */
+    font-weight: 800 !important;
+}
+
+body.light-mode .pdv-header-meta {
+    color: #475569 !important;                      /* text-slate-600 */
+    font-weight: 600 !important;
+}
+
+body.light-mode .pdv-base-badge {
+    background: #f1f5f9 !important;                 /* slate-100 */
+    color: #1e293b !important;                      /* slate-800 */
+    border: 1px solid #cbd5e1 !important;
+    font-weight: 700 !important;
+}
+
+body.light-mode .pdv-list-header {
+    background: #f1f5f9 !important;
+    color: #334155 !important;
+    border-bottom: 2px solid #cbd5e1 !important;
+}
+
+body.light-mode .pdv-details {
+    background: #ffffff !important;
+    border-top: 1px solid #e2e8f0 !important;
+    color: #0f172a !important;
+}
+
+/* 7. Missão do Balcão */
+body.light-mode .missao-banner {
+    background: #fffbeb !important;                 /* amber-50 */
+    border: 1px solid #fde68a !important;           /* amber-200 */
+    border-radius: 12px !important;
+    box-shadow: 0 1px 3px rgba(245, 158, 11, 0.08) !important;
+}
+
+body.light-mode .missao-banner > div:first-child {
+    color: #b45309 !important;                      /* amber-700 */
+    font-weight: 800 !important;
+}
+
+body.light-mode .missao-banner [style*="font-weight:900"] {
+    color: #78350f !important;                      /* amber-900 */
+    text-shadow: none !important;
+    font-weight: 800 !important;
+}
+
+body.light-mode .missao-banner [style*="font-style:italic"] {
+    color: #92400e !important;                      /* amber-800 */
+}
+
+/* 8. Faturamento BEES Force */
+body.light-mode .fat-card-container {
+    background: #f8fafc !important;                 /* slate-50 */
+    border: 1px solid #e2e8f0 !important;           /* slate-200 */
+    border-radius: 12px !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-mode .fat-card-header > div:first-child {
+    color: #0f172a !important;
+    font-weight: 800 !important;
+}
+
+body.light-mode .fat-val-row {
+    color: #334155 !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .fat-val-row span {
+    color: #0f172a !important;
+    font-weight: 800 !important;
+}
+
+body.light-mode [style*="color:#f97316"] {
+    color: #c2410c !important;                      /* orange-700 */
+    text-shadow: none !important;
+    font-weight: 800 !important;
+}
+
+/* 9. Execução no PDV & Trade (Cards de Comodato, Visibilidade, Digital BEES) */
+body.light-mode .trade-card {
+    border-radius: 12px !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Comodato (Geladeira) */
+body.light-mode .trade-card[style*="14,165,233"],
+body.light-mode .trade-card[style*="sky"] {
+    background: #f0f9ff !important;                 /* bg-sky-50 */
+    border: 1px solid #bae6fd !important;           /* border-sky-200 */
+    color: #0c4a6e !important;                      /* text-sky-900 */
+}
+body.light-mode .trade-card[style*="14,165,233"] div,
+body.light-mode .trade-card[style*="sky"] div {
+    color: #0c4a6e !important;
+}
+
+/* Visibilidade (Trade) */
+body.light-mode .trade-card[style*="168,85,247"],
+body.light-mode .trade-card[style*="purple"] {
+    background: #faf5ff !important;                 /* bg-purple-50 */
+    border: 1px solid #e9d5ff !important;           /* border-purple-200 */
+    color: #581c87 !important;                      /* text-purple-900 */
+}
+body.light-mode .trade-card[style*="168,85,247"] div,
+body.light-mode .trade-card[style*="purple"] div {
+    color: #581c87 !important;
+}
+
+/* Digital BEES (Cupom) */
+body.light-mode .trade-card[style*="219,39,119"],
+body.light-mode .trade-card[style*="pink"] {
+    background: #fdf2f8 !important;                 /* bg-pink-50 */
+    border: 1px solid #fbcfe8 !important;           /* border-pink-200 */
+    color: #831843 !important;                      /* text-pink-900 */
+}
+body.light-mode .trade-card[style*="219,39,119"] div,
+body.light-mode .trade-card[style*="pink"] div {
+    color: #831843 !important;
+}
+
+/* Trade Cards Sem Ativo / Oportunidade */
+body.light-mode .trade-card[style*="30,41,59"],
+body.light-mode .trade-card[style*="slate"] {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+}
+body.light-mode .trade-card[style*="30,41,59"] div,
+body.light-mode .trade-card[style*="slate"] div {
+    color: #475569 !important;
+}
+
+/* 10. Badges de Status & Indicadores */
+/* Meta Batida / Sucesso */
+body.light-mode [style*="background:rgba(34,197,94"],
+body.light-mode [style*="background: #22c55e"],
+body.light-mode .badge-meta-batida {
+    background: #ecfdf5 !important;                 /* bg-emerald-50 */
+    color: #065f46 !important;                      /* text-emerald-800 */
+    border: 1px solid #6ee7b7 !important;           /* border-emerald-300 */
+    font-weight: 700 !important;
+}
+
+/* Fora da Meta / Alerta */
+body.light-mode [style*="background:rgba(239,68,68"],
+body.light-mode [style*="background:rgba(159,18,57"],
+body.light-mode .badge-fora-meta {
+    background: #fff1f2 !important;                 /* bg-rose-50 */
+    color: #9f1239 !important;                      /* text-rose-800 */
+    border: 1px solid #fda4af !important;           /* border-rose-300 */
+    font-weight: 700 !important;
+}
+
+/* Badge de Visita / Neutro */
+body.light-mode [style*="background: rgba(100,116,139"],
+body.light-mode [style*="background:rgba(100,116,139"] {
+    background: #f1f5f9 !important;
+    color: #1e293b !important;
+    border: 1px solid #cbd5e1 !important;
+    font-weight: 600 !important;
+}
+
+/* 11. Trilhos e Barras de Progresso */
+body.light-mode [style*="background:rgba(0,0,0,0.4)"],
+body.light-mode [style*="background: #2a2a3a"],
+body.light-mode [style*="background:#1e293b"],
+body.light-mode [style*="background: #1e293b"],
+body.light-mode [style*="background: rgba(255,255,255,0.03)"] {
+    background: #e2e8f0 !important;                 /* bg-slate-200 */
+}
+
+/* 12. Simulador de Vendas & Roteiros Inteligentes */
+body.light-mode .output-box {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+body.light-mode .script-step {
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-left: 4px solid #4f46e5 !important;
+    border-radius: 8px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-mode .script-step h4 {
+    color: #4338ca !important;                      /* text-indigo-700 */
+    font-weight: 800 !important;
+}
+
+body.light-mode .step-content {
+    color: #1e293b !important;                      /* text-slate-800 */
+    line-height: 1.6 !important;
+}
+
+body.light-mode .fala-pronta {
+    background: #f1f5f9 !important;
+    border-left: 3px solid #6366f1 !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .calc-results {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+}
+
+body.light-mode .result-row {
+    color: #475569 !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .result-row strong {
+    color: #0f172a !important;
+    font-weight: 800 !important;
+}
+
+body.light-mode .result-row.highlighted {
+    border-top: 1px solid #e2e8f0 !important;
+}
+
+body.light-mode .result-row.highlighted strong {
+    color: #047857 !important;                      /* emerald-700 */
+    font-weight: 900 !important;
+}
+
+body.light-mode .calc-badge {
+    background: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+    color: #065f46 !important;
+    font-weight: 600 !important;
+}
+
+/* 13. Botões e Ações */
+body.light-mode #quick-filters button[onclick*="FALTA_META"] {
+    background: #fff1f2 !important;
+    color: #be123c !important;
+    border: 1px solid #fda4af !important;
+    font-weight: 700 !important;
+}
+
+body.light-mode #quick-filters button[onclick*="BATEU_META"] {
+    background: #ecfdf5 !important;
+    color: #047857 !important;
+    border: 1px solid #6ee7b7 !important;
+    font-weight: 700 !important;
+}
+
+body.light-mode #quick-filters button[onclick*="TODOS"] {
+    background: #f1f5f9 !important;
+    color: #1e293b !important;
+    border: 1px solid #cbd5e1 !important;
+    font-weight: 700 !important;
+}
+
+body.light-mode .btn-limpar-campos,
+body.light-mode #btn-theme-toggle {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #1e293b !important;
+    font-weight: 600 !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04) !important;
+}
+
+body.light-mode a[href="simulador.html"] {
+    background: #eff6ff !important;
+    color: #1d4ed8 !important;
+    border: 1px solid #93c5fd !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .btn-clear {
+    background: #f1f5f9 !important;
+    border: 1px solid #cbd5e1 !important;
+    color: #334155 !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .tab-btn {
+    background: #f1f5f9 !important;
+    color: #475569 !important;
+    border: 1px solid #cbd5e1 !important;
+    font-weight: 600 !important;
+}
+
+body.light-mode .tab-btn.active {
+    background: #ffffff !important;
+    color: #4f46e5 !important;
+    border: 1px solid #818cf8 !important;
+    font-weight: 700 !important;
+    box-shadow: 0 1px 3px rgba(79, 70, 229, 0.1) !important;
+}
+
+body.light-mode button.badge {
+    background: #ecfdf5 !important;
+    color: #047857 !important;
+    border: 1px solid #6ee7b7 !important;
+    font-weight: 700 !important;
+}
+
+/* 14. Tabelas internas do PDV */
+body.light-mode table {
+    color: #0f172a !important;
+}
+
+body.light-mode th {
+    background: #f1f5f9 !important;
+    color: #334155 !important;
+    border-bottom: 2px solid #cbd5e1 !important;
+    font-weight: 700 !important;
+}
+
+body.light-mode td {
+    border-bottom: 1px solid #e2e8f0 !important;
+    color: #1e293b !important;
+}
+
+body.light-mode tr:hover {
+    background: #f8fafc !important;
+}
+
+/* 15. Proteção de textos inline no Modo Claro */
+body.light-mode [style*="color:#fff"]:not(button),
+body.light-mode [style*="color: #fff"]:not(button),
+body.light-mode [style*="color: white"]:not(button) {
+    color: #0f172a !important;
+}
+
+body.light-mode [style*="color:#cbd5e1"],
+body.light-mode [style*="color: #cbd5e1"],
+body.light-mode [style*="color:#94a3b8"],
+body.light-mode [style*="color: #94a3b8"],
+body.light-mode [style*="color: #64748b"],
+body.light-mode [style*="color:#64748b"] {
+    color: #334155 !important;
+}
+</style>
+<script>
+/* Sincronização isolada do botão de tema */
+(function () {
+    function syncLabel() {
+        var isLight = document.body.classList.contains('light-mode');
+        var icon = document.getElementById('theme-icon');
+        var text = document.getElementById('theme-text');
+        if (icon) icon.innerText = isLight ? '\u2600\uFE0F' : '\uD83C\uDF19';
+        if (text) text.innerText = isLight ? 'Claro' : 'Escuro';
+    }
+    window.addEventListener('click', function (e) {
+        var btn = e.target && e.target.closest ? e.target.closest('#btn-theme-toggle') : null;
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        document.body.classList.toggle('light-mode');
+        syncLabel();
+    }, true);
+    syncLabel();
+})();
+</script>
+<!-- LIGHT-MODE-SOL:END -->
+
 </body>
 
 </html>
