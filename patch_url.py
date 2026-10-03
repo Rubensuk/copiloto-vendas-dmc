@@ -4,10 +4,11 @@ def patch():
     with open('api/sheet.js', 'r', encoding='utf-8') as f:
         code = f.read()
 
-    # The old ID
-    old_url = 'https://docs.google.com/spreadsheets/d/1RdtvJaS0S1jeSNgBoYZ86WzIfvEIKlo8/export?format=csv'
-    # The new ID provided by the user today
-    new_url = 'https://docs.google.com/spreadsheets/d/1I7mM2zzqLABFnxi2Lx_-Sk86HrvmCRvv/export?format=csv&gid=1015537580'
+    # Old URL: https://docs.google.com/spreadsheets/d/1I7mM2zzqLABFnxi2Lx_-Sk86HrvmCRvv/export?format=csv&gid=1015537580
+    # New URL: https://docs.google.com/spreadsheets/d/1IHbnIjofO3ozVBrywfb4bzGUsktE3Fu0/export?format=csv&gid=378465162
+    
+    old_url = 'https://docs.google.com/spreadsheets/d/1I7mM2zzqLABFnxi2Lx_-Sk86HrvmCRvv/export?format=csv&gid=1015537580'
+    new_url = 'https://docs.google.com/spreadsheets/d/1IHbnIjofO3ozVBrywfb4bzGUsktE3Fu0/export?format=csv&gid=378465162'
     
     code = code.replace(old_url, new_url)
 
