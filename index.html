@@ -778,7 +778,95 @@
             50% { background-position: 100% 50%; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.6); }
             100% { background-position: 0% 50%; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
         }
-        </style>
+        
+    /* --- MOBILE-FIRST RIGOROSO --- */
+    .pdv-summary {
+        white-space: normal !important;
+        word-break: break-word !important;
+    }
+    .grid-responsive-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .grid-responsive-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+    }
+    .trade-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 10px;
+        border-radius: 12px;
+    }
+    .fat-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .fat-val-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .btn-gerar-sticky {
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        margin-top: 24px;
+        padding-bottom: 12px; /* respiro abaixo do botão */
+        background: var(--bg-color); /* evita que fundo seja transparente */
+    }
+
+    @media (max-width: 639px) {
+        .pdv-summary {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 8px !important;
+        }
+        .pdv-summary > div {
+            text-align: left !important;
+            width: 100% !important;
+            flex: none !important;
+        }
+        .pdv-summary > div:first-child {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+        
+        .grid-responsive-2 { grid-template-columns: 1fr !important; }
+        .grid-responsive-3 { grid-template-columns: 1fr !important; gap: 8px !important; }
+        
+        .trade-card {
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            text-align: left !important;
+            padding: 8px 12px !important;
+        }
+        .trade-card > div:first-child { margin-bottom: 0 !important; }
+        .trade-card > div:nth-child(2) { margin-bottom: 0 !important; flex: 1; margin-left: 8px; }
+        
+        .fat-card-header {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 6px !important;
+        }
+        .fat-val-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 4px !important;
+        }
+    }
+    /* ----------------------------- */
+    </style>
+    
 
     <style>
         body.light-mode {
@@ -919,7 +1007,95 @@
             50% { background-position: 100% 50%; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.6); }
             100% { background-position: 0% 50%; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); }
         }
-        </style>
+        
+    /* --- MOBILE-FIRST RIGOROSO --- */
+    .pdv-summary {
+        white-space: normal !important;
+        word-break: break-word !important;
+    }
+    .grid-responsive-2 {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        margin-bottom: 12px;
+    }
+    .grid-responsive-3 {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 10px;
+    }
+    .trade-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding: 10px;
+        border-radius: 12px;
+    }
+    .fat-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+    .fat-val-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .btn-gerar-sticky {
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        margin-top: 24px;
+        padding-bottom: 12px; /* respiro abaixo do botão */
+        background: var(--bg-color); /* evita que fundo seja transparente */
+    }
+
+    @media (max-width: 639px) {
+        .pdv-summary {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 8px !important;
+        }
+        .pdv-summary > div {
+            text-align: left !important;
+            width: 100% !important;
+            flex: none !important;
+        }
+        .pdv-summary > div:first-child {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            align-items: center;
+        }
+        
+        .grid-responsive-2 { grid-template-columns: 1fr !important; }
+        .grid-responsive-3 { grid-template-columns: 1fr !important; gap: 8px !important; }
+        
+        .trade-card {
+            flex-direction: row !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+            text-align: left !important;
+            padding: 8px 12px !important;
+        }
+        .trade-card > div:first-child { margin-bottom: 0 !important; }
+        .trade-card > div:nth-child(2) { margin-bottom: 0 !important; flex: 1; margin-left: 8px; }
+        
+        .fat-card-header {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 6px !important;
+        }
+        .fat-val-row {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 4px !important;
+        }
+    }
+    /* ----------------------------- */
+    </style>
+    
     
 </head>
 <body>
@@ -2125,7 +2301,7 @@
                                 <div style="font-size:0.75rem; color:#94a3b8; font-style:italic;">Destrave a meta e positive o mix High End deste cliente.</div>
                             </div>` + inner_html;
                         }
-                        let cards_he = `<div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">`;
+                        let cards_he = `<div class="grid-responsive-2">`;
                         cards_he += miniCardHTML(meta_600, real_600, '600ml (HE)', '🍺');
                         cards_he += miniCardHTML(meta_ln, real_ln, 'Long Neck', '🍾');
                         if (tem_zero) cards_he += miniCardHTML(meta_ln_zero, real_ln_zero, 'LN Zero', '🧊');
@@ -2182,7 +2358,7 @@
                                 <div style="font-size:0.75rem; color:#94a3b8; font-style:italic;">Destrave a meta e positive o mix Core deste cliente.</div>
                             </div>` + inner_html;
                         }
-                        let cards_core = `<div style="display:grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">`;
+                        let cards_core = `<div class="grid-responsive-2">`;
                         cards_core += miniCardHTML(meta_int, real_int, 'Inteira (600ml)', '🍺');
                         cards_core += miniCardHTML(meta_rgb, real_rgb, 'RGB', '📦');
                         cards_core += miniCardHTML(meta_300, real_300, '300ml', '🥃');
@@ -2234,12 +2410,12 @@
                         let formatBRL = (v) => v.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                         let falta_v = Math.max(0, meta_task - real_task);
                         
-                        fat_html += `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                        fat_html += `<div class="fat-card-header">
                             <div style="font-weight: bold; color:var(--text-primary); font-size: 0.95rem;">🎯 Faturamento BEES Force</div>
                             ${falta_v === 0 ? `<span style="background:rgba(34,197,94,0.2); color:#22c55e; padding:2px 8px; border-radius:6px; font-size:0.75rem; font-weight:bold;">Concluído</span>` : `<span style="background:rgba(100,116,139,0.3); color:#cbd5e1; border:1px solid rgba(255,255,255,0.1); padding:2px 8px; border-radius:6px; font-size:0.75rem; font-weight:bold;">${pct_task.toFixed(0)}%</span>`}
                         </div>`;
                         
-                        fat_html += `<div style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:6px;">Realizado: <span style="font-weight:900;color:#fff;">R$ ${formatBRL(real_task)}</span> / Meta: R$ ${formatBRL(meta_task)}</div>`;
+                        fat_html += `<div class="fat-val-row" style="font-size:0.85rem; color:var(--text-secondary); margin-bottom:6px;"><div>Realizado: <span style="font-weight:900;color:#fff;">R$ ${formatBRL(real_task)}</span></div><div>Meta: R$ ${formatBRL(meta_task)}</div></div>`;
                         
                         if (falta_v > 0) {
                             fat_html += `<div style="font-size:0.95rem; font-weight:900; color:#f97316; margin-bottom:10px; text-shadow:0 0 8px rgba(249,115,22,0.3);">Faltam apenas R$ ${formatBRL(falta_v)}</div>`;
@@ -2262,36 +2438,36 @@
                     let cupom_val = dig_coup ? parseInt(dig_coup) : 0;
                     
                     let card_coolers = coolers > 0 
-                        ? `<div style="background:rgba(14,165,233,0.15); border:1px solid rgba(14,165,233,0.4); border-radius:12px; padding:10px; display:flex; flex-direction:column; justify-content:center; box-shadow:0 4px 10px rgba(14,165,233,0.1);">
+                        ? `<div style="background:rgba(14,165,233,0.15); border:1px solid rgba(14,165,233,0.4); border-radius:12px;" class="trade-card box-shadow:0 4px 10px rgba(14,165,233,0.1);">
                              <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">COMODATO</div>
                              <div style="font-size:0.85rem; font-weight:900; color:#fff; display:flex; align-items:center; gap:6px; margin-bottom:4px;">❄️ ${coolers} Geladeira(s)</div>
                              <div style="font-size:0.65rem; color:#10b981; font-weight:bold;">Ativo na Rota</div>
                            </div>`
-                        : `<div style="background:rgba(30,41,59,0.5); border:1px solid rgba(71,85,105,0.6); border-radius:12px; padding:10px; display:flex; flex-direction:column; justify-content:center;">
+                        : `<div style="background:rgba(30,41,59,0.5); border:1px solid rgba(71,85,105,0.6); border-radius:12px;" class="trade-card ">
                              <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">COMODATO</div>
                              <div style="font-size:0.85rem; font-weight:bold; color:#cbd5e1; display:flex; align-items:center; gap:6px; margin-bottom:4px;"><span style="filter:grayscale(1) opacity(0.5)">❄️</span> Sem Ativos</div>
                              <div style="font-size:0.65rem; color:#f59e0b; font-weight:bold;">Oportunidade</div>
                            </div>`;
 
                     let card_trade = trade_val > 0
-                        ? `<div style="background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.4); border-radius:12px; padding:10px; display:flex; flex-direction:column; justify-content:center; box-shadow:0 4px 10px rgba(168,85,247,0.1);">
+                        ? `<div style="background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.4); border-radius:12px;" class="trade-card box-shadow:0 4px 10px rgba(168,85,247,0.1);">
                              <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">VISIBILIDADE</div>
                              <div style="font-size:0.85rem; font-weight:900; color:#fff; display:flex; align-items:center; gap:6px; margin-bottom:4px;">🎨 Ativo (${trade_val})</div>
                              <div style="font-size:0.65rem; color:#10b981; font-weight:bold;">Positivado</div>
                            </div>`
-                        : `<div style="background:rgba(30,41,59,0.5); border:1px solid rgba(71,85,105,0.6); border-radius:12px; padding:10px; display:flex; flex-direction:column; justify-content:center;">
+                        : `<div style="background:rgba(30,41,59,0.5); border:1px solid rgba(71,85,105,0.6); border-radius:12px;" class="trade-card ">
                              <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">VISIBILIDADE</div>
                              <div style="font-size:0.85rem; font-weight:bold; color:#cbd5e1; display:flex; align-items:center; gap:6px; margin-bottom:4px;"><span style="filter:grayscale(1) opacity(0.5)">🎨</span> Sem Material</div>
                              <div style="font-size:0.65rem; color:#f59e0b; font-weight:bold;">Oportunidade</div>
                            </div>`;
 
                     let card_cupom = cupom_val > 0
-                        ? `<div style="background:rgba(219,39,119,0.15); border:1px solid rgba(219,39,119,0.4); border-radius:12px; padding:10px; display:flex; flex-direction:column; justify-content:center; box-shadow:0 4px 10px rgba(219,39,119,0.1);">
+                        ? `<div style="background:rgba(219,39,119,0.15); border:1px solid rgba(219,39,119,0.4); border-radius:12px;" class="trade-card box-shadow:0 4px 10px rgba(219,39,119,0.1);">
                              <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">DIGITAL BEES</div>
                              <div style="font-size:0.85rem; font-weight:900; color:#fff; display:flex; align-items:center; gap:6px; margin-bottom:4px;">🎟️ ${cupom_val} Disponível</div>
                              <div style="font-size:0.65rem; color:#10b981; font-weight:bold;">Engajado</div>
                            </div>`
-                        : `<div style="background:rgba(30,41,59,0.5); border:1px solid rgba(71,85,105,0.6); border-radius:12px; padding:10px; display:flex; flex-direction:column; justify-content:center;">
+                        : `<div style="background:rgba(30,41,59,0.5); border:1px solid rgba(71,85,105,0.6); border-radius:12px;" class="trade-card ">
                              <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">DIGITAL BEES</div>
                              <div style="font-size:0.85rem; font-weight:bold; color:#cbd5e1; display:flex; align-items:center; gap:6px; margin-bottom:4px;"><span style="filter:grayscale(1) opacity(0.5)">🎟️</span> Sem Cupom</div>
                              <div style="font-size:0.65rem; color:#ef4444; font-weight:bold;">Não Ativado</div>
@@ -2299,7 +2475,7 @@
 
                     let exec_html = `<div style="margin-top: 24px; margin-bottom: 24px;">
                         <div style="font-weight: bold; margin-bottom: 12px; font-size: 0.95rem; color:var(--text-primary);">🧊 Execução no PDV & Trade</div>
-                        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px;">
+                        <div class="grid-responsive-3">
                             ${card_coolers}
                             ${card_trade}
                             ${card_cupom}
@@ -2308,8 +2484,8 @@
                     
                     /* copiloto_data_str removido, usando index agora */
 
-                    let btn_copiloto = `<div style="margin-top: 24px; margin-bottom: 8px; text-align: center;">
-                        <button onclick="chamarCopiloto(${index})" style="background: linear-gradient(90deg, #4f46e5, #6366f1, #8b5cf6); background-size: 200% auto; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 900; font-size: 1.05rem; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); text-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: all 0.3s ease; animation: gradientPulse 3s ease infinite;">🤖 Gerar Tática no Copiloto</button>
+                    let btn_copiloto = `<div class="btn-gerar-sticky" style="text-align: center; border-radius: 0 0 8px 8px;">
+                        <button onclick="chamarCopiloto(${index})" style="background: linear-gradient(90deg, #4f46e5, #6366f1, #8b5cf6); background-size: 200% auto; color: white; border: none; padding: 14px 20px; border-radius: 12px; font-weight: 900; font-size: 1.05rem; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); text-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: transform 0.1s ease; animation: gradientPulse 3s ease infinite;" onmousedown="this.style.transform='scale(0.97)'" onmouseup="this.style.transform='scale(1)'" onmouseleave="this.style.transform='scale(1)'">🤖 Gerar Tática no Copiloto</button>
                     </div>`;
 
                     inner_html += fat_html + exec_html + btn_copiloto;
