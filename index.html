@@ -2257,7 +2257,7 @@
         const aiModeToggle = document.getElementById('ai-mode-toggle');
 
         window.pdvContextoCopiloto = null;
-        function prepararCopiloto(dataStr) {
+        window.prepararCopiloto = function(dataStr) {
             const data = JSON.parse(decodeURIComponent(dataStr));
             window.pdvContextoCopiloto = data;
             
