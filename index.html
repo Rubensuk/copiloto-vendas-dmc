@@ -948,6 +948,84 @@
 
         </div>
 <script>
+        window.chamarCopiloto = function(index) {
+            try {
+                if (!window.appFilteredRows || !window.appFilteredRows[index]) {
+                    alert("Erro: Dados do PDV não encontrados na memória.");
+                    return;
+                }
+                const row = window.appFilteredRows[index];
+                
+                let safeInt = (v) => { let p = parseInt(v); return isNaN(p) ? 0 : p; };
+                let safeFloat = (v) => { let p = parseFloat(v); return isNaN(p) ? 0 : p; };
+                
+                let base = row['BASE'] ? row['BASE'].trim().toUpperCase() : 'CORE';
+                let bateu = safeFloat(row['BATEU META']);
+                
+                let falta_volume_app = "";
+                if (base === 'HIGH END' && bateu === 0) {
+                    let m_600 = safeInt(row['META 600 HE']); let r_600 = safeInt(row['REAL 600 HE']);
+                    let m_ln = safeInt(row['META LN']); let r_ln = safeInt(row['REAL LN']);
+                    let m_lnz = safeInt(row['META LN ZERO']); let r_lnz = safeInt(row['REAL LN ZERO']);
+                    let faltas = [];
+                    if (r_600 < m_600) faltas.push((m_600 - r_600) + " cx de 600ml");
+                    if (r_ln < m_ln) faltas.push((m_ln - r_ln) + " cx de Long Neck");
+                    if (r_lnz < m_lnz) faltas.push((m_lnz - r_lnz) + " cx de Long Neck Zero");
+                    if (faltas.length > 0) falta_volume_app = "Falta vender " + faltas.join(" + ") + ".";
+                } else if (bateu === 0) {
+                    let m_int = safeInt(row['META 600']); let r_int = safeInt(row['REAL 600']);
+                    let m_rgb = safeInt(row['META RGB']); let r_rgb = safeInt(row['REAL RGB']);
+                    let m_300 = safeInt(row['META 300']); let r_300 = safeInt(row['REAL 300']);
+                    let faltas = [];
+                    if (r_int < m_int) faltas.push((m_int - r_int) + " cx de Inteira (600ml)");
+                    if (r_rgb < m_rgb) faltas.push((m_rgb - r_rgb) + " cx de RGB");
+                    if (r_300 < m_300) faltas.push((m_300 - r_300) + " cx de 300ml");
+                    if (faltas.length > 0) falta_volume_app = "Falta vender " + faltas.join(" + ") + ".";
+                }
+                
+                // Tratar valores monetários BRL (ex: "3.010,00" -> 3010)
+                let parseBRL = (val) => {
+                    if (!val) return 0;
+                    if (typeof val === 'number') return val;
+                    let str = val.toString().trim();
+                    if (str === '-' || str === '') return 0;
+                    str = str.replace(/\./g, '');
+                    str = str.replace(',', '.');
+                    let num = parseFloat(str);
+                    return isNaN(num) ? 0 : num;
+                };
+
+                const data = {
+                    nome: row['NOME PDV'] || 'Cliente',
+                    comprador: safeInt(row['COMPR']),
+                    possui_task: row['POSSUI TASK'] ? row['POSSUI TASK'].trim().toUpperCase() : 'N',
+                    meta_task: parseBRL(row['META TASK']),
+                    real_task: parseBRL(row['REAL TASK']),
+                    coolers: safeInt(row['COOLERS']),
+                    falta_volume: falta_volume_app
+                };
+                
+                window.pdvContextoCopiloto = data;
+                
+                const clienteInput = document.getElementById('cliente');
+                if (clienteInput) clienteInput.value = data.nome;
+                
+                const copilotSection = document.getElementById('copiloto-section');
+                if (copilotSection) copilotSection.scrollIntoView({ behavior: 'smooth' });
+                
+                setTimeout(() => {
+                    const btnGen = document.getElementById('generate-btn');
+                    if (btnGen) {
+                        btnGen.click();
+                    } else {
+                        alert("Erro: Botão de geração (generate-btn) não encontrado na tela!");
+                    }
+                }, 600);
+            } catch(e) {
+                alert("Erro ao preparar dados da IA: " + e.message);
+                console.error(e);
+            }
+        };
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('btn-limpar-campos')?.addEventListener('click', function(e) {
                 if (e) {
@@ -1962,7 +2040,8 @@
                     return bateuA - bateuB;
                 });
                 
-                filteredRows.forEach(row => {
+                window.appFilteredRows = filteredRows;
+                filteredRows.forEach((row, index) => {
                     agg.count_pdvs = (agg.count_pdvs || 0) + 1;
 
 
@@ -2227,18 +2306,10 @@
                         </div>
                     </div>`;
                     
-                    let copiloto_data_str = encodeURIComponent(JSON.stringify({
-                        nome: row['NOME PDV'],
-                        comprador: comprador,
-                        possui_task: possui_task,
-                        meta_task: meta_task,
-                        real_task: real_task,
-                        coolers: coolers,
-                        falta_volume: falta_volume_app
-                    })).replace(/'/g, "%27");
+                    /* copiloto_data_str removido, usando index agora */
 
                     let btn_copiloto = `<div style="margin-top: 24px; margin-bottom: 8px; text-align: center;">
-                        <button onclick="prepararCopiloto('${copiloto_data_str}')" style="background: linear-gradient(90deg, #4f46e5, #6366f1, #8b5cf6); background-size: 200% auto; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 900; font-size: 1.05rem; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); text-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: all 0.3s ease; animation: gradientPulse 3s ease infinite;">🤖 Gerar Tática no Copiloto</button>
+                        <button onclick="chamarCopiloto(${index})" style="background: linear-gradient(90deg, #4f46e5, #6366f1, #8b5cf6); background-size: 200% auto; color: white; border: none; padding: 12px 20px; border-radius: 8px; font-weight: 900; font-size: 1.05rem; cursor: pointer; width: 100%; box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4); text-shadow: 0 1px 3px rgba(0,0,0,0.3); transition: all 0.3s ease; animation: gradientPulse 3s ease infinite;">🤖 Gerar Tática no Copiloto</button>
                     </div>`;
 
                     inner_html += fat_html + exec_html + btn_copiloto;
