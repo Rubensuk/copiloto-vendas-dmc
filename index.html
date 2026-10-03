@@ -2005,6 +2005,7 @@
                         }
                         
                         if (insight_he !== "" && bateu === 0) {
+                            falta_volume_app = insight_he;
                             inner_html = `<div style="background: rgba(255, 204, 0, 0.15); border-left: 3px solid #ffcc00; padding: 10px; margin-bottom: 12px; border-radius: 4px; font-weight: bold; color: #ffcc00; font-size: 0.9rem;">💡 Foco da Visita: ${insight_he}</div>` + inner_html;
                         }
                         inner_html += barraHTML(pct_600, `🍺 600ml — Meta: ${meta_600} | Real: ${real_600} | Falta: ${Math.max(0, meta_600 - real_600)}`);
@@ -2051,6 +2052,7 @@
                         }
                         
                         if (insight_core !== "" && bateu === 0) {
+                            falta_volume_app = insight_core;
                             inner_html = `<div style="background: rgba(255, 204, 0, 0.15); border-left: 3px solid #ffcc00; padding: 10px; margin-bottom: 12px; border-radius: 4px; font-weight: bold; color: #ffcc00; font-size: 0.9rem;">💡 Foco da Visita: ${insight_core}</div>` + inner_html;
                         }
                         inner_html += barraHTML(pct_int, `🍺 Inteira (600ml) — Meta: ${meta_int} | Real: ${real_int} | Falta: ${Math.max(0, meta_int - real_int)}`);
@@ -2093,12 +2095,12 @@
                     let he_tend = row['HE (TEND)'] ? row['HE (TEND)'].trim() : '';
 
                     let fat_html = `<div style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed ${border_color};">
-                        <div style="font-weight: bold; margin-bottom: 10px;">🎯 Faturamento & BEES Force</div>`;
+                        <div style="font-weight: bold; margin-bottom: 10px;">🎯 Faturamento</div>`;
 
                     if (possui_task === 'S') {
                         let pct_task = meta_task > 0 ? (real_task / meta_task) * 100 : (real_task > 0 ? 100 : 0);
                         let formatBRL = (v) => v.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                        fat_html += barraHTML(pct_task, `💪 Desafio BEES Force — Meta: R$ ${formatBRL(meta_task)} | Real: R$ ${formatBRL(real_task)} | Falta: R$ ${formatBRL(Math.max(0, meta_task - real_task))}`);
+                        fat_html += barraHTML(pct_task, `💪 Faturamento — Meta: R$ ${formatBRL(meta_task)} | Real: R$ ${formatBRL(real_task)} | Falta: R$ ${formatBRL(Math.max(0, meta_task - real_task))}`);
                     } else {
                         fat_html += `<div style="font-size: 0.85rem; color: #888; font-style: italic;">Sem task ativa no BEES Force.</div>`;
                     }
@@ -2119,7 +2121,8 @@
                         possui_task: possui_task,
                         meta_task: meta_task,
                         real_task: real_task,
-                        coolers: coolers
+                        coolers: coolers,
+                        falta_volume: falta_volume_app
                     }));
 
                     let btn_copiloto = `<div style="margin-top: 20px; text-align: center;">
@@ -2259,6 +2262,13 @@
             // Rola a tela suavemente até a seção do Copiloto
             const copilotSection = document.getElementById('copiloto-section');
             if (copilotSection) copilotSection.scrollIntoView({ behavior: 'smooth' });
+            
+            // Auto-ativa o gerador de tática após 600ms
+            setTimeout(() => {
+                if (typeof gerarResposta === 'function') {
+                    gerarResposta();
+                }
+            }, 600);
         }
 
         function getRawPrompt() {
@@ -2299,7 +2309,10 @@ REGRAS DE OURO TÁTICAS:
                 }
                 if (pdv.possui_task === 'S' && pdv.real_task < pdv.meta_task) {
                     let falta_rs = (pdv.meta_task - pdv.real_task).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-                    instrucoes_extras += `- DESAFIO BEES FORCE ATIVO: Falta R$ ${falta_rs} para bater a meta da Task. Calcule rapidamente quantas caixas do produto foco cobrem esse valor e coloque essa matemática na fala de fechamento.\n`;
+                    instrucoes_extras += `- META DE FATURAMENTO: Faltam exatamente R$ ${falta_rs} para o vendedor bater a meta de faturamento neste cliente. Faça as contas de quantas caixas do produto foco cobrem esse valor e insira isso no fechamento.\n`;
+                }
+                if (pdv.falta_volume) {
+                    instrucoes_extras += `- GAP DE VOLUME (O QUE FALTA BATER): ${pdv.falta_volume}. O VENDEDOR SÓ BATE A META DA ROTA SE VENDER ISSO. Crie um argumento incisivo que empurre exatamente essa quantidade de caixas goela abaixo do cliente (de forma persuasiva e técnica).\n`;
                 }
                 if (pdv.coolers > 0) {
                     instrucoes_extras += `- GELADEIRA AMBEV PRESENTE (${pdv.coolers}): Lembre o cliente da regra de comodato (SOPI / Visibilidade). Use isso como alavanca de negociação se ele ameaçar colocar produto concorrente.\n`;
