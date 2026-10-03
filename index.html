@@ -1458,6 +1458,62 @@ body.light-mode .hub-card-rose .hub-card-title {
     color: #9f1239 !important;
 }
 
+
+/* --- ISOLAMENTO ESTRITO DE MÓDULOS (RENDERIZAÇÃO CONDICIONAL) --- */
+#cenario-section,
+#copiloto-section,
+#calculadoras-section,
+#painel-rn-araguaina,
+#btn-voltar-menu-container {
+    display: none;
+}
+
+body[data-modulo="dashboard"] #hub-modulos-section {
+    display: block !important;
+}
+body[data-modulo="dashboard"] #btn-voltar-menu-container,
+body[data-modulo="dashboard"] #cenario-section,
+body[data-modulo="dashboard"] #copiloto-section,
+body[data-modulo="dashboard"] #calculadoras-section,
+body[data-modulo="dashboard"] #painel-rn-araguaina {
+    display: none !important;
+}
+
+body[data-modulo="score5"] #hub-modulos-section {
+    display: none !important;
+}
+body[data-modulo="score5"] #btn-voltar-menu-container,
+body[data-modulo="score5"] #painel-rn-araguaina {
+    display: block !important;
+}
+
+body[data-modulo="simulador"] #hub-modulos-section {
+    display: none !important;
+}
+body[data-modulo="simulador"] #btn-voltar-menu-container {
+    display: block !important;
+}
+body[data-modulo="simulador"] #cenario-section,
+body[data-modulo="simulador"] #copiloto-section {
+    display: flex !important;
+}
+
+body[data-modulo="rentabilidade"] #hub-modulos-section {
+    display: none !important;
+}
+body[data-modulo="rentabilidade"] #btn-voltar-menu-container,
+body[data-modulo="rentabilidade"] #calculadoras-section {
+    display: block !important;
+}
+
+body[data-modulo="conversor"] #hub-modulos-section {
+    display: none !important;
+}
+body[data-modulo="conversor"] #btn-voltar-menu-container,
+body[data-modulo="conversor"] #calculadoras-section {
+    display: block !important;
+}
+
 </style>
     
 
@@ -1691,7 +1747,7 @@ body.light-mode .hub-card-rose .hub-card-title {
     
     
 </head>
-<body>
+<body data-modulo="dashboard">
 
     <header>
         <div class="logo-container">
@@ -4292,54 +4348,21 @@ body.light-mode .btn-voltar-menu:hover {
 window.moduloAtivo = 'dashboard';
 
 window.navegarModulo = function(modulo) {
-    window.moduloAtivo = modulo;
-    
-    const hub = document.getElementById('hub-modulos-section');
-    const btnVoltar = document.getElementById('btn-voltar-menu-container');
-    const cenario = document.getElementById('cenario-section');
-    const copiloto = document.getElementById('copiloto-section');
-    const calculadoras = document.getElementById('calculadoras-section');
-    const score5 = document.getElementById('painel-rn-araguaina');
-    
-    // Ocultar tudo inicialmente
-    if (hub) hub.style.display = 'none';
-    if (btnVoltar) btnVoltar.style.display = 'none';
-    if (cenario) cenario.style.display = 'none';
-    if (copiloto) copiloto.style.display = 'none';
-    if (calculadoras) calculadoras.style.display = 'none';
-    if (score5) score5.style.display = 'none';
-    
-    if (modulo === 'dashboard') {
-        if (hub) hub.style.display = 'block';
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-    } else {
-        if (btnVoltar) btnVoltar.style.display = 'block';
-        
-        if (modulo === 'score5') {
-            if (score5) {
-                score5.style.display = 'block';
-                score5.scrollIntoView({ behavior: 'smooth' });
-            }
-        } else if (modulo === 'simulador') {
-            if (cenario) cenario.style.display = 'flex';
-            if (copiloto) copiloto.style.display = 'flex';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else if (modulo === 'rentabilidade') {
-            if (calculadoras) {
-                calculadoras.style.display = 'block';
-                document.querySelector('[data-tab="tab-rentabilidade"]')?.click();
-                calculadoras.scrollIntoView({ behavior: 'smooth' });
-            }
-        } else if (modulo === 'conversor') {
-            if (calculadoras) {
-                calculadoras.style.display = 'block';
-                document.querySelector('[data-tab="tab-conversor"]')?.click();
-                calculadoras.scrollIntoView({ behavior: 'smooth' });
-            }
-        } else if (modulo === 'treinamento') {
-            window.location.href = 'simulador.html';
-        }
+    if (modulo === 'treinamento') {
+        window.location.href = 'simulador.html';
+        return;
     }
+    
+    window.moduloAtivo = modulo;
+    document.body.setAttribute('data-modulo', modulo);
+    
+    if (modulo === 'rentabilidade') {
+        document.querySelector('[data-tab="tab-rentabilidade"]')?.click();
+    } else if (modulo === 'conversor') {
+        document.querySelector('[data-tab="tab-conversor"]')?.click();
+    }
+    
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
 // Inicia com o Dashboard isolado
