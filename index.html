@@ -1022,6 +1022,97 @@
         }
     }
     /* ----------------------------- */
+    
+    /* --- COPILOT ORB --- */
+    .ai-orb-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: -12px;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 20;
+    }
+    .ai-orb {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, #22d3ee, #6366f1, #9333ea);
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.4);
+        transition: all 0.5s ease;
+        cursor: pointer;
+    }
+    
+    .orb-idle {
+        animation: orbFloat 4s ease-in-out infinite, orbPulse 3s ease-in-out infinite alternate;
+        filter: blur(0.5px);
+    }
+    
+    .orb-loading {
+        animation: orbSpin 1s linear infinite, orbGlow 1s ease-in-out infinite alternate;
+        filter: blur(1px) brightness(1.2);
+    }
+    
+    .orb-speaking {
+        animation: orbSpeak 0.3s ease-in-out infinite alternate, orbFloat 4s ease-in-out infinite;
+        box-shadow: 0 0 25px rgba(34, 211, 238, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.6);
+    }
+    
+    @keyframes orbFloat {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+        100% { transform: translateY(0); }
+    }
+    
+    @keyframes orbPulse {
+        0% { box-shadow: 0 0 10px rgba(99, 102, 241, 0.4); }
+        100% { box-shadow: 0 0 25px rgba(147, 51, 234, 0.7); }
+    }
+    
+    @keyframes orbSpin {
+        0% { transform: rotate(0deg) scale(1.1); background: radial-gradient(circle at 30% 30%, #22d3ee, #6366f1, #9333ea); }
+        100% { transform: rotate(360deg) scale(1.1); background: radial-gradient(circle at 70% 70%, #9333ea, #22d3ee, #6366f1); }
+    }
+    
+    @keyframes orbSpeak {
+        0% { transform: scale(1); filter: brightness(1); }
+        100% { transform: scale(1.15); filter: brightness(1.3); }
+    }
+    
+    .btn-orb-wrapper {
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        background: var(--bg-color);
+        padding-bottom: 24px;
+        border-radius: 0 0 8px 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        margin-top: 15px;
+        padding-top: 15px;
+    }
+    
+    .btn-copilot-modern {
+        background: linear-gradient(90deg, #4f46e5, #6366f1, #8b5cf6);
+        background-size: 200% auto;
+        color: white;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-weight: 900;
+        font-size: 1.05rem;
+        cursor: pointer;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        transition: transform 0.1s ease;
+    }
+    .btn-copilot-modern:active {
+        transform: scale(0.96);
+    }
+    /* ----------------------------- */
     </style>
     
 
@@ -1251,11 +1342,117 @@
         }
     }
     /* ----------------------------- */
+    
+    /* --- COPILOT ORB --- */
+    .ai-orb-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: -12px;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 20;
+    }
+    .ai-orb {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, #22d3ee, #6366f1, #9333ea);
+        box-shadow: 0 0 15px rgba(99, 102, 241, 0.5), inset 0 0 10px rgba(255, 255, 255, 0.4);
+        transition: all 0.5s ease;
+        cursor: pointer;
+    }
+    
+    .orb-idle {
+        animation: orbFloat 4s ease-in-out infinite, orbPulse 3s ease-in-out infinite alternate;
+        filter: blur(0.5px);
+    }
+    
+    .orb-loading {
+        animation: orbSpin 1s linear infinite, orbGlow 1s ease-in-out infinite alternate;
+        filter: blur(1px) brightness(1.2);
+    }
+    
+    .orb-speaking {
+        animation: orbSpeak 0.3s ease-in-out infinite alternate, orbFloat 4s ease-in-out infinite;
+        box-shadow: 0 0 25px rgba(34, 211, 238, 0.8), inset 0 0 15px rgba(255, 255, 255, 0.6);
+    }
+    
+    @keyframes orbFloat {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-6px); }
+        100% { transform: translateY(0); }
+    }
+    
+    @keyframes orbPulse {
+        0% { box-shadow: 0 0 10px rgba(99, 102, 241, 0.4); }
+        100% { box-shadow: 0 0 25px rgba(147, 51, 234, 0.7); }
+    }
+    
+    @keyframes orbSpin {
+        0% { transform: rotate(0deg) scale(1.1); background: radial-gradient(circle at 30% 30%, #22d3ee, #6366f1, #9333ea); }
+        100% { transform: rotate(360deg) scale(1.1); background: radial-gradient(circle at 70% 70%, #9333ea, #22d3ee, #6366f1); }
+    }
+    
+    @keyframes orbSpeak {
+        0% { transform: scale(1); filter: brightness(1); }
+        100% { transform: scale(1.15); filter: brightness(1.3); }
+    }
+    
+    .btn-orb-wrapper {
+        position: sticky;
+        bottom: 0;
+        z-index: 10;
+        background: var(--bg-color);
+        padding-bottom: 24px;
+        border-radius: 0 0 8px 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        border-top: 1px solid rgba(255,255,255,0.05);
+        margin-top: 15px;
+        padding-top: 15px;
+    }
+    
+    .btn-copilot-modern {
+        background: linear-gradient(90deg, #4f46e5, #6366f1, #8b5cf6);
+        background-size: 200% auto;
+        color: white;
+        border: none;
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-weight: 900;
+        font-size: 1.05rem;
+        cursor: pointer;
+        width: 100%;
+        box-shadow: 0 4px 15px rgba(99, 102, 241, 0.4);
+        text-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        transition: transform 0.1s ease;
+    }
+    .btn-copilot-modern:active {
+        transform: scale(0.96);
+    }
+    /* ----------------------------- */
     </style>
     
     
 </head>
 <body>
+
+    <!-- PWA Install Modal -->
+    <div id="pwa-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center; padding:20px; backdrop-filter:blur(4px);">
+        <div style="background:var(--card-bg); border:1px solid var(--card-border); border-radius:16px; padding:24px; max-width:400px; width:100%; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,0.5);">
+            <div style="font-size:3rem; margin-bottom:10px;">📱</div>
+            <h2 style="font-size:1.25rem; font-weight:bold; color:white; margin-bottom:12px;">Instalar DMC Copilot</h2>
+            <p style="color:var(--text-secondary); font-size:0.9rem; margin-bottom:20px; text-align:left;">
+                Para uma experiência mais rápida e offline, instale o app:<br><br>
+                <b style="color:white;">Android (Chrome):</b> Toque nos três pontos (⋮) no topo e selecione "Adicionar à tela inicial".<br><br>
+                <b style="color:white;">iOS (Safari):</b> Toque no ícone Compartilhar (⎋) na barra inferior, role e selecione "Adicionar à Tela de Início".
+            </p>
+            <button id="pwa-close-btn" style="background:#3b82f6; color:white; border:none; padding:10px 20px; border-radius:8px; font-weight:bold; cursor:pointer; width:100%;">Entendi</button>
+        </div>
+    </div>
+    
 
     <header>
         <div class="logo-container">
@@ -1266,7 +1463,8 @@
             </div>
         </div>
         <div class="header-actions">
-<a href="simulador.html" class="btn-limpar-campos" style="text-decoration: none; margin-right: 10px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid #3b82f6;" title="Ir para o Simulador de Vendas">🎮 Modo Treinamento</a>
+<button id="btn-pwa-install" type="button" class="btn-limpar-campos" style="color: #10b981; border-color: rgba(16,185,129,0.3); background: rgba(16,185,129,0.1);">📱 Instalar App</button>
+        <a href="simulador.html" class="btn-limpar-campos" style="text-decoration: none; margin-right: 10px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid #3b82f6;" title="Ir para o Simulador de Vendas">🎮 Modo Treinamento</a>
         <button id="btn-theme-toggle" type="button" class="btn-limpar-campos" title="Alternar Tema Claro/Escuro" style="margin-right: 10px;">
             <span id="theme-icon">🌙</span>
             <span id="theme-text">Escuro</span>
@@ -1281,6 +1479,162 @@
 
         </div>
 <script>
+        // PWA Install Logic
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            const pwaBtn = document.getElementById('btn-pwa-install');
+            const pwaModal = document.getElementById('pwa-modal');
+            if(pwaBtn) {
+                pwaBtn.addEventListener('click', () => {
+                    if (deferredPrompt) {
+                        deferredPrompt.prompt();
+                        deferredPrompt.userChoice.then(() => { deferredPrompt = null; });
+                    } else {
+                        pwaModal.style.display = 'flex';
+                    }
+                });
+            }
+            if(document.getElementById('pwa-close-btn')) {
+                document.getElementById('pwa-close-btn').addEventListener('click', () => {
+                    pwaModal.style.display = 'none';
+                });
+            }
+        });
+
+        // Speech API helper
+        window.falarTatica = function(texto, orbEl) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel(); // Para fala anterior
+            const msg = new SpeechSynthesisUtterance();
+            // Limpa o texto de asteriscos, hashtags, etc.
+            let cleanText = texto.replace(/\*/g, '').replace(/#/g, '');
+            msg.text = cleanText;
+            msg.lang = 'pt-BR';
+            msg.rate = 1.0;
+            
+            msg.onstart = () => {
+                if(orbEl) {
+                    orbEl.classList.remove('orb-loading');
+                    orbEl.classList.add('orb-speaking');
+                }
+            };
+            msg.onend = () => {
+                if(orbEl) {
+                    orbEl.classList.remove('orb-speaking');
+                    orbEl.classList.add('orb-idle');
+                }
+            };
+            
+            window.speechSynthesis.speak(msg);
+        };
+
+        window.chamarCopiloto = function(index, orbEl) {
+            try {
+                if (orbEl) {
+                    orbEl.classList.remove('orb-idle');
+                    orbEl.classList.add('orb-loading');
+                }
+                
+                if (!window.appFilteredRows || !window.appFilteredRows[index]) {
+                    alert("Erro: Dados do PDV não encontrados na memória.");
+                    return;
+                }
+                const row = window.appFilteredRows[index];
+                
+                let safeInt = (v) => { let p = parseInt(v); return isNaN(p) ? 0 : p; };
+                let safeFloat = (v) => { let p = parseFloat(v); return isNaN(p) ? 0 : p; };
+                
+                let base = row['BASE'] ? row['BASE'].trim().toUpperCase() : 'CORE';
+                let bateu = safeFloat(row['BATEU META']);
+                
+                let falta_volume_app = "";
+                if (base === 'HIGH END' && bateu === 0) {
+                    let m_600 = safeInt(row['META 600 HE']); let r_600 = safeInt(row['REAL 600 HE']);
+                    let m_ln = safeInt(row['META LN']); let r_ln = safeInt(row['REAL LN']);
+                    let m_lnz = safeInt(row['META LN ZERO']); let r_lnz = safeInt(row['REAL LN ZERO']);
+                    let faltas = [];
+                    if (r_600 < m_600) faltas.push((m_600 - r_600) + " cx de 600ml");
+                    if (r_ln < m_ln) faltas.push((m_ln - r_ln) + " cx de Long Neck");
+                    if (r_lnz < m_lnz) faltas.push((m_lnz - r_lnz) + " cx de Long Neck Zero");
+                    if (faltas.length > 0) falta_volume_app = "Falta vender " + faltas.join(" + ") + ".";
+                } else if (bateu === 0) {
+                    let m_int = safeInt(row['META 600']); let r_int = safeInt(row['REAL 600']);
+                    let m_rgb = safeInt(row['META RGB']); let r_rgb = safeInt(row['REAL RGB']);
+                    let m_300 = safeInt(row['META 300']); let r_300 = safeInt(row['REAL 300']);
+                    let faltas = [];
+                    if (r_int < m_int) faltas.push((m_int - r_int) + " cx de Inteira (600ml)");
+                    if (r_rgb < m_rgb) faltas.push((m_rgb - r_rgb) + " cx de RGB");
+                    if (r_300 < m_300) faltas.push((m_300 - r_300) + " cx de 300ml");
+                    if (faltas.length > 0) falta_volume_app = "Falta vender " + faltas.join(" + ") + ".";
+                }
+                
+                // Tratar valores BRL
+                let parseBRL = (val) => {
+                    if (!val) return 0;
+                    if (typeof val === 'number') return val;
+                    let str = val.toString().trim();
+                    if (str === '-' || str === '') return 0;
+                    str = str.replace(/\./g, '');
+                    str = str.replace(',', '.');
+                    let num = parseFloat(str);
+                    return isNaN(num) ? 0 : num;
+                };
+
+                const data = {
+                    nome: row['NOME PDV'] || 'Cliente',
+                    comprador: safeInt(row['COMPR']),
+                    possui_task: row['POSSUI TASK'] ? row['POSSUI TASK'].trim().toUpperCase() : 'N',
+                    meta_task: parseBRL(row['META TASK']),
+                    real_task: parseBRL(row['REAL TASK']),
+                    coolers: safeInt(row['COOLERS']),
+                    falta_volume: falta_volume_app
+                };
+                
+                window.pdvContextoCopiloto = data;
+                
+                const clienteInput = document.getElementById('cliente');
+                if (clienteInput) clienteInput.value = data.nome;
+                
+                const copilotSection = document.getElementById('copiloto-section');
+                if (copilotSection) copilotSection.scrollIntoView({ behavior: 'smooth' });
+                
+                // Ao clicar, gera a tática. No evento de fim (que seria no script do form),
+                // mas não temos hook direto pro simulador a não ser sobrescrever a resposta.
+                setTimeout(() => {
+                    const btnGen = document.getElementById('generate-btn');
+                    if (btnGen) {
+                        // Vamos injetar TTS quando a div the resultado aparecer?
+                        // Como o código do form pode demorar, agendamos um observador.
+                        let resultDiv = document.getElementById('result');
+                        if (resultDiv && orbEl) {
+                            let observer = new MutationObserver((mutations) => {
+                                if (resultDiv.innerText && resultDiv.innerText.length > 10) {
+                                    window.falarTatica(resultDiv.innerText, orbEl);
+                                    observer.disconnect();
+                                }
+                            });
+                            observer.observe(resultDiv, { childList: true, characterData: true, subtree: true });
+                        }
+                        btnGen.click();
+                    } else {
+                        if(orbEl) { orbEl.classList.remove('orb-loading'); orbEl.classList.add('orb-idle'); }
+                        alert("Botão gerar-btn não encontrado!");
+                    }
+                }, 600);
+            } catch(e) {
+                if (orbEl) {
+                    orbEl.classList.remove('orb-loading');
+                    orbEl.classList.add('orb-idle');
+                }
+                console.error(e);
+            }
+        };
+    </script>
         window.chamarCopiloto = function(index) {
             try {
                 if (!window.appFilteredRows || !window.appFilteredRows[index]) {
@@ -2459,9 +2813,9 @@
                             </div>` + inner_html;
                         }
                         let cards_he = `<div class="grid-responsive-2">`;
-                        cards_he += miniCardHTML(meta_600, real_600, '600ml (HE)', '🍺');
-                        cards_he += miniCardHTML(meta_ln, real_ln, 'Long Neck', '🍾');
-                        if (tem_zero) cards_he += miniCardHTML(meta_ln_zero, real_ln_zero, 'LN Zero', '🧊');
+                        if (meta_600 > 0 || real_600 > 0) cards_he += miniCardHTML(meta_600, real_600, '600ml (HE)', '🍺');
+                        if (meta_ln > 0 || real_ln > 0) cards_he += miniCardHTML(meta_ln, real_ln, 'Long Neck', '🍾');
+                        if (tem_zero && (meta_ln_zero > 0 || real_ln_zero > 0)) cards_he += miniCardHTML(meta_ln_zero, real_ln_zero, 'LN Zero', '🧊');
                         cards_he += `</div>`;
                         inner_html += cards_he;
                         
@@ -2516,9 +2870,9 @@
                             </div>` + inner_html;
                         }
                         let cards_core = `<div class="grid-responsive-2">`;
-                        cards_core += miniCardHTML(meta_int, real_int, 'Inteira (600ml)', '🍺');
-                        cards_core += miniCardHTML(meta_rgb, real_rgb, 'RGB', '📦');
-                        cards_core += miniCardHTML(meta_300, real_300, '300ml', '🥃');
+                        if (meta_int > 0 || real_int > 0) cards_core += miniCardHTML(meta_int, real_int, 'Inteira (600ml)', '🍺');
+                        if (meta_rgb > 0 || real_rgb > 0) cards_core += miniCardHTML(meta_rgb, real_rgb, 'RGB', '📦');
+                        if (meta_300 > 0 || real_300 > 0) cards_core += miniCardHTML(meta_300, real_300, '300ml', '🥃');
                         cards_core += `</div>`;
                         inner_html += cards_core;
                         
@@ -2594,54 +2948,60 @@
                     let trade_val = mat_trade ? parseInt(mat_trade) : 0;
                     let cupom_val = dig_coup ? parseInt(dig_coup) : 0;
                     
+                    
                     let card_coolers = coolers > 0 
-                        ? `<div style="background:rgba(14,165,233,0.15); border:1px solid rgba(14,165,233,0.4); border-radius:12px;" class="trade-card box-shadow:0 4px 10px rgba(14,165,233,0.1);">
-                             <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">COMODATO</div>
-                             <div style="font-size:0.85rem; font-weight:900; color:#fff; display:flex; align-items:center; gap:6px; margin-bottom:4px;">❄️ ${coolers} Geladeira(s)</div>
-                             <div style="font-size:0.65rem; color:#10b981; font-weight:bold;">Ativo na Rota</div>
+                        ? `<div class="trade-card" style="background:rgba(8, 47, 73, 0.4); border:1px solid rgba(14, 165, 233, 0.5);">
+                             <div>
+                                 <div style="font-size:10px; color:#94a3b8; font-weight:bold; letter-spacing:0.5px;">COMODATO</div>
+                                 <div style="font-size:0.875rem; font-weight:bold; color:#fff;">❄️ ${coolers} Geladeira(s) Ambev</div>
+                             </div>
+                             <div style="font-size:10px; color:#34d399; font-weight:600; text-align:right;">Ativo na Rota</div>
                            </div>`
-                        : `<div style="background:rgba(30,41,59,0.5); border:1px solid rgba(71,85,105,0.6); border-radius:12px;" class="trade-card ">
-                             <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">COMODATO</div>
-                             <div style="font-size:0.85rem; font-weight:bold; color:#cbd5e1; display:flex; align-items:center; gap:6px; margin-bottom:4px;"><span style="filter:grayscale(1) opacity(0.5)">❄️</span> Sem Ativos</div>
-                             <div style="font-size:0.65rem; color:#f59e0b; font-weight:bold;">Oportunidade</div>
+                        : `<div class="trade-card" style="background:rgba(30, 41, 59, 0.4); border:1px solid rgba(51, 65, 85, 0.6);">
+                             <div>
+                                 <div style="font-size:10px; color:#94a3b8; font-weight:bold; letter-spacing:0.5px;">COMODATO</div>
+                                 <div style="font-size:0.875rem; font-weight:bold; color:#fff;">Sem Ativos</div>
+                             </div>
+                             <div style="font-size:10px; color:#fbbf24; font-weight:600; text-align:right;">Oportunidade</div>
                            </div>`;
 
                     let card_trade = trade_val > 0
-                        ? `<div style="background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.4); border-radius:12px;" class="trade-card box-shadow:0 4px 10px rgba(168,85,247,0.1);">
-                             <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">VISIBILIDADE</div>
-                             <div style="font-size:0.85rem; font-weight:900; color:#fff; display:flex; align-items:center; gap:6px; margin-bottom:4px;">🎨 Ativo (${trade_val})</div>
-                             <div style="font-size:0.65rem; color:#10b981; font-weight:bold;">Positivado</div>
+                        ? `<div class="trade-card" style="background:rgba(88, 28, 135, 0.4); border:1px solid rgba(168, 85, 247, 0.5);">
+                             <div>
+                                 <div style="font-size:10px; color:#94a3b8; font-weight:bold; letter-spacing:0.5px;">VISIBILIDADE</div>
+                                 <div style="font-size:0.875rem; font-weight:bold; color:#d8b4fe;">🎨 ${trade_val} Ativo(s)</div>
+                             </div>
                            </div>`
-                        : `<div style="background:rgba(30,41,59,0.5); border:1px solid rgba(71,85,105,0.6); border-radius:12px;" class="trade-card ">
-                             <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">VISIBILIDADE</div>
-                             <div style="font-size:0.85rem; font-weight:bold; color:#cbd5e1; display:flex; align-items:center; gap:6px; margin-bottom:4px;"><span style="filter:grayscale(1) opacity(0.5)">🎨</span> Sem Material</div>
-                             <div style="font-size:0.65rem; color:#f59e0b; font-weight:bold;">Oportunidade</div>
+                        : `<div class="trade-card" style="background:rgba(30, 41, 59, 0.4); border:1px solid rgba(51, 65, 85, 0.6);">
+                             <div>
+                                 <div style="font-size:10px; color:#94a3b8; font-weight:bold; letter-spacing:0.5px;">VISIBILIDADE</div>
+                                 <div style="font-size:0.875rem; font-weight:bold; color:#fff;">Sem Material</div>
+                             </div>
+                             <div style="font-size:10px; color:#94a3b8; font-weight:600; text-align:right;">Oportunidade</div>
                            </div>`;
 
                     let card_cupom = cupom_val > 0
-                        ? `<div style="background:rgba(219,39,119,0.15); border:1px solid rgba(219,39,119,0.4); border-radius:12px;" class="trade-card box-shadow:0 4px 10px rgba(219,39,119,0.1);">
-                             <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">DIGITAL BEES</div>
-                             <div style="font-size:0.85rem; font-weight:900; color:#fff; display:flex; align-items:center; gap:6px; margin-bottom:4px;">🎟️ ${cupom_val} Disponível</div>
-                             <div style="font-size:0.65rem; color:#10b981; font-weight:bold;">Engajado</div>
+                        ? `<div class="trade-card" style="background:rgba(131, 24, 67, 0.4); border:1px solid rgba(236, 72, 153, 0.5);">
+                             <div>
+                                 <div style="font-size:10px; color:#94a3b8; font-weight:bold; letter-spacing:0.5px;">DIGITAL BEES</div>
+                                 <div style="font-size:0.875rem; font-weight:bold; color:#f9a8d4;">🎟️ ${cupom_val} Disponível</div>
+                             </div>
                            </div>`
-                        : `<div style="background:rgba(30,41,59,0.5); border:1px solid rgba(71,85,105,0.6); border-radius:12px;" class="trade-card ">
-                             <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">DIGITAL BEES</div>
-                             <div style="font-size:0.85rem; font-weight:bold; color:#cbd5e1; display:flex; align-items:center; gap:6px; margin-bottom:4px;"><span style="filter:grayscale(1) opacity(0.5)">🎟️</span> Sem Cupom</div>
-                             <div style="font-size:0.65rem; color:#ef4444; font-weight:bold;">Não Ativado</div>
+                        : `<div class="trade-card" style="background:rgba(30, 41, 59, 0.4); border:1px solid rgba(51, 65, 85, 0.6);">
+                             <div>
+                                 <div style="font-size:10px; color:#94a3b8; font-weight:bold; letter-spacing:0.5px;">DIGITAL BEES</div>
+                                 <div style="font-size:0.875rem; font-weight:bold; color:#fff;">Sem Cupons</div>
+                             </div>
+                             <div style="font-size:10px; color:#94a3b8; font-weight:600; text-align:right;">Não Ativado</div>
                            </div>`;
-
-                    let exec_html = `<div style="margin-top: 24px; margin-bottom: 24px;">
-                        <div style="font-weight: bold; margin-bottom: 12px; font-size: 0.95rem; color:var(--text-primary);">🧊 Execução no PDV & Trade</div>
-                        <div class="grid-responsive-3">
-                            ${card_coolers}
-                            ${card_trade}
-                            ${card_cupom}
+                           
+                    let btn_copiloto = `
+                    <div class="btn-orb-wrapper">
+                        <div class="ai-orb-container" onclick="chamarCopiloto(${index}, this)">
+                            <div class="ai-orb orb-idle" id="orb-${index}"></div>
                         </div>
+                        <button class="btn-copilot-modern" onclick="chamarCopiloto(${index}, this.previousElementSibling.querySelector('.ai-orb'))">🤖 Gerar Tática no Copiloto</button>
                     </div>`;
-                    
-                    /* copiloto_data_str removido, usando index agora */
-
-                    let btn_copiloto = '';
 
                     inner_html += fat_html + exec_html + btn_copiloto;
 
