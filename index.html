@@ -2453,10 +2453,33 @@
                     return vis.toUpperCase().includes(diaFiltro);
                 });
                 
+                const ordemSegmentos = {
+                    'HIGH END': 1,
+                    'CORE': 2,
+                    'VITRINE': 3
+                };
+
                 filteredRows.sort((a, b) => {
+                    let segA = (a['BASE'] || '').trim().toUpperCase();
+                    let segB = (b['BASE'] || '').trim().toUpperCase();
+                    let pesoA = ordemSegmentos[segA] || 99;
+                    let pesoB = ordemSegmentos[segB] || 99;
+
+                    if (pesoA !== pesoB) {
+                        return pesoA - pesoB;
+                    }
+
+                    // Dentro do mesmo segmento: quem falta bater meta vem primeiro
                     let bateuA = safeInt(a['BATEU META']) === 1 ? 1 : 0;
                     let bateuB = safeInt(b['BATEU META']) === 1 ? 1 : 0;
-                    return bateuA - bateuB;
+                    if (bateuA !== bateuB) {
+                        return bateuA - bateuB;
+                    }
+
+                    // Desempate final por ordem alfabética
+                    let nomeA = (a['NOME PDV'] || '').trim();
+                    let nomeB = (b['NOME PDV'] || '').trim();
+                    return nomeA.localeCompare(nomeB, 'pt-BR');
                 });
                 
                 window.appFilteredRows = filteredRows;
