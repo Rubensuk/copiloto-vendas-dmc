@@ -789,11 +789,15 @@
         grid-template-columns: repeat(2, 1fr);
         gap: 8px;
         margin-bottom: 12px;
+        width: 100%;
+        box-sizing: border-box;
     }
     .grid-responsive-3 {
         display: grid;
         grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 10px;
+        width: 100%;
+        box-sizing: border-box;
     }
     .trade-card {
         display: flex;
@@ -801,6 +805,8 @@
         justify-content: center;
         padding: 10px;
         border-radius: 12px;
+        width: 100%;
+        box-sizing: border-box;
     }
     .fat-card-header {
         display: flex;
@@ -813,17 +819,32 @@
         justify-content: space-between;
         align-items: center;
     }
-    .btn-gerar-sticky {
-        position: sticky;
-        bottom: 0;
-        z-index: 10;
-        margin-top: 24px;
-        padding-bottom: 12px; /* respiro abaixo do botão */
-        background: var(--bg-color); /* evita que fundo seja transparente */
-    }
-
+    
+    /* Responsive overrides */
     @media (max-width: 639px) {
+        /* Container Edge-to-Edge */
+        main {
+            margin: 0.5rem auto !important;
+            padding: 0 8px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        /* Lista e Cartões ocupando tudo */
+        .pdv-list {
+            padding: 0 !important;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .pdv-card {
+            border-radius: 0 !important;
+            margin-bottom: 8px !important;
+            border-left: 4px solid var(--card-border) !important;
+        }
+        
+        /* Ajuste de Espaçamento Interno */
         .pdv-summary {
+            padding: 12px 10px !important;
             flex-direction: column !important;
             align-items: flex-start !important;
             gap: 8px !important;
@@ -840,19 +861,35 @@
             align-items: center;
         }
         
-        .grid-responsive-2 { grid-template-columns: 1fr !important; }
+        .pdv-details {
+            padding: 12px 8px !important;
+            padding-bottom: 16px !important;
+        }
+        
+        /* Modificadores de Box */
+        .fat-card-container {
+            padding: 10px !important;
+        }
+        .missao-banner {
+            padding: 10px !important;
+        }
+        
+        /* Grids para stack no mobile */
+        .grid-responsive-2 { grid-template-columns: 1fr !important; gap: 8px !important; }
         .grid-responsive-3 { grid-template-columns: 1fr !important; gap: 8px !important; }
         
+        /* Trade stack flex row */
         .trade-card {
             flex-direction: row !important;
             justify-content: space-between !important;
             align-items: center !important;
             text-align: left !important;
-            padding: 8px 12px !important;
+            padding: 8px 10px !important;
         }
         .trade-card > div:first-child { margin-bottom: 0 !important; }
         .trade-card > div:nth-child(2) { margin-bottom: 0 !important; flex: 1; margin-left: 8px; }
         
+        /* Fat */
         .fat-card-header {
             flex-direction: column !important;
             align-items: flex-start !important;
@@ -2293,7 +2330,7 @@
                         
                         if (insight_he !== "" && bateu === 0) {
                             falta_volume_app = insight_he;
-                            inner_html = `<div style="background: linear-gradient(145deg, #1e1b4b, #0f172a); border: 1px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15); padding: 12px; margin-bottom: 15px; border-radius: 8px;">
+                            inner_html = `<div style="background: linear-gradient(145deg, #1e1b4b, #0f172a); border: 1px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15); padding: 12px; margin-bottom: 15px;" class="missao-banner border-radius: 8px;">
                                 <div style="display:flex; align-items:center; gap:8px; font-weight:900; color:#f59e0b; margin-bottom:4px; font-size: 0.95rem;">
                                     <span>🎯</span> <span>Missão do Balcão</span>
                                 </div>
@@ -2350,7 +2387,7 @@
                         
                         if (insight_core !== "" && bateu === 0) {
                             falta_volume_app = insight_core;
-                            inner_html = `<div style="background: linear-gradient(145deg, #1e1b4b, #0f172a); border: 1px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15); padding: 12px; margin-bottom: 15px; border-radius: 8px;">
+                            inner_html = `<div style="background: linear-gradient(145deg, #1e1b4b, #0f172a); border: 1px solid #f59e0b; box-shadow: 0 4px 15px rgba(245, 158, 11, 0.15); padding: 12px; margin-bottom: 15px;" class="missao-banner border-radius: 8px;">
                                 <div style="display:flex; align-items:center; gap:8px; font-weight:900; color:#f59e0b; margin-bottom:4px; font-size: 0.95rem;">
                                     <span>🎯</span> <span>Missão do Balcão</span>
                                 </div>
@@ -2403,7 +2440,7 @@
                     let cerv_tend = row['CERV (TEND)'] ? row['CERV (TEND)'].trim() : '';
                     let he_tend = row['HE (TEND)'] ? row['HE (TEND)'].trim() : '';
 
-                    let fat_html = `<div style="margin-top: 20px; padding: 15px; background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);">`;
+                    let fat_html = `<div style="margin-top: 20px; padding: 15px; background: rgba(30, 41, 59, 0.6);" class="fat-card-container border: 1px solid rgba(255,255,255,0.05); border-radius: 8px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);">`;
 
                     if (possui_task === 'S') {
                         let pct_task = meta_task > 0 ? (real_task / meta_task) * 100 : (real_task > 0 ? 100 : 0);
