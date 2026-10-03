@@ -1466,7 +1466,8 @@ body.light-mode .hub-card-rose .hub-card-title {
 #btn-voltar-menu-container,
 #hub-modulos-section,
 #modulo-simulador-section,
-#modulo-calculadoras-section,
+#modulo-rentabilidade-section,
+#modulo-conversor-section,
 #modulo-score5-section {
     display: none !important;
 }
@@ -1495,19 +1496,19 @@ body[data-modulo="simulador"] #modulo-simulador-section {
     gap: 2rem;
 }
 
-/* 3. Módulo Rentabilidade (Calculadoras) */
+/* 3. Módulo Rentabilidade (Aderido vs NAD) */
 body[data-modulo="rentabilidade"] #btn-voltar-menu-container {
     display: block !important;
 }
-body[data-modulo="rentabilidade"] #modulo-calculadoras-section {
+body[data-modulo="rentabilidade"] #modulo-rentabilidade-section {
     display: block !important;
 }
 
-/* 4. Módulo Conversor HCT (Calculadoras) */
+/* 4. Módulo Conversor HCT */
 body[data-modulo="conversor"] #btn-voltar-menu-container {
     display: block !important;
 }
-body[data-modulo="conversor"] #modulo-calculadoras-section {
+body[data-modulo="conversor"] #modulo-conversor-section {
     display: block !important;
 }
 
@@ -2251,108 +2252,105 @@ body[data-modulo="conversor"] #modulo-calculadoras-section {
         </section>
         </div><!-- Fim do #modulo-simulador-section -->
 
-        <!-- MÓDULOS 3 & 4: CALCULADORAS COMERCIAIS (RENTABILIDADE & CONVERSOR HCT) -->
-        <div id="modulo-calculadoras-section" style="display: none; width: 100%;">
-            <!-- Calculadoras Comerciais Interativas -->
-            <div class="calculator-card" id="calculadoras-section">
-                <div class="calculator-tabs">
-                    <button class="tab-btn active" id="btn-tab-rentabilidade" onclick="switchTab('tab-rentabilidade')">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-                        Rentabilidade (Aderido)
-                    </button>
-                    <button class="tab-btn" id="btn-tab-conversor" onclick="switchTab('tab-conversor')">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-                        Conversor HCT
-                    </button>
+        <!-- MÓDULO 3: CALCULADORA DE RENTABILIDADE (ADERIDO VS NAD) -->
+        <div id="modulo-rentabilidade-section" style="display: none; width: 100%;">
+            <div class="calculator-card" id="rentabilidade-card">
+                <div class="card-title" style="margin-bottom: 0.5rem; font-size: 1.25rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+                    <span>📈 Calculadora de Rentabilidade (Aderido vs NAD)</span>
                 </div>
 
-                <!-- Tab 1: Rentabilidade -->
-                <div id="tab-rentabilidade" class="tab-content active">
-                    <div class="calc-grid">
-                        <div class="calc-input-group">
-                            <label for="calc-qtd">Qtd/Cx (un)</label>
-                            <input type="number" id="calc-qtd" value="24">
-                        </div>
-                        <div class="calc-input-group">
-                            <label for="calc-volume">Volume (cx/mês)</label>
-                            <input type="number" id="calc-volume" value="20">
-                        </div>
-                        <div class="calc-input-group">
-                            <label for="calc-ttc-nad">Preço Atual (TTC NAD)</label>
-                            <input type="number" id="calc-ttc-nad" step="0.01" value="9.50">
-                        </div>
-                        <div class="calc-input-group">
-                            <label for="calc-ttv-nad">Custo Atual (TTV NAD)</label>
-                            <input type="number" id="calc-ttv-nad" step="0.01" value="145.42">
-                        </div>
-                        <div class="calc-input-group">
-                            <label for="calc-ttc-ad">Preço Sugerido (TTC AD)</label>
-                            <input type="number" id="calc-ttc-ad" step="0.01" value="9.00">
-                        </div>
-                        <div class="calc-input-group">
-                            <label for="calc-ttv-ad">Custo Sugerido (TTV AD)</label>
-                            <input type="number" id="calc-ttv-ad" step="0.01" value="135.42">
-                        </div>
+                <div class="calc-grid">
+                    <div class="calc-input-group">
+                        <label for="calc-qtd">Qtd/Cx (un)</label>
+                        <input type="number" id="calc-qtd" value="24">
                     </div>
-
-                    <div class="calc-results" style="margin-top: 1rem;">
-                        <div class="result-row">
-                            <span>Lucro Bruto Atual:</span>
-                            <strong id="res-lucro-atual">R$ 0,00</strong>
-                        </div>
-                        <div class="result-row">
-                            <span>Lucro Bruto Aderido:</span>
-                            <strong id="res-lucro-aderido">R$ 0,00</strong>
-                        </div>
-                        <div class="result-row highlighted">
-                            <span>Diferença de Lucro:</span>
-                            <strong id="res-diferenca">R$ 0,00</strong>
-                        </div>
+                    <div class="calc-input-group">
+                        <label for="calc-volume">Volume (cx/mês)</label>
+                        <input type="number" id="calc-volume" value="20">
                     </div>
-
-                    <div class="calc-badge" id="calc-badge-container" style="display: none;">
-                        💡 <span id="calc-badge-text"></span>
+                    <div class="calc-input-group">
+                        <label for="calc-ttc-nad">Preço Atual (TTC NAD)</label>
+                        <input type="number" id="calc-ttc-nad" step="0.01" value="9.50">
                     </div>
-
-                    <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
-                        <button class="btn-clear" onclick="clearRentabilidade()">Limpar Campos</button>
+                    <div class="calc-input-group">
+                        <label for="calc-ttv-nad">Custo Atual (TTV NAD)</label>
+                        <input type="number" id="calc-ttv-nad" step="0.01" value="145.42">
+                    </div>
+                    <div class="calc-input-group">
+                        <label for="calc-ttc-ad">Preço Sugerido (TTC AD)</label>
+                        <input type="number" id="calc-ttc-ad" step="0.01" value="9.00">
+                    </div>
+                    <div class="calc-input-group">
+                        <label for="calc-ttv-ad">Custo Sugerido (TTV AD)</label>
+                        <input type="number" id="calc-ttv-ad" step="0.01" value="135.42">
                     </div>
                 </div>
 
-                <!-- Tab 2: Conversor HCT -->
-                <div id="tab-conversor" class="tab-content">
-                    <div class="calc-grid-2">
-                        <div class="calc-input-group">
-                            <label for="calc-hct">Volume em Hectolitros (HCT)</label>
-                            <input type="number" id="calc-hct" step="0.01" value="10">
-                        </div>
-                        <div class="calc-input-group">
-                            <label for="calc-fator">Tipo de Embalagem</label>
-                            <select id="calc-fator">
-                                <option value="6.94">Cerveja 600ml (c/ 24 un) - Fator 6.94</option>
-                                <option value="14.49">Cerveja 300ml (c/ 23 un) - Fator 14.49</option>
-                                <option value="8.33">Cerveja Litro (c/ 12 un) - Fator 8.33</option>
-                                <option value="24.78">Cerveja Lata 269ml (c/ 15 un) - Fator 24.78</option>
-                                <option value="8.33">NAB / Refri 2L (c/ 06 un) - Fator 8.33</option>
-                                <option value="16.67">NAB / Refri 1L (c/ 06 un) - Fator 16.67</option>
-                                <option value="23.80">NAB / Refri Lata 350ml (c/ 12 un) - Fator 23.80</option>
-                            </select>
-                        </div>
+                <div class="calc-results" style="margin-top: 1rem;">
+                    <div class="result-row">
+                        <span>Lucro Bruto Atual:</span>
+                        <strong id="res-lucro-atual">R$ 0,00</strong>
                     </div>
+                    <div class="result-row">
+                        <span>Lucro Bruto Aderido:</span>
+                        <strong id="res-lucro-aderido">R$ 0,00</strong>
+                    </div>
+                    <div class="result-row highlighted">
+                        <span>Diferença de Lucro:</span>
+                        <strong id="res-diferenca">R$ 0,00</strong>
+                    </div>
+                </div>
 
-                    <div class="calc-results" style="margin-top: 1.5rem;">
-                        <div class="result-row highlighted">
-                            <span>Quantidade Convertida:</span>
-                            <strong id="res-caixas-convertidas" style="font-size: 1.2rem; color: var(--primary-accent);">0 caixas</strong>
-                        </div>
-                    </div>
+                <div class="calc-badge" id="calc-badge-container" style="display: none;">
+                    💡 <span id="calc-badge-text"></span>
+                </div>
 
-                    <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
-                        <button class="btn-clear" onclick="clearConversor()">Limpar Campos</button>
-                    </div>
+                <div style="display: flex; justify-content: flex-end; margin-top: 1rem;">
+                    <button class="btn-clear" onclick="clearRentabilidade()">Limpar Campos</button>
                 </div>
             </div>
-        </div><!-- Fim do #modulo-calculadoras-section -->
+        </div><!-- Fim do #modulo-rentabilidade-section -->
+
+        <!-- MÓDULO 4: CONVERSOR DE HECTOLITROS (HCT) -->
+        <div id="modulo-conversor-section" style="display: none; width: 100%;">
+            <div class="calculator-card" id="conversor-card">
+                <div class="card-title" style="margin-bottom: 0.5rem; font-size: 1.25rem;">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                    <span>📦 Conversor de Hectolitros (HCT)</span>
+                </div>
+
+                <div class="calc-grid-2">
+                    <div class="calc-input-group">
+                        <label for="calc-hct">Volume em Hectolitros (HCT)</label>
+                        <input type="number" id="calc-hct" step="0.01" value="10">
+                    </div>
+                    <div class="calc-input-group">
+                        <label for="calc-fator">Tipo de Embalagem</label>
+                        <select id="calc-fator">
+                            <option value="6.94">Cerveja 600ml (c/ 24 un) - Fator 6.94</option>
+                            <option value="14.49">Cerveja 300ml (c/ 23 un) - Fator 14.49</option>
+                            <option value="8.33">Cerveja Litro (c/ 12 un) - Fator 8.33</option>
+                            <option value="24.78">Cerveja Lata 269ml (c/ 15 un) - Fator 24.78</option>
+                            <option value="8.33">NAB / Refri 2L (c/ 06 un) - Fator 8.33</option>
+                            <option value="16.67">NAB / Refri 1L (c/ 06 un) - Fator 16.67</option>
+                            <option value="23.80">NAB / Refri Lata 350ml (c/ 12 un) - Fator 23.80</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="calc-results" style="margin-top: 1.5rem;">
+                    <div class="result-row highlighted">
+                        <span>Quantidade Convertida:</span>
+                        <strong id="res-caixas-convertidas" style="font-size: 1.2rem; color: var(--primary-accent);">0 caixas</strong>
+                    </div>
+                </div>
+
+                <div style="display: flex; justify-content: flex-end; margin-top: 1.5rem;">
+                    <button class="btn-clear" onclick="clearConversor()">Limpar Campos</button>
+                </div>
+            </div>
+        </div><!-- Fim do #modulo-conversor-section -->
 
         <!-- MÓDULO 1: METAS & PORTFÓLIO SCORE 5 -->
         <div id="modulo-score5-section" style="display: none; width: 100%;">
@@ -4361,13 +4359,6 @@ window.navegarModulo = function(modulo) {
     
     window.moduloAtivo = modulo;
     document.body.setAttribute('data-modulo', modulo);
-    
-    if (modulo === 'rentabilidade') {
-        if (typeof switchTab === 'function') switchTab('tab-rentabilidade');
-    } else if (modulo === 'conversor') {
-        if (typeof switchTab === 'function') switchTab('tab-conversor');
-    }
-    
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
