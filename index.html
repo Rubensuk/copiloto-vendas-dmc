@@ -844,6 +844,69 @@
 
     /* --- MOBILE OVERRIDES (max-width: 639px) --- */
     @media (max-width: 639px) {
+        /* Edge-to-Edge Header & Main */
+        body { padding: 0 !important; margin: 0 !important; overflow-x: hidden; }
+        header { padding: 12px 10px !important; }
+        main {
+            margin: 0 !important;
+            padding: 8px 6px !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            overflow-x: hidden;
+            box-sizing: border-box;
+        }
+        
+        /* Ocultar barra de tabela no celular */
+        .pdv-list-header {
+            display: none !important;
+        }
+        
+        /* Reorganizar botoes do topo no celular (Grid 3 colunas) */
+        .header-actions {
+            display: grid !important;
+            grid-template-columns: repeat(3, 1fr) !important;
+            gap: 6px !important;
+            width: 100% !important;
+            margin-top: 8px !important;
+        }
+        .header-actions > * {
+            margin: 0 !important;
+            font-size: 0.7rem !important;
+            padding: 8px 4px !important;
+            width: 100% !important;
+            text-align: center !important;
+            justify-content: center !important;
+            box-sizing: border-box;
+            border-radius: 6px !important;
+        }
+        .header-actions svg { width: 14px; height: 14px; margin-right: 2px; }
+        
+        /* Ocultar metainfo do cabecalho (resumo q tem barras embaixo) */
+        .pdv-header-meta {
+            display: none !important;
+        }
+        
+        /* Reajustar layout do summary */
+        .pdv-header-main {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100% !important;
+            flex-direction: row !important;
+            flex-wrap: nowrap !important;
+        }
+        .pdv-nome {
+            font-size: 0.95rem !important;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            flex: 1;
+        }
+        .pdv-base-badge {
+            margin-left: 8px;
+            flex-shrink: 0;
+        }
+
         /* Container Edge-to-Edge Absoluto */
         main {
             margin: 0 !important;
@@ -2318,7 +2381,7 @@
                     let base = row['BASE'] ? row['BASE'].trim().toUpperCase() : 'CORE';
                     if (!base) base = 'CORE';
                     let bateu = parseFloat(row['BATEU META']) || 0;
-                    let status_txt = bateu === 1 ? "<span style='color:#22c55e;'>✅ BATEU META</span>" : "<span style='color:#ef4444;'>❌ FORA DA META</span>";
+                    let status_txt = bateu === 1 ? "<span style='color:#22c55e;'>✅ BATEU META</span>" : "<span style='background:rgba(159,18,57,0.4); color:#fb7185; border:1px solid rgba(159,18,57,0.4); font-size:0.75rem; padding:2px 6px; border-radius:4px; font-weight:bold;'>❌ FORA DA META</span>";
                     let icone = base === 'CORE' ? "🟡" : (base === 'HIGH END' ? "💎" : "🏪");
                     
                     let meta_info = "";
@@ -2330,7 +2393,7 @@
                     let text_color = is_light ? '#111827' : '#ffffff';
                     
                     let visita = row['VISITA'] || '';
-                    let badge_visita = visita ? `<span style="background: rgba(100,116,139,0.2); padding: 2px 6px; border-radius: 4px; margin-left: 5px; font-size: 0.7rem; color: #94a3b8;">🗓️ ${visita}</span>` : '';
+                    let badge_visita = visita ? `<span style="background: rgba(100,116,139,0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; color: #cbd5e1;">🗓️ ${visita}</span>` : `<span style="background: rgba(100,116,139,0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; color: #cbd5e1;">🗓️ Rota Ativa</span>`;
 
                     let meta_600 = safeInt(row['600']);
                     let real_600 = calcReal(row, HE_600);
