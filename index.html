@@ -2422,6 +2422,11 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                     </div>
                 </div>
 
+                <!-- CONTAINER MODULAR (PLUG-AND-PLAY): SCORE 5 PONTUAÇÃO & PILARES DO RN -->
+                <div id="score5-rn-kpis-widget" style="display: none; margin-top: 1rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(15, 23, 42, 0.75) 100%); border: 1px solid rgba(16, 185, 129, 0.35); border-radius: 12px; padding: 1rem; box-shadow: 0 4px 15px rgba(0,0,0,0.2);">
+                    <!-- Preenchido via carregarDadosScore5() e atualizarScore5Widget() -->
+                </div>
+
                 <!-- 4 Métricas de Topo (Score 5 Executivo) -->
                 <div class="score5-top-grid">
                     <div style="background: rgba(0, 255, 136, 0.08); border: 1px solid rgba(0, 255, 136, 0.2); padding: 0.75rem; border-radius: 10px; text-align: center;">
@@ -2781,8 +2786,101 @@ body[data-modulo="conversor"] #modulo-conversor-section {
 
         // Lógica do Painel de Metas & Portfólio - Integração em Tempo Real (Google Drive)
         let dbRN = {};
+        let dbScore5Data = {};
+
+        async function carregarDadosScore5() {
+            try {
+                const res = await fetch('/api/score5');
+                if (!res.ok) return;
+                const json = await res.json();
+                if (json && json.data) {
+                    dbScore5Data = {};
+                    json.data.forEach(row => {
+                        if (row.RN) {
+                            const cleanRN = row.RN.toString().replace('.0', '').trim();
+                            dbScore5Data[cleanRN] = row;
+                        }
+                    });
+                    atualizarScore5Widget();
+                }
+            } catch(e) {
+                console.error("Erro ao carregar dados do Score 5:", e);
+            }
+        }
+
+        function atualizarScore5Widget() {
+            const selectRN = document.getElementById('select-rn-code');
+            const code = selectRN ? selectRN.value : "111";
+            const widget = document.getElementById('score5-rn-kpis-widget');
+            if (!widget) return;
+            
+            const row = dbScore5Data[code] || null;
+            if (!row) {
+                widget.style.display = 'none';
+                return;
+            }
+            
+            widget.style.display = 'block';
+            
+            const pts = row['PTs'] || '0';
+            const rk = row['RK'] || '-';
+            const compr = row['Compr'] || '0';
+            const task = row['Task Fat.'] || '0';
+            const coolers = row['Coolers'] || '0';
+            const preco = row['Exec. Preços'] || '0';
+            const trade = row['Mat Trade'] || '0';
+            const coup = row['Dig Coup'] || '0';
+            const tend = row['Tend. Cerveja'] || '0';
+            
+            widget.innerHTML = `
+                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 0.6rem; margin-bottom: 0.75rem; flex-wrap: wrap; gap: 8px;">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span style="font-size: 1.25rem;">⭐</span>
+                        <div>
+                            <div style="font-weight: 800; font-size: 0.95rem; color: #fff;" class="score5-title-text">Score 5 Operacional - RN ${code}</div>
+                            <div style="font-size: 0.72rem; color: var(--text-secondary);">Pontuação e Pilares Estratégicos</div>
+                        </div>
+                    </div>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <span style="background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid #10b981; padding: 3px 10px; border-radius: 20px; font-weight: 800; font-size: 0.8rem;">🏆 ${rk}º Lugar</span>
+                        <span style="background: rgba(99, 102, 241, 0.2); color: #a5b4fc; border: 1px solid #6366f1; padding: 3px 10px; border-radius: 20px; font-weight: 800; font-size: 0.8rem;">🎯 ${pts} Pontos</span>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 8px;">
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 8px; border-radius: 8px; text-align: center;" class="score5-item-box">
+                        <div style="font-size: 0.68rem; color: var(--text-secondary); font-weight: 600;">🛒 Compradores</div>
+                        <div style="font-size: 1.05rem; font-weight: 800; color: #fff; margin-top: 2px;" class="score5-val-text">${compr}</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 8px; border-radius: 8px; text-align: center;" class="score5-item-box">
+                        <div style="font-size: 0.68rem; color: var(--text-secondary); font-weight: 600;">💼 Task Fat.</div>
+                        <div style="font-size: 1.05rem; font-weight: 800; color: #fff; margin-top: 2px;" class="score5-val-text">${task}</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 8px; border-radius: 8px; text-align: center;" class="score5-item-box">
+                        <div style="font-size: 0.68rem; color: var(--text-secondary); font-weight: 600;">🧊 Coolers</div>
+                        <div style="font-size: 1.05rem; font-weight: 800; color: #fff; margin-top: 2px;" class="score5-val-text">${coolers}</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 8px; border-radius: 8px; text-align: center;" class="score5-item-box">
+                        <div style="font-size: 0.68rem; color: var(--text-secondary); font-weight: 600;">🏷️ Exec. Preços</div>
+                        <div style="font-size: 1.05rem; font-weight: 800; color: #fff; margin-top: 2px;" class="score5-val-text">${preco}</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 8px; border-radius: 8px; text-align: center;" class="score5-item-box">
+                        <div style="font-size: 0.68rem; color: var(--text-secondary); font-weight: 600;">🎨 Mat Trade</div>
+                        <div style="font-size: 1.05rem; font-weight: 800; color: #fff; margin-top: 2px;" class="score5-val-text">${trade}</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 8px; border-radius: 8px; text-align: center;" class="score5-item-box">
+                        <div style="font-size: 0.68rem; color: var(--text-secondary); font-weight: 600;">🎟️ Cupom Digital</div>
+                        <div style="font-size: 1.05rem; font-weight: 800; color: #fff; margin-top: 2px;" class="score5-val-text">${coup}</div>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.06); padding: 8px; border-radius: 8px; text-align: center;" class="score5-item-box">
+                        <div style="font-size: 0.68rem; color: var(--text-secondary); font-weight: 600;">🍺 Tend. Cerveja</div>
+                        <div style="font-size: 1.05rem; font-weight: 800; color: #fff; margin-top: 2px;" class="score5-val-text">${tend} cx</div>
+                    </div>
+                </div>
+            `;
+        }
 
         async function carregarDadosDrive() {
+            carregarDadosScore5();
             try {
                 const response = await fetch('/api/sheet');
                 if (!response.ok) throw new Error('Falha ao baixar CSV da API Vercel');
@@ -2856,6 +2954,7 @@ body[data-modulo="conversor"] #modulo-conversor-section {
         }
 
         function atualizarPainelRN() {
+            atualizarScore5Widget();
             const selectRN = document.getElementById('select-rn-code');
             const code = selectRN ? selectRN.value : "111";
             
@@ -4345,6 +4444,23 @@ body.light-mode .btn-voltar-menu:hover {
     border-color: #059669 !important;
     color: #065f46 !important;
 }
+
+/* Estilos do Widget Modular de Score 5 */
+body.light-mode #score5-rn-kpis-widget {
+    background: #ffffff !important;
+    border: 1px solid #a7f3d0 !important;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.08) !important;
+}
+body.light-mode .score5-title-text {
+    color: #065f46 !important;
+}
+body.light-mode .score5-item-box {
+    background: #f8fafc !important;
+    border: 1px solid #e2e8f0 !important;
+}
+body.light-mode .score5-val-text {
+    color: #0f172a !important;
+}
 </style>
 
 <script>
@@ -4362,9 +4478,12 @@ window.navegarModulo = function(modulo) {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 };
 
-// Inicia com o Dashboard isolado
+// Inicia com o Dashboard isolado e carrega dados
 document.addEventListener('DOMContentLoaded', function() {
     window.navegarModulo('dashboard');
+    if (typeof carregarDadosScore5 === 'function') {
+        carregarDadosScore5();
+    }
 });
 </script>
 
