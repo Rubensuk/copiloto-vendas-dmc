@@ -1459,18 +1459,20 @@ body.light-mode .hub-card-rose .hub-card-title {
 }
 
 
-/* --- ISOLAMENTO ESTRITO DE MÓDULOS (RENDERIZAÇÃO CONDICIONAL) --- */
-#cenario-section,
-#copiloto-section,
-#calculadoras-section,
-#painel-rn-araguaina,
-#btn-voltar-menu-container {
-    display: none;
-}
 
+/* ==========================================================================
+   ESTADO GLOBAL DE NAVEGAÇÃO E ISOLAMENTO DE MÓDULOS (RENDERIZAÇÃO CONDICIONAL)
+   ========================================================================== */
+body:not([data-modulo]) #hub-modulos-section,
 body[data-modulo="dashboard"] #hub-modulos-section {
     display: block !important;
 }
+
+body:not([data-modulo]) #btn-voltar-menu-container,
+body:not([data-modulo]) #cenario-section,
+body:not([data-modulo]) #copiloto-section,
+body:not([data-modulo]) #calculadoras-section,
+body:not([data-modulo]) #painel-rn-araguaina,
 body[data-modulo="dashboard"] #btn-voltar-menu-container,
 body[data-modulo="dashboard"] #cenario-section,
 body[data-modulo="dashboard"] #copiloto-section,
@@ -1482,9 +1484,16 @@ body[data-modulo="dashboard"] #painel-rn-araguaina {
 body[data-modulo="score5"] #hub-modulos-section {
     display: none !important;
 }
-body[data-modulo="score5"] #btn-voltar-menu-container,
+body[data-modulo="score5"] #btn-voltar-menu-container {
+    display: block !important;
+}
 body[data-modulo="score5"] #painel-rn-araguaina {
     display: block !important;
+}
+body[data-modulo="score5"] #cenario-section,
+body[data-modulo="score5"] #copiloto-section,
+body[data-modulo="score5"] #calculadoras-section {
+    display: none !important;
 }
 
 body[data-modulo="simulador"] #hub-modulos-section {
@@ -1497,22 +1506,41 @@ body[data-modulo="simulador"] #cenario-section,
 body[data-modulo="simulador"] #copiloto-section {
     display: flex !important;
 }
+body[data-modulo="simulador"] #calculadoras-section,
+body[data-modulo="simulador"] #painel-rn-araguaina {
+    display: none !important;
+}
 
 body[data-modulo="rentabilidade"] #hub-modulos-section {
     display: none !important;
 }
-body[data-modulo="rentabilidade"] #btn-voltar-menu-container,
+body[data-modulo="rentabilidade"] #btn-voltar-menu-container {
+    display: block !important;
+}
 body[data-modulo="rentabilidade"] #calculadoras-section {
     display: block !important;
+}
+body[data-modulo="rentabilidade"] #cenario-section,
+body[data-modulo="rentabilidade"] #copiloto-section,
+body[data-modulo="rentabilidade"] #painel-rn-araguaina {
+    display: none !important;
 }
 
 body[data-modulo="conversor"] #hub-modulos-section {
     display: none !important;
 }
-body[data-modulo="conversor"] #btn-voltar-menu-container,
+body[data-modulo="conversor"] #btn-voltar-menu-container {
+    display: block !important;
+}
 body[data-modulo="conversor"] #calculadoras-section {
     display: block !important;
 }
+body[data-modulo="conversor"] #cenario-section,
+body[data-modulo="conversor"] #copiloto-section,
+body[data-modulo="conversor"] #painel-rn-araguaina {
+    display: none !important;
+}
+
 
 </style>
     
@@ -1758,7 +1786,7 @@ body[data-modulo="conversor"] #calculadoras-section {
             </div>
         </div>
         <div class="header-actions">
-<a href="simulador.html" class="btn-limpar-campos" style="text-decoration: none; margin-right: 10px; background: rgba(59, 130, 246, 0.15); color: #3b82f6; border: 1px solid #3b82f6;" title="Ir para o Simulador de Vendas">🎮 Modo Treinamento</a>
+
         <button id="btn-theme-toggle" type="button" class="btn-limpar-campos" title="Alternar Tema Claro/Escuro" style="margin-right: 10px;">
             <span id="theme-icon">🌙</span>
             <span id="theme-text">Escuro</span>
