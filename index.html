@@ -1022,7 +1022,93 @@
         }
     }
     /* ----------------------------- */
-    </style>
+    
+/* --- GRID PROPORCIONAL E ALINHAMENTO DA LISTA DE PDVS --- */
+.pdv-list-header, .pdv-summary {
+    display: grid !important;
+    grid-template-columns: 5fr 2fr 2fr 3fr !important;
+    align-items: center !important;
+    gap: 12px !important;
+    padding: 10px 16px !important;
+}
+
+.pdv-col-nome {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-width: 0 !important;
+}
+
+.pdv-nome {
+    font-weight: 700 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    flex: 1 !important;
+    min-width: 0 !important;
+}
+
+.pdv-base-badge {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    padding: 2px 6px !important;
+    border-radius: 4px !important;
+}
+
+.pdv-col-visita, .pdv-col-status {
+    display: flex !important;
+    align-items: center !important;
+    min-width: 0 !important;
+}
+
+.pdv-header-meta {
+    text-align: right !important;
+    font-size: 0.75rem !important;
+    color: var(--text-secondary) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+}
+
+#pdv-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+@media (max-width: 768px) {
+    .pdv-list-header {
+        display: none !important;
+    }
+    .pdv-summary {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+        padding: 12px 14px !important;
+    }
+    .pdv-col-nome {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+    }
+    .pdv-col-visita {
+        display: inline-flex !important;
+    }
+    .pdv-col-status {
+        display: inline-flex !important;
+    }
+    .pdv-header-meta {
+        width: 100% !important;
+        text-align: left !important;
+        font-size: 0.75rem !important;
+    }
+}
+
+</style>
     
 
     <style>
@@ -2343,10 +2429,10 @@
 
                 let html_lista = `
                 <div class="pdv-list-header">
-                    <div style="flex: 2;">🏪 NOME DO PDV</div>
-                    <div style="flex: 1;">📊 SEGMENTO</div>
-                    <div style="flex: 1;">🎯 STATUS</div>
-                    <div style="flex: 2; text-align:right;">📋 METAS</div>
+                    <div>🏪 NOME DO PDV & SEGMENTO</div>
+                    <div>🗓️ DIA DA VISITA</div>
+                    <div>🎯 STATUS META</div>
+                    <div style="text-align:right;">📋 METAS</div>
                 </div>`;
                 
                 let agg = {
@@ -2393,7 +2479,11 @@
                     let text_color = is_light ? '#111827' : '#ffffff';
                     
                     let visita = row['VISITA'] || '';
-                    let badge_visita = visita ? `<span style="background: rgba(100,116,139,0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; color: #cbd5e1;">🗓️ ${visita}</span>` : `<span style="background: rgba(100,116,139,0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; color: #cbd5e1;">🗓️ Rota Ativa</span>`;
+                    let vis_trim = (visita || '').trim();
+                    if (!vis_trim || vis_trim.toLowerCase() === 'indefinido' || vis_trim === '-') {
+                        vis_trim = 'Rota';
+                    }
+                    let badge_visita = `<span class="pdv-visita-badge" style="background: rgba(100,116,139,0.2); padding: 2px 6px; border-radius: 4px; font-size: 0.75rem; color: #cbd5e1; white-space: nowrap; flex-shrink: 0;">🗓️ ${vis_trim}</span>`;
 
                     let meta_600 = safeInt(row['600']);
                     let real_600 = calcReal(row, HE_600);
@@ -2648,13 +2738,15 @@
                     html_lista += `
                     <details class="pdv-row pdv-item" data-nome="${row['NOME PDV']?.toLowerCase() || ''}" data-chave="${row['CHAVE PDV'] || ''}" data-bateu="${bateu}" style="background: ${row_bg}; border: 1px solid ${border_color}; border-radius: 8px; margin-bottom: 8px; font-family: sans-serif;">
                         <summary class="pdv-summary">
-                            <div class="pdv-header-main">
+                            <div class="pdv-col-nome">
                                 <span class="pdv-nome" style="color: ${text_color};">${icone} ${row['NOME PDV'] || 'PDV'}</span>
-                                <span class="pdv-base-badge">${base}</span>
+                                <span class="pdv-base-badge" style="white-space: nowrap; flex-shrink: 0;">${base}</span>
                             </div>
-                            <div class="pdv-header-tags">
+                            <div class="pdv-col-visita">
                                 ${badge_visita}
-                                <span class="pdv-status-badge">${status_txt}</span>
+                            </div>
+                            <div class="pdv-col-status">
+                                <span class="pdv-status-badge" style="white-space: nowrap; flex-shrink: 0;">${status_txt}</span>
                             </div>
                             <div class="pdv-header-meta">${meta_info}</div>
                         </summary>
