@@ -2980,27 +2980,33 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                 const HE_LN_ZERO = {'HE_BUD LN ZERO': 'Budweiser Zero LN', 'HE_COR LN ZERO': 'Corona Zero LN', 'HE_OUTROS LN ZERO': 'Outros Zero LN'};
                 const CORE_600 = {'CORE_AP 600': 'Antarctica 600ml', 'CORE_BC 600': 'Brahma 600ml', 'CORE_BUD 600': 'Budweiser 600ml', 'CORE_ORI 600': 'Original 600ml', 'CORE_SK 600': 'Skol 600ml', 'CORE_SPT 600': 'Spaten 600ml', 'CORE_STL 600': 'Stella Artois 600ml', 'CORE_STL PG 600': 'Stella Puro Gold 600ml', 'CORE_OUTROS 600': 'Outros 600ml'};
                 const CORE_300 = {'CORE_AP 300': 'Antarctica 300ml', 'CORE_BC 300': 'Brahma 300ml', 'CORE_BUD 300': 'Budweiser 300ml', 'CORE_ORI 300': 'Original 300ml', 'CORE_SK 300': 'Skol 300ml', 'CORE_OUTROS 300': 'Outros 300ml'};
-                const CORE_1000 = {'CORE_AP 1000': 'Antarctica 1000ml', 'CORE_BC 1000': 'Brahma 1000ml', 'CORE_ORI 1000': 'Original 1000ml', 'CORE_SK 1000': 'Skol 1000ml', 'CORE_SPT 1000': 'Spaten 1000ml', 'CORE_BUD 1000': 'Budweiser 1000ml', 'CORE_OUTROS 1000': 'Outros 1000ml'};
+                const CORE_1000 = {'CORE_AP 1000': 'Antarctica 1000ml', 'CORE_BC 1000': 'Brahma 1000ml', 'CORE_ORI 1000': 'Original 1000ml', 'CORE_SK 1000': 'Skol 1000ml', 'CORE_SPT 1000': 'Spaten 1000ml', 'CORE_OUTROS 1000': 'Outros 1000ml'};
                 
                 function safeInt(val) {
-                    if (!val || val.trim() === '') return 0;
+                    if (!val || (typeof val === 'string' && val.trim() === '')) return 0;
                     const parsed = parseInt(parseFloat(val));
                     return isNaN(parsed) ? 0 : parsed;
                 }
                 function calcReal(row, mapping) {
                     let sum = 0;
                     for (const key in mapping) {
-                        sum += safeInt(row[key]);
+                        if (key === 'CORE_SPT 1000') {
+                            sum += (safeInt(row['CORE_SPT 1000']) || safeInt(row['CORE_BUD 1000']));
+                        } else {
+                            sum += safeInt(row[key]);
+                        }
                     }
                     return sum;
                 }
                 
-                function miniCardHTML(meta, real, label, icon) {
-                    if (meta === 0 && real === 0) return '';
-                    let pct = meta > 0 ? (real / meta * 100) : 100;
+                function miniCardHTML(meta, real, label, icon, forceShow = false) {
+                    if (!forceShow && meta === 0 && real === 0) return '';
+                    let pct = meta > 0 ? (real / meta * 100) : (real > 0 ? 100 : 0);
                     let falta = Math.max(0, meta - real);
-                    let cor = pct <= 50 ? '#ef4444' : (pct < 100 ? '#f59e0b' : '#22c55e');
-                    let tag = falta > 0 ? `<div style="background:rgba(239,68,68,0.2);color:#ef4444;padding:2px 6px;border-radius:4px;font-size:0.7rem;font-weight:bold;">Falta ${falta}</div>` : `<div style="background:rgba(34,197,94,0.2);color:#22c55e;padding:2px 6px;border-radius:4px;font-size:0.7rem;font-weight:bold;">Batida</div>`;
+                    let cor = meta > 0 ? (pct <= 50 ? '#ef4444' : (pct < 100 ? '#f59e0b' : '#22c55e')) : (real > 0 ? '#22c55e' : '#64748b');
+                    let tag = meta > 0 
+                        ? (falta > 0 ? `<div style="background:rgba(239,68,68,0.2);color:#ef4444;padding:2px 6px;border-radius:4px;font-size:0.7rem;font-weight:bold;">Falta ${falta}</div>` : `<div style="background:rgba(34,197,94,0.2);color:#22c55e;padding:2px 6px;border-radius:4px;font-size:0.7rem;font-weight:bold;">Batida</div>`)
+                        : (real > 0 ? `<div style="background:rgba(34,197,94,0.2);color:#22c55e;padding:2px 6px;border-radius:4px;font-size:0.7rem;font-weight:bold;">${real} cx</div>` : `<div style="background:rgba(100,116,139,0.2);color:#94a3b8;padding:2px 6px;border-radius:4px;font-size:0.7rem;font-weight:bold;">0 cx</div>`);
                     let bg_bar = document.body.classList.contains('light-mode') ? '#e2e8f0' : '#1e293b';
                     return `
                     <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.06); border-radius:8px; padding:10px; display:flex; flex-direction:column; justify-content: space-between; gap:6px; min-width: 0;">
@@ -3131,13 +3137,14 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                     let meta_int = safeInt(row['INTEIRA']);
                     let real_int = calcReal(row, CORE_600);
                     let meta_rgb = safeInt(row['RGB']);
-                    let meta_300 = safeInt(row['LITRINHO']);
-                    let real_300 = calcReal(row, CORE_300);
+                    let meta_1000 = safeInt(row['LITRO']) || safeInt(row['LITRAO']) || safeInt(row['1000']) || safeInt(row['LITRÃO']);
                     let real_1000 = calcReal(row, CORE_1000);
+                    let meta_300 = safeInt(row['LITRINHO']) || safeInt(row['300']) || safeInt(row['LITRINHOS']);
+                    let real_300 = calcReal(row, CORE_300);
                     let real_rgb = real_int + real_300 + real_1000;
                     
-                    let total_meta = base === 'HIGH END' ? (meta_600 + meta_ln + meta_ln_zero) : (meta_int + meta_rgb + meta_300);
-                    let total_real = base === 'HIGH END' ? (real_600 + real_ln + real_ln_zero) : (real_int + real_rgb + real_300);
+                    let total_meta = base === 'HIGH END' ? (meta_600 + meta_ln + meta_ln_zero) : (meta_int + meta_rgb + meta_1000 + meta_300);
+                    let total_real = base === 'HIGH END' ? (real_600 + real_ln + real_ln_zero) : (real_int + real_rgb + real_1000 + real_300);
                     let total_pct = total_meta > 0 ? (total_real / total_meta * 100) : (total_real > 0 ? 100 : 0);
                     
                     if (bateu === 1) {
@@ -3166,9 +3173,9 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                         
                         
                         let faltas_he = [];
-                        if (real_600 < meta_600) faltas_he.push((meta_600 - real_600) + " cx de 600ml");
-                        if (real_ln < meta_ln) faltas_he.push((meta_ln - real_ln) + " cx de Long Neck");
-                        if (real_ln_zero < meta_ln_zero) faltas_he.push((meta_ln_zero - real_ln_zero) + " cx de Long Neck Zero");
+                        if (meta_600 > 0 && real_600 < meta_600) faltas_he.push((meta_600 - real_600) + " cx de 600ml");
+                        if (meta_ln > 0 && real_ln < meta_ln) faltas_he.push((meta_ln - real_ln) + " cx de Long Neck");
+                        if (meta_ln_zero > 0 && real_ln_zero < meta_ln_zero) faltas_he.push((meta_ln_zero - real_ln_zero) + " cx de Long Neck Zero");
                         
                         let insight_he = "";
                         if (faltas_he.length > 0) {
@@ -3186,18 +3193,18 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                             </div>` + inner_html;
                         }
                         let cards_he = `<div class="grid-responsive-2">`;
-                        cards_he += miniCardHTML(meta_600, real_600, '600ml (HE)', '🍺');
-                        cards_he += miniCardHTML(meta_ln, real_ln, 'Long Neck', '🍾');
-                        if (tem_zero) cards_he += miniCardHTML(meta_ln_zero, real_ln_zero, 'LN Zero', '🧊');
+                        cards_he += miniCardHTML(meta_600, real_600, '600ml (HE)', '🍺', true);
+                        cards_he += miniCardHTML(meta_ln, real_ln, 'Long Neck', '🍾', true);
+                        if (tem_zero) cards_he += miniCardHTML(meta_ln_zero, real_ln_zero, 'LN Zero', '🧊', true);
                         cards_he += `</div>`;
                         inner_html += cards_he;
                         
                         let mix_items = "";
                         const formatRow = (sq, nome, val) => `<tr style="border-bottom:1px solid ${border_color};"><td style="padding:6px 12px;text-align:center;">${sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;color:${text_color};">${nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;color:${text_color};">${val}</td></tr>`;
                         
-                        for (let col in HE_600) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), HE_600[col], safeInt(row[col])); }
-                        for (let col in HE_LN) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), HE_LN[col], safeInt(row[col])); }
-                        for (let col in HE_LN_ZERO) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), HE_LN_ZERO[col], safeInt(row[col])); }
+                        for (let col in HE_600) { let val = safeInt(row[col]); mix_items += formatRow(gerarQuadrado(val > 0), HE_600[col], val); }
+                        for (let col in HE_LN) { let val = safeInt(row[col]); mix_items += formatRow(gerarQuadrado(val > 0), HE_LN[col], val); }
+                        for (let col in HE_LN_ZERO) { let val = safeInt(row[col]); mix_items += formatRow(gerarQuadrado(val > 0), HE_LN_ZERO[col], val); }
                         
                         inner_html += `
                         <details style="margin-top:15px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid ${border_color};">
@@ -3213,19 +3220,22 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                         agg.count_core += 1;
                         agg.meta_600 += meta_int; agg.real_600 += real_int;
                         agg.meta_rgb += meta_rgb; agg.real_rgb += real_rgb;
+                        agg.meta_1000 = (agg.meta_1000 || 0) + meta_1000; agg.real_1000 = (agg.real_1000 || 0) + real_1000;
                         agg.meta_300 += meta_300; agg.real_300 += real_300;
                         
-                        meta_info = `Inteira: ${meta_int} &nbsp;|&nbsp; RGB: ${meta_rgb} &nbsp;|&nbsp; 300ml: ${meta_300}`;
+                        meta_info = `Inteira: ${meta_int} &nbsp;|&nbsp; RGB: ${meta_rgb}` + (meta_1000 > 0 ? ` &nbsp;|&nbsp; 1000ml: ${meta_1000}` : "") + (meta_300 > 0 ? ` &nbsp;|&nbsp; 300ml: ${meta_300}` : "");
                         
                         let pct_int = meta_int > 0 ? (real_int / meta_int * 100) : (real_int > 0 ? 100 : 0);
                         let pct_rgb = meta_rgb > 0 ? (real_rgb / meta_rgb * 100) : (real_rgb > 0 ? 100 : 0);
+                        let pct_1000 = meta_1000 > 0 ? (real_1000 / meta_1000 * 100) : (real_1000 > 0 ? 100 : 0);
                         let pct_300 = meta_300 > 0 ? (real_300 / meta_300 * 100) : (real_300 > 0 ? 100 : 0);
                         
                         
                         let faltas_core = [];
-                        if (real_int < meta_int) faltas_core.push((meta_int - real_int) + " cx de Inteira (600ml)");
-                        if (real_rgb < meta_rgb) faltas_core.push((meta_rgb - real_rgb) + " cx de Vasilhame (RGB)");
-                        if (real_300 < meta_300) faltas_core.push((meta_300 - real_300) + " cx de 300ml");
+                        if (meta_int > 0 && real_int < meta_int) faltas_core.push((meta_int - real_int) + " cx de Inteira (600ml)");
+                        if (meta_rgb > 0 && real_rgb < meta_rgb) faltas_core.push((meta_rgb - real_rgb) + " cx de Vasilhame (RGB)");
+                        if (meta_1000 > 0 && real_1000 < meta_1000) faltas_core.push((meta_1000 - real_1000) + " cx de 1000ml (Litrão)");
+                        if (meta_300 > 0 && real_300 < meta_300) faltas_core.push((meta_300 - real_300) + " cx de 300ml (Pequena)");
                         
                         let insight_core = "";
                         if (faltas_core.length > 0) {
@@ -3243,18 +3253,28 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                             </div>` + inner_html;
                         }
                         let cards_core = `<div class="grid-responsive-2">`;
-                        cards_core += miniCardHTML(meta_int, real_int, 'Inteira (600ml)', '🍺');
-                        cards_core += miniCardHTML(meta_rgb, real_rgb, 'RGB', '📦');
-                        cards_core += miniCardHTML(meta_300, real_300, '300ml', '🥃');
+                        cards_core += miniCardHTML(meta_int, real_int, 'Inteira (600ml)', '🍺', true);
+                        cards_core += miniCardHTML(meta_rgb, real_rgb, 'RGB (Total)', '📦', true);
+                        cards_core += miniCardHTML(meta_1000, real_1000, '1000ml (Litrão)', '🍾', true);
+                        cards_core += miniCardHTML(meta_300, real_300, '300ml (Pequena)', '🥃', true);
                         cards_core += `</div>`;
                         inner_html += cards_core;
                         
                         let mix_items = "";
                         const formatRow = (sq, nome, val) => `<tr style="border-bottom:1px solid ${border_color};"><td style="padding:6px 12px;text-align:center;">${sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;color:${text_color};">${nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;color:${text_color};">${val}</td></tr>`;
                         
-                        for (let col in CORE_600) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), CORE_600[col], safeInt(row[col])); }
-                        for (let col in CORE_1000) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), CORE_1000[col], safeInt(row[col])); }
-                        for (let col in CORE_300) { if (row[col] !== undefined && row[col] !== '') mix_items += formatRow(gerarQuadrado(safeInt(row[col]) > 0), CORE_300[col], safeInt(row[col])); }
+                        for (let col in CORE_600) {
+                            let val = safeInt(row[col]);
+                            mix_items += formatRow(gerarQuadrado(val > 0), CORE_600[col], val);
+                        }
+                        for (let col in CORE_1000) {
+                            let val = col === 'CORE_SPT 1000' ? (safeInt(row['CORE_SPT 1000']) || safeInt(row['CORE_BUD 1000'])) : safeInt(row[col]);
+                            mix_items += formatRow(gerarQuadrado(val > 0), CORE_1000[col], val);
+                        }
+                        for (let col in CORE_300) {
+                            let val = safeInt(row[col]);
+                            mix_items += formatRow(gerarQuadrado(val > 0), CORE_300[col], val);
+                        }
                         
                         
                         inner_html += `
