@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dmc-copilot-v37';
+const CACHE_NAME = 'dmc-copilot-v38';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
