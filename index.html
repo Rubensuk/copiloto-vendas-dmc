@@ -3,6 +3,9 @@
 <head>
     <link rel="manifest" href="manifest.json">
     <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DMC Sales Copilot - Inteligência Comercial</title>
     <!-- Google Fonts -->
@@ -3893,7 +3896,9 @@ FORMATO OBRIGATÓRIO (Exatamente 3 seções, marcadas com **Título**):
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js').catch(err => console.log('SW falhou: ', err));
+                navigator.serviceWorker.register('/sw.js?v=40').then(reg => {
+                    reg.update();
+                }).catch(err => console.log('SW falhou: ', err));
             });
         }
     </script>
