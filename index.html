@@ -3725,7 +3725,7 @@ FORMATO OBRIGATÓRIO (Exatamente 3 seções, marcadas com **Título**):
                 // MODO IA REAL
                 const prompt = getRawPrompt();
                 try {
-                    const endpoint = "https://copiloto-vendas-omega.vercel.app/api/generate";
+                    const endpoint = "/api/generate";
 
                     const response = await fetch(endpoint, {
                         method: "POST",
