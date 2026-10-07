@@ -3307,6 +3307,7 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                     let comprador = parseInt(row['COMPR']) || 0;
                     let coolers = parseInt(row['COOLERS']) || 0;
                     let mat_trade = row['MAT TRADE'] ? row['MAT TRADE'].trim() : '';
+                    let menu_ptc = row['MENU & PTC'] ? row['MENU & PTC'].trim() : (row['MENU'] ? row['MENU'].trim() : '');
                     let dig_coup = row['DIG COUP'] ? row['DIG COUP'].trim() : '';
                     let cerv_tend = row['CERV (TEND)'] ? row['CERV (TEND)'].trim() : '';
                     let he_tend = row['HE (TEND)'] ? row['HE (TEND)'].trim() : '';
@@ -3343,6 +3344,7 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                     fat_html += `</div>`;
 
                     let trade_val = mat_trade ? parseInt(mat_trade) : 0;
+                    let menu_val = menu_ptc ? parseInt(menu_ptc) : 0;
                     let cupom_val = dig_coup ? parseInt(dig_coup) : 0;
                     
                     let card_coolers = coolers > 0 
@@ -3357,14 +3359,26 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                              <div style="font-size:0.65rem; color:#f59e0b; font-weight:bold;">Oportunidade</div>
                            </div>`;
 
+                    let card_menu = menu_val > 0
+                        ? `<div style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.4); border-radius:12px;" class="trade-card box-shadow:0 4px 10px rgba(245,158,11,0.1);">
+                             <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">CARDÁPIO & PREÇO</div>
+                             <div style="font-size:0.85rem; font-weight:900; color:#fff; display:flex; align-items:center; gap:6px; margin-bottom:4px;">📋 Cardápio Ativo</div>
+                             <div style="font-size:0.65rem; color:#10b981; font-weight:bold;">Positivado</div>
+                           </div>`
+                        : `<div style="background:rgba(30,41,59,0.5); border:1px solid rgba(71,85,105,0.6); border-radius:12px;" class="trade-card ">
+                             <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">CARDÁPIO & PREÇO</div>
+                             <div style="font-size:0.85rem; font-weight:bold; color:#cbd5e1; display:flex; align-items:center; gap:6px; margin-bottom:4px;"><span style="filter:grayscale(1) opacity(0.5)">📋</span> Sem Cardápio</div>
+                             <div style="font-size:0.65rem; color:#f59e0b; font-weight:bold;">Oportunidade</div>
+                           </div>`;
+
                     let card_trade = trade_val > 0
                         ? `<div style="background:rgba(168,85,247,0.15); border:1px solid rgba(168,85,247,0.4); border-radius:12px;" class="trade-card box-shadow:0 4px 10px rgba(168,85,247,0.1);">
-                             <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">VISIBILIDADE</div>
+                             <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">MATERIAL TRADE</div>
                              <div style="font-size:0.85rem; font-weight:900; color:#fff; display:flex; align-items:center; gap:6px; margin-bottom:4px;">🎨 Ativo (${trade_val})</div>
                              <div style="font-size:0.65rem; color:#10b981; font-weight:bold;">Positivado</div>
                            </div>`
                         : `<div style="background:rgba(30,41,59,0.5); border:1px solid rgba(71,85,105,0.6); border-radius:12px;" class="trade-card ">
-                             <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">VISIBILIDADE</div>
+                             <div style="font-size:0.65rem; color:var(--text-secondary); font-weight:bold; letter-spacing:0.5px; margin-bottom:4px;">MATERIAL TRADE</div>
                              <div style="font-size:0.85rem; font-weight:bold; color:#cbd5e1; display:flex; align-items:center; gap:6px; margin-bottom:4px;"><span style="filter:grayscale(1) opacity(0.5)">🎨</span> Sem Material</div>
                              <div style="font-size:0.65rem; color:#f59e0b; font-weight:bold;">Oportunidade</div>
                            </div>`;
@@ -3383,8 +3397,9 @@ body[data-modulo="conversor"] #modulo-conversor-section {
 
                     let exec_html = `<div style="margin-top: 24px; margin-bottom: 24px;">
                         <div style="font-weight: bold; margin-bottom: 12px; font-size: 0.95rem; color:var(--text-primary);">🧊 Execução no PDV & Trade</div>
-                        <div class="grid-responsive-3">
+                        <div class="grid-responsive-2" style="gap: 10px;">
                             ${card_coolers}
+                            ${card_menu}
                             ${card_trade}
                             ${card_cupom}
                         </div>
@@ -4300,7 +4315,19 @@ body.light-mode .trade-card[style*="sky"] div {
     color: #0c4a6e !important;
 }
 
-/* Visibilidade (Trade) */
+/* Cardápio & Preço (Menu) */
+body.light-mode .trade-card[style*="245,158,11"],
+body.light-mode .trade-card[style*="amber"] {
+    background: #fffbeb !important;                 /* bg-amber-50 */
+    border: 1px solid #fde68a !important;           /* border-amber-200 */
+    color: #78350f !important;                      /* text-amber-900 */
+}
+body.light-mode .trade-card[style*="245,158,11"] div,
+body.light-mode .trade-card[style*="amber"] div {
+    color: #78350f !important;
+}
+
+/* Material Trade */
 body.light-mode .trade-card[style*="168,85,247"],
 body.light-mode .trade-card[style*="purple"] {
     background: #faf5ff !important;                 /* bg-purple-50 */
