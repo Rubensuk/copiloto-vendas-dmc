@@ -3906,6 +3906,131 @@ FORMATO OBRIGATÓRIO (Exatamente 3 seções, marcadas com **Título**):
 
 
 
+    <!-- PWA INSTALL PROMPT BANNER (INCREMENTAL) -->
+    <div id="pwa-install-banner" style="display: none; position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; width: 92%; max-width: 480px; background: rgba(15, 23, 42, 0.95); border: 1px solid rgba(0, 255, 136, 0.3); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-radius: 16px; padding: 16px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 255, 136, 0.15); animation: pwaSlideUp 0.4s ease-out;">
+        <div style="display: flex; align-items: flex-start; justify-content: space-between; gap: 12px;">
+            <div style="width: 42px; height: 42px; border-radius: 10px; background: linear-gradient(135deg, #059669, #10b981); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.3);">
+                📲
+            </div>
+            <div style="flex: 1;">
+                <div style="font-weight: 800; font-size: 0.95rem; color: #ffffff; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                    Instalar DMC Sales Copilot
+                </div>
+                <div style="font-size: 0.8rem; color: #94a3b8; line-height: 1.35; margin-bottom: 12px;">
+                    Para melhor desempenho em campo e acesso rápido, instale o app na tela inicial do seu celular!
+                </div>
+                
+                <div id="pwa-ios-instructions" style="display: none; background: rgba(255, 255, 255, 0.05); border: 1px dashed rgba(255, 255, 255, 0.15); border-radius: 8px; padding: 8px 10px; font-size: 0.75rem; color: #cbd5e1; margin-bottom: 12px; line-height: 1.4;">
+                    👉 Toque no botão <strong>Compartilhar</strong> (ícone <span style="font-size: 0.9rem;">⎋</span> ou ⬆️) no Safari e selecione <strong>"Adicionar à Tela de Início"</strong> (+).
+                </div>
+
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <button id="pwa-install-btn" style="flex: 1; background: linear-gradient(135deg, #00ff88, #00b4d8); color: #080b10; font-weight: 800; font-size: 0.82rem; border: none; border-radius: 8px; padding: 8px 14px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(0, 255, 136, 0.25); transition: transform 0.15s ease;">
+                        <span>🚀</span> Instalar App
+                    </button>
+                    <button id="pwa-dismiss-btn" style="background: transparent; color: #94a3b8; font-size: 0.8rem; font-weight: 600; border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 8px; padding: 8px 12px; cursor: pointer;">
+                        Agora não
+                    </button>
+                </div>
+            </div>
+            <button id="pwa-close-x-btn" style="background: transparent; border: none; color: #64748b; font-size: 1.1rem; cursor: pointer; padding: 2px; line-height: 1;" title="Fechar">
+                ✕
+            </button>
+        </div>
+    </div>
+
+    <style>
+        @keyframes pwaSlideUp {
+            from { opacity: 0; transform: translate(-50%, 20px); }
+            to { opacity: 1; transform: translate(-50%, 0); }
+        }
+        body.light-mode #pwa-install-banner {
+            background: rgba(255, 255, 255, 0.98) !important;
+            border-color: #059669 !important;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15) !important;
+        }
+        body.light-mode #pwa-install-banner div[style*="color: #ffffff"] {
+            color: #0f172a !important;
+        }
+        body.light-mode #pwa-install-banner div[style*="color: #94a3b8"] {
+            color: #475569 !important;
+        }
+        body.light-mode #pwa-ios-instructions {
+            background: #f1f5f9 !important;
+            color: #1e293b !important;
+            border-color: #cbd5e1 !important;
+        }
+        body.light-mode #pwa-dismiss-btn {
+            color: #64748b !important;
+            border-color: #cbd5e1 !important;
+        }
+    </style>
+
+    <script>
+        (function() {
+            let deferredInstallPrompt = null;
+            const banner = document.getElementById('pwa-install-banner');
+            const installBtn = document.getElementById('pwa-install-btn');
+            const dismissBtn = document.getElementById('pwa-dismiss-btn');
+            const closeXBtn = document.getElementById('pwa-close-x-btn');
+            const iosInstructions = document.getElementById('pwa-ios-instructions');
+
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+            const isIos = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+
+            function showBanner(showIosHelp = false) {
+                if (isStandalone) return;
+                if (localStorage.getItem('pwa_prompt_dismissed') === 'true') return;
+                
+                if (showIosHelp && iosInstructions && installBtn) {
+                    iosInstructions.style.display = 'block';
+                    installBtn.style.display = 'none';
+                }
+                if (banner) banner.style.display = 'block';
+            }
+
+            function dismissBanner() {
+                if (banner) banner.style.display = 'none';
+                localStorage.setItem('pwa_prompt_dismissed', 'true');
+            }
+
+            if (dismissBtn) dismissBtn.addEventListener('click', dismissBanner);
+            if (closeXBtn) closeXBtn.addEventListener('click', dismissBanner);
+
+            // Captura o evento nativo do PWA no Android/Chrome
+            window.addEventListener('beforeinstallprompt', (e) => {
+                e.preventDefault();
+                deferredInstallPrompt = e;
+                showBanner(false);
+            });
+
+            if (installBtn) {
+                installBtn.addEventListener('click', async () => {
+                    if (deferredInstallPrompt) {
+                        deferredInstallPrompt.prompt();
+                        const { outcome } = await deferredInstallPrompt.userChoice;
+                        deferredInstallPrompt = null;
+                        if (outcome === 'accepted') {
+                            dismissBanner();
+                        }
+                    } else if (isIos) {
+                        if (iosInstructions) iosInstructions.style.display = 'block';
+                        installBtn.style.display = 'none';
+                    } else {
+                        alert('Para instalar, toque no menu do seu navegador (⋮) e selecione "Instalar aplicativo" ou "Adicionar à tela inicial".');
+                    }
+                });
+            }
+
+            // Exibe automaticamente no iOS caso não esteja instalado nem dispensado
+            if (isIos && !isStandalone && !localStorage.getItem('pwa_prompt_dismissed')) {
+                setTimeout(() => {
+                    showBanner(true);
+                }, 2000);
+            }
+        })();
+    </script>
+
 <!-- LIGHT-MODE-SOL:START -->
 <style id="light-mode-sol">
 /* =====================================================================
