@@ -18,26 +18,26 @@ export default async function handler(req, res) {
         let csvBase = await resBase.text();
         let csvFat = await resFat.text();
         
-        // --- TRATAMENTO DE CABEÇALHOS DUPLICADOS DA BASE ---
-        let lines = csvBase.split(/\r?\n/);
-        if (lines.length > 0) {
-            let headers = lines[0].split(',');
-            // Índices 19 a 35 são High End (SPT 600 até OUTROS LN ZERO)
-            for(let i = 19; i <= 35; i++) {
+        // --- TRATAMENTO DE CABEÇALHOS DUPLICADOS DO PORTFÓLIO (csvFat) ---
+        let linesFat = csvFat.split(/\r?\n/);
+        if (linesFat.length > 0) {
+            let headers = linesFat[0].split(',');
+            // Índices 20 a 36 são High End (SPT 600 até OUTROS LN ZERO)
+            for(let i = 20; i <= 36; i++) {
                 if(headers[i]) {
                     let clean = headers[i].trim().replace(/^["']|["']$/g, '');
                     headers[i] = clean ? `HE_${clean}` : headers[i];
                 }
             }
-            // Índices 36 a 56 são Core (AP 600 até OUTROS 1000)
-            for(let i = 36; i <= 56; i++) {
+            // Índices 37 a 57 são Core (AP 600 até OUTROS 1000)
+            for(let i = 37; i <= 57; i++) {
                 if(headers[i]) {
                     let clean = headers[i].trim().replace(/^["']|["']$/g, '');
                     headers[i] = clean ? `CORE_${clean}` : headers[i];
                 }
             }
-            lines[0] = headers.join(',');
-            csvBase = lines.join('\n');
+            linesFat[0] = headers.join(',');
+            csvFat = linesFat.join('\n');
         }
         // --- FIM DO TRATAMENTO ---
         
@@ -92,7 +92,7 @@ export default async function handler(req, res) {
         // Identificar colunas do Faturamento que serão unidas (evitando duplicar chaves primárias)
         const ignoreHeaders = ['CHAVE PDV', 'NOME PDV', 'GEO', 'RN', 'COMERCIAL', 'OPERAÇÃO', 'GV', 'VISITA', 'BASE', 'id_ano_mes'];
         
-        // Cruzar os dados da Base com o Faturamento
+        // Cruzar os dados da Base com o Portfólio / Faturamento
         for (let row of parsedBase.data) {
             const rawChave = row['CHAVE PDV'] || row['COD_PDV'] || row['COD PDV'];
             const chave = rawChave ? String(rawChave).trim() : null;
@@ -100,33 +100,60 @@ export default async function handler(req, res) {
             const nn = rawNome ? normNome(rawNome) : null;
 
             // Busca por chave ou fallback por nome
-            const fatData = chave ? (dictFat[chave] || dictFat[normChave(chave)] || dictFat[chave.replace(/^["']|["']$/g, '')]) : (nn ? dictFatByNome[nn] : null) || (nn ? dictFatByNome[nn] : null);
+            const fatData = chave ? (dictFat[chave] || dictFat[normChave(chave)] || dictFat[chave.replace(/^["']|["']$/g, '')]) : (nn ? dictFatByNome[nn] : null);
             
-            for (const h of fatHeaders) {
-                const cleanH = h.replace(/["']/g, '').trim();
-                if (!ignoreHeaders.includes(cleanH) && !ignoreHeaders.includes(h)) {
-                    const val = fatData ? (fatData[h] !== undefined ? fatData[h] : fatData[cleanH]) : '';
-                    row[cleanH] = val !== undefined && val !== null ? val : '';
+            if (fatData) {
+                for (const h of fatHeaders) {
+                    const cleanH = h.replace(/["']/g, '').trim();
+                    if (!ignoreHeaders.includes(cleanH) && !ignoreHeaders.includes(h)) {
+                        const val = fatData[h] !== undefined ? fatData[h] : fatData[cleanH];
+                        row[cleanH] = val !== undefined && val !== null ? val : '';
+                    }
                 }
             }
 
-            // Normalização de aliases de Faturamento (Meta, Real, Gap)
-            if (fatData) {
-                const metaVal = fatData['META TASK'] || fatData['META'] || fatData['META FAT'] || fatData['META FATURAMENTO'] || fatData['OBJETIVO'] || '';
-                if (metaVal && !row['META TASK']) row['META TASK'] = metaVal;
-                if (metaVal && !row['META']) row['META'] = metaVal;
+            // Normalização de Faturamento (Meta, Real, Gap, Possui Task)
+            // A planilha Base é a fonte principal de Meta e Real Task
+            const metaVal = (row['META TASK'] !== undefined && row['META TASK'] !== null && String(row['META TASK']).trim() !== '') 
+                ? String(row['META TASK']).trim() 
+                : (row['META'] || (fatData && (fatData['META TASK'] || fatData['META'] || fatData['META FAT'] || fatData['META FATURAMENTO'] || fatData['OBJETIVO'])) || '');
 
-                const realVal = fatData['REAL TASK'] || fatData['REAL'] || fatData['REALIZADO'] || fatData['REAL FAT'] || fatData['FATURAMENTO'] || '';
-                if (realVal && !row['REAL TASK']) row['REAL TASK'] = realVal;
-                if (realVal && !row['REAL']) row['REAL'] = realVal;
+            const realVal = (row['REAL TASK'] !== undefined && row['REAL TASK'] !== null && String(row['REAL TASK']).trim() !== '') 
+                ? String(row['REAL TASK']).trim() 
+                : (row['REAL'] || (fatData && (fatData['REAL TASK'] || fatData['REAL'] || fatData['REALIZADO'] || fatData['REAL FAT'] || fatData['FATURAMENTO'])) || '');
 
-                const gapVal = fatData['GAP TASK'] || fatData['GAP'] || fatData['FALTA'] || fatData['FALTA TASK'] || fatData['FALTA FAT'] || '';
-                if (gapVal && !row['GAP TASK']) row['GAP TASK'] = gapVal;
-                if (gapVal && !row['GAP']) row['GAP'] = gapVal;
+            const parseNum = (v) => {
+                if (!v) return 0;
+                let s = String(v).replace(/\s/g, '').replace(/^R\$/i, '').trim();
+                if (s.includes(',') && s.includes('.')) {
+                    s = s.replace(/\./g, '').replace(',', '.');
+                } else if (s.includes(',')) {
+                    s = s.replace(',', '.');
+                }
+                const n = parseFloat(s);
+                return isNaN(n) ? 0 : n;
+            };
 
-                const possuiVal = fatData['POSSUI TASK'] || fatData['TASK'] || (metaVal ? 'S' : '');
-                if (possuiVal && !row['POSSUI TASK']) row['POSSUI TASK'] = possuiVal;
-            }
+            const metaNum = parseNum(metaVal);
+            const realNum = parseNum(realVal);
+            const gapCalc = Math.max(0, metaNum - realNum);
+
+            const gapVal = (row['GAP TASK'] !== undefined && row['GAP TASK'] !== null && String(row['GAP TASK']).trim() !== '')
+                ? String(row['GAP TASK']).trim()
+                : (row['GAP'] || (fatData && (fatData['GAP TASK'] || fatData['GAP'] || fatData['FALTA'])) || (metaNum > 0 ? String(gapCalc) : '0'));
+
+            row['META TASK'] = metaVal;
+            row['META'] = metaVal;
+            row['REAL TASK'] = realVal;
+            row['REAL'] = realVal;
+            row['GAP TASK'] = gapVal;
+            row['GAP'] = gapVal;
+
+            const possuiVal = (row['POSSUI TASK'] !== undefined && row['POSSUI TASK'] !== null && String(row['POSSUI TASK']).trim() !== '')
+                ? String(row['POSSUI TASK']).trim()
+                : (fatData && fatData['POSSUI TASK']) || ((metaNum > 0 || realNum > 0) ? 'S' : '');
+
+            row['POSSUI TASK'] = possuiVal;
         }
         
         // Reverter o JSON mesclado de volta para CSV (mantendo a mesma interface para o Front-end)
