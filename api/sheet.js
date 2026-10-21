@@ -24,11 +24,17 @@ export default async function handler(req, res) {
             let headers = lines[0].split(',');
             // Índices 19 a 35 são High End (SPT 600 até OUTROS LN ZERO)
             for(let i = 19; i <= 35; i++) {
-                if(headers[i]) headers[i] = 'HE_' + headers[i].trim();
+                if(headers[i]) {
+                    let clean = headers[i].trim().replace(/^["']|["']$/g, '');
+                    headers[i] = clean ? `HE_${clean}` : headers[i];
+                }
             }
             // Índices 36 a 56 são Core (AP 600 até OUTROS 1000)
             for(let i = 36; i <= 56; i++) {
-                if(headers[i]) headers[i] = 'CORE_' + headers[i].trim();
+                if(headers[i]) {
+                    let clean = headers[i].trim().replace(/^["']|["']$/g, '');
+                    headers[i] = clean ? `CORE_${clean}` : headers[i];
+                }
             }
             lines[0] = headers.join(',');
             csvBase = lines.join('\n');

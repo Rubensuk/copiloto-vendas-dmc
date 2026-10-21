@@ -2912,6 +2912,69 @@ body[data-modulo="conversor"] #modulo-conversor-section {
             return isNaN(parsed) ? 0 : parsed;
         }
 
+        function getSkuVal(row, colKey, altName) {
+            if (!row || !colKey) return 0;
+            if (row[colKey] !== undefined && row[colKey] !== null && row[colKey] !== '') {
+                return safeIntHelper(row[colKey]);
+            }
+            const cleanKey = String(colKey).replace(/["']/g, '').trim();
+            const withoutPrefix = cleanKey.replace(/^(HE_|CORE_)/i, '');
+            const prefix = cleanKey.startsWith('HE_') ? 'HE' : (cleanKey.startsWith('CORE_') ? 'CORE' : '');
+
+            const candidates = [
+                cleanKey,
+                `"${cleanKey}"`,
+                prefix ? `${prefix}_${withoutPrefix}` : null,
+                prefix ? `${prefix}_"${withoutPrefix}"` : null,
+                prefix ? `"${prefix}_${withoutPrefix}"` : null,
+                prefix ? `${prefix}_ ${withoutPrefix}` : null,
+                withoutPrefix,
+                `"${withoutPrefix}"`,
+                `${withoutPrefix} `,
+                ` ${withoutPrefix} `,
+                ` ${withoutPrefix}`,
+                `"${withoutPrefix} "`
+            ];
+
+            if (altName) {
+                const cleanAlt = String(altName).replace(/["']/g, '').trim();
+                candidates.push(cleanAlt);
+                candidates.push(`"${cleanAlt}"`);
+                candidates.push(cleanAlt.replace(/\s*ml$/i, ''));
+                candidates.push(`"${cleanAlt.replace(/\s*ml$/i, '')}"`);
+            }
+
+            for (let i = 0; i < candidates.length; i++) {
+                let c = candidates[i];
+                if (!c) continue;
+                if (row[c] !== undefined && row[c] !== null && row[c] !== '') {
+                    return safeIntHelper(row[c]);
+                }
+            }
+
+            const targetNorm = cleanKey.toUpperCase().replace(/\s+/g, ' ');
+            const targetWithoutPrefix = withoutPrefix.toUpperCase().replace(/\s+/g, ' ');
+            const altNorm = altName ? String(altName).replace(/["']/g, '').trim().toUpperCase().replace(/\s+/g, ' ') : null;
+            const altNormNoMl = altNorm ? altNorm.replace(/\s*ML$/i, '') : null;
+
+            for (let k in row) {
+                if (!Object.prototype.hasOwnProperty.call(row, k)) continue;
+                let val = row[k];
+                if (val === undefined || val === null || val === '') continue;
+
+                let kNorm = String(k).replace(/["']/g, '').trim().toUpperCase().replace(/\s+/g, ' ');
+                if (kNorm === targetNorm) return safeIntHelper(val);
+                if (prefix && kNorm === `${prefix}_${targetWithoutPrefix}`) return safeIntHelper(val);
+                if (!kNorm.startsWith('HE_') && !kNorm.startsWith('CORE_') && kNorm === targetWithoutPrefix) {
+                    return safeIntHelper(val);
+                }
+                if (altNorm && kNorm === altNorm) return safeIntHelper(val);
+                if (altNormNoMl && kNorm === altNormNoMl) return safeIntHelper(val);
+            }
+
+            return 0;
+        }
+
         function parseBRLHelper(val) {
             if (!val) return 0;
             if (typeof val === 'number') return val;
@@ -2926,9 +2989,9 @@ body[data-modulo="conversor"] #modulo-conversor-section {
             let sum = 0;
             for (const key in mapping) {
                 if (key === 'CORE_SPT 1000') {
-                    sum += (safeIntHelper(row['CORE_SPT 1000']) || safeIntHelper(row['CORE_BUD 1000']));
+                    sum += (getSkuVal(row, 'CORE_SPT 1000', mapping[key]) || getSkuVal(row, 'CORE_BUD 1000', mapping[key]));
                 } else {
-                    sum += safeIntHelper(row[key]);
+                    sum += getSkuVal(row, key, mapping[key]);
                 }
             }
             return sum;
@@ -3160,9 +3223,9 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                     let sum = 0;
                     for (const key in mapping) {
                         if (key === 'CORE_SPT 1000') {
-                            sum += (safeInt(row['CORE_SPT 1000']) || safeInt(row['CORE_BUD 1000']));
+                            sum += (getSkuVal(row, 'CORE_SPT 1000', mapping[key]) || getSkuVal(row, 'CORE_BUD 1000', mapping[key]));
                         } else {
-                            sum += safeInt(row[key]);
+                            sum += getSkuVal(row, key, mapping[key]);
                         }
                     }
                     return sum;
@@ -3368,9 +3431,9 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                         let mix_items = "";
                         const formatRow = (sq, nome, val) => `<tr style="border-bottom:1px solid ${border_color};"><td style="padding:6px 12px;text-align:center;">${sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;color:${text_color};">${nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;color:${text_color};">${val}</td></tr>`;
                         
-                        for (let col in HE_600) { let val = safeInt(row[col]); mix_items += formatRow(gerarQuadrado(val > 0), HE_600[col], val); }
-                        for (let col in HE_LN) { let val = safeInt(row[col]); mix_items += formatRow(gerarQuadrado(val > 0), HE_LN[col], val); }
-                        for (let col in HE_LN_ZERO) { let val = safeInt(row[col]); mix_items += formatRow(gerarQuadrado(val > 0), HE_LN_ZERO[col], val); }
+                        for (let col in HE_600) { let val = getSkuVal(row, col, HE_600[col]); mix_items += formatRow(gerarQuadrado(val > 0), HE_600[col], val); }
+                        for (let col in HE_LN) { let val = getSkuVal(row, col, HE_LN[col]); mix_items += formatRow(gerarQuadrado(val > 0), HE_LN[col], val); }
+                        for (let col in HE_LN_ZERO) { let val = getSkuVal(row, col, HE_LN_ZERO[col]); mix_items += formatRow(gerarQuadrado(val > 0), HE_LN_ZERO[col], val); }
                         
                         inner_html += `
                         <details style="margin-top:15px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid ${border_color};">
@@ -3430,15 +3493,15 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                         const formatRow = (sq, nome, val) => `<tr style="border-bottom:1px solid ${border_color};"><td style="padding:6px 12px;text-align:center;">${sq}</td><td style="padding:6px 12px;text-align:left;font-size:0.95rem;color:${text_color};">${nome}</td><td style="padding:6px 12px;text-align:center;font-weight:bold;color:${text_color};">${val}</td></tr>`;
                         
                         for (let col in CORE_600) {
-                            let val = safeInt(row[col]);
+                            let val = getSkuVal(row, col, CORE_600[col]);
                             mix_items += formatRow(gerarQuadrado(val > 0), CORE_600[col], val);
                         }
                         for (let col in CORE_1000) {
-                            let val = col === 'CORE_SPT 1000' ? (safeInt(row['CORE_SPT 1000']) || safeInt(row['CORE_BUD 1000'])) : safeInt(row[col]);
+                            let val = col === 'CORE_SPT 1000' ? (getSkuVal(row, 'CORE_SPT 1000', CORE_1000[col]) || getSkuVal(row, 'CORE_BUD 1000', CORE_1000[col])) : getSkuVal(row, col, CORE_1000[col]);
                             mix_items += formatRow(gerarQuadrado(val > 0), CORE_1000[col], val);
                         }
                         for (let col in CORE_300) {
-                            let val = safeInt(row[col]);
+                            let val = getSkuVal(row, col, CORE_300[col]);
                             mix_items += formatRow(gerarQuadrado(val > 0), CORE_300[col], val);
                         }
                         
@@ -4131,7 +4194,7 @@ FORMATO OBRIGATÓRIO (Exatamente 3 seções, marcadas com **Título**):
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js?v=40').then(reg => {
+                navigator.serviceWorker.register('/sw.js?v=45').then(reg => {
                     reg.update();
                 }).catch(err => console.log('SW falhou: ', err));
             });
