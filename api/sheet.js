@@ -45,26 +45,48 @@ export default async function handler(req, res) {
         const parsedBase = Papa.parse(csvBase, { header: true, skipEmptyLines: true });
         const parsedFat = Papa.parse(csvFat, { header: true, skipEmptyLines: true });
         
-        // Indexar a planilha de Faturamento pela CHAVE PDV para cruzamento rápido
+        function normChave(val) {
+            if (!val) return '';
+            let s = String(val).trim().replace(/^["']|["']$/g, '');
+            s = s.replace(/\.0+$/, '');
+            return s.trim();
+        }
+
+        // Identificar dinamicamente o campo de chave no Faturamento
+        const fatHeaders = parsedFat.meta.fields || [];
+        const fatChaveField = fatHeaders.find(f => {
+            const clean = f.replace(/["']/g, '').trim().toUpperCase();
+            return clean === 'CHAVE PDV' || clean === 'CHAVE' || clean === 'COD_PDV' || clean === 'COD PDV' || clean === 'CODIGO';
+        }) || 'CHAVE PDV';
+
+        // Indexar a planilha de Faturamento por múltiplas variações da chave
         const dictFat = {};
         for (const row of parsedFat.data) {
-            if (row['CHAVE PDV']) {
-                dictFat[row['CHAVE PDV'].trim()] = row;
+            const rawVal = row[fatChaveField] || row['CHAVE PDV'];
+            if (rawVal !== undefined && rawVal !== null) {
+                const trimmed = String(rawVal).trim();
+                const cleanQuotes = trimmed.replace(/^["']|["']$/g, '');
+                const norm = normChave(trimmed);
+                if (trimmed) dictFat[trimmed] = row;
+                if (cleanQuotes) dictFat[cleanQuotes] = row;
+                if (norm) dictFat[norm] = row;
             }
         }
         
         // Identificar colunas do Faturamento que serão unidas (evitando duplicar chaves primárias)
-        const fatHeaders = parsedFat.meta.fields || [];
         const ignoreHeaders = ['CHAVE PDV', 'NOME PDV', 'GEO', 'RN', 'COMERCIAL', 'OPERAÇÃO', 'GV', 'VISITA', 'BASE', 'id_ano_mes'];
         
         // Cruzar os dados da Base com o Faturamento
         for (let row of parsedBase.data) {
-            const chave = row['CHAVE PDV'] ? row['CHAVE PDV'].trim() : null;
-            const fatData = chave ? dictFat[chave] : null;
+            const rawChave = row['CHAVE PDV'];
+            const chave = rawChave ? String(rawChave).trim() : null;
+            const fatData = chave ? (dictFat[chave] || dictFat[normChave(chave)] || dictFat[chave.replace(/^["']|["']$/g, '')]) : null;
             
             for (const h of fatHeaders) {
-                if (!ignoreHeaders.includes(h)) {
-                    row[h] = fatData && fatData[h] !== undefined ? fatData[h] : '';
+                const cleanH = h.replace(/["']/g, '').trim();
+                if (!ignoreHeaders.includes(cleanH) && !ignoreHeaders.includes(h)) {
+                    const val = fatData ? (fatData[h] !== undefined ? fatData[h] : fatData[cleanH]) : '';
+                    row[cleanH] = val !== undefined && val !== null ? val : '';
                 }
             }
         }
