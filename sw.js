@@ -1,4 +1,4 @@
-const CACHE_NAME = 'dmc-copilot-v46';
+const CACHE_NAME = 'dmc-copilot-v47';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
@@ -41,7 +41,7 @@ self.addEventListener('fetch', event => {
   }
 
   // Para arquivos HTML, Network First para sempre ter a versão mais recente!
-  if (event.request.mode === 'navigate' || event.request.headers.get('accept').includes('text/html')) {
+  if (event.request.mode === 'navigate' || (event.request.headers.get('accept') || '').includes('text/html')) {
       event.respondWith(
           fetch(event.request).then(response => {
               const clonedResponse = response.clone();

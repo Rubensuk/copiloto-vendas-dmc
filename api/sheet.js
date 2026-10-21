@@ -52,24 +52,40 @@ export default async function handler(req, res) {
             return s.trim();
         }
 
-        // Identificar dinamicamente o campo de chave no Faturamento
+        function normNome(val) {
+            if (!val) return '';
+            return String(val).trim().toUpperCase().replace(/["']/g, '').replace(/\s+/g, ' ');
+        }
+
         const fatHeaders = parsedFat.meta.fields || [];
         const fatChaveField = fatHeaders.find(f => {
             const clean = f.replace(/["']/g, '').trim().toUpperCase();
             return clean === 'CHAVE PDV' || clean === 'CHAVE' || clean === 'COD_PDV' || clean === 'COD PDV' || clean === 'CODIGO';
         }) || 'CHAVE PDV';
 
-        // Indexar a planilha de Faturamento por múltiplas variações da chave
+        const fatNomeField = fatHeaders.find(f => {
+            const clean = f.replace(/["']/g, '').trim().toUpperCase();
+            return clean === 'NOME PDV' || clean === 'NOME' || clean === 'CLIENTE' || clean === 'RAZAO SOCIAL';
+        }) || 'NOME PDV';
+
+        // Indexar a planilha de Faturamento por chave E por nome
         const dictFat = {};
+        const dictFatByNome = {};
+
         for (const row of parsedFat.data) {
-            const rawVal = row[fatChaveField] || row['CHAVE PDV'];
-            if (rawVal !== undefined && rawVal !== null) {
-                const trimmed = String(rawVal).trim();
+            const rawChave = row[fatChaveField] || row['CHAVE PDV'];
+            if (rawChave !== undefined && rawChave !== null) {
+                const trimmed = String(rawChave).trim();
                 const cleanQuotes = trimmed.replace(/^["']|["']$/g, '');
                 const norm = normChave(trimmed);
                 if (trimmed) dictFat[trimmed] = row;
                 if (cleanQuotes) dictFat[cleanQuotes] = row;
                 if (norm) dictFat[norm] = row;
+            }
+            const rawNome = row[fatNomeField] || row['NOME PDV'];
+            if (rawNome) {
+                const nn = normNome(rawNome);
+                if (nn) dictFatByNome[nn] = row;
             }
         }
         
@@ -78,9 +94,13 @@ export default async function handler(req, res) {
         
         // Cruzar os dados da Base com o Faturamento
         for (let row of parsedBase.data) {
-            const rawChave = row['CHAVE PDV'];
+            const rawChave = row['CHAVE PDV'] || row['COD_PDV'] || row['COD PDV'];
             const chave = rawChave ? String(rawChave).trim() : null;
-            const fatData = chave ? (dictFat[chave] || dictFat[normChave(chave)] || dictFat[chave.replace(/^["']|["']$/g, '')]) : null;
+            const rawNome = row['NOME PDV'] || row['CLIENTE'];
+            const nn = rawNome ? normNome(rawNome) : null;
+
+            // Busca por chave ou fallback por nome
+            const fatData = chave ? (dictFat[chave] || dictFat[normChave(chave)] || dictFat[chave.replace(/^["']|["']$/g, '')]) : (nn ? dictFatByNome[nn] : null) || (nn ? dictFatByNome[nn] : null);
             
             for (const h of fatHeaders) {
                 const cleanH = h.replace(/["']/g, '').trim();
@@ -89,13 +109,31 @@ export default async function handler(req, res) {
                     row[cleanH] = val !== undefined && val !== null ? val : '';
                 }
             }
+
+            // Normalização de aliases de Faturamento (Meta, Real, Gap)
+            if (fatData) {
+                const metaVal = fatData['META TASK'] || fatData['META'] || fatData['META FAT'] || fatData['META FATURAMENTO'] || fatData['OBJETIVO'] || '';
+                if (metaVal && !row['META TASK']) row['META TASK'] = metaVal;
+                if (metaVal && !row['META']) row['META'] = metaVal;
+
+                const realVal = fatData['REAL TASK'] || fatData['REAL'] || fatData['REALIZADO'] || fatData['REAL FAT'] || fatData['FATURAMENTO'] || '';
+                if (realVal && !row['REAL TASK']) row['REAL TASK'] = realVal;
+                if (realVal && !row['REAL']) row['REAL'] = realVal;
+
+                const gapVal = fatData['GAP TASK'] || fatData['GAP'] || fatData['FALTA'] || fatData['FALTA TASK'] || fatData['FALTA FAT'] || '';
+                if (gapVal && !row['GAP TASK']) row['GAP TASK'] = gapVal;
+                if (gapVal && !row['GAP']) row['GAP'] = gapVal;
+
+                const possuiVal = fatData['POSSUI TASK'] || fatData['TASK'] || (metaVal ? 'S' : '');
+                if (possuiVal && !row['POSSUI TASK']) row['POSSUI TASK'] = possuiVal;
+            }
         }
         
         // Reverter o JSON mesclado de volta para CSV (mantendo a mesma interface para o Front-end)
         const finalCsv = Papa.unparse(parsedBase.data);
         
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
-        res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=60');
+        res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
         res.setHeader('Access-Control-Allow-Origin', '*');
         res.status(200).send(finalCsv);
     } catch (error) {
