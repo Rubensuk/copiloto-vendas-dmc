@@ -2980,8 +2980,15 @@ body[data-modulo="conversor"] #modulo-conversor-section {
             if (typeof val === 'number') return val;
             let str = String(val).replace(/R\$/gi, '').replace(/[^0-9,.-]/g, '').trim();
             if (str === '-' || str === '') return 0;
-            if (str.includes(',')) {
+            if (str.includes(',') && str.includes('.')) {
                 str = str.replace(/\./g, '').replace(',', '.');
+            } else if (str.includes(',')) {
+                str = str.replace(',', '.');
+            } else if (str.includes('.')) {
+                const parts = str.split('.');
+                if (parts.length === 2 && parts[1].length === 3) {
+                    str = parts[0] + parts[1];
+                }
             }
             let num = parseFloat(str);
             return isNaN(num) ? 0 : num;
@@ -4507,7 +4514,7 @@ FORMATO OBRIGATÓRIO (Exatamente 3 seções, marcadas com **Título**):
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js?v=49').then(reg => {
+                navigator.serviceWorker.register('/sw.js?v=50').then(reg => {
                     reg.update();
                 }).catch(err => console.log('SW falhou: ', err));
             });
