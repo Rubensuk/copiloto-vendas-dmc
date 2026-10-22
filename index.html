@@ -3713,9 +3713,15 @@ body[data-modulo="conversor"] #modulo-conversor-section {
                     
                     /* copiloto_data_str removido, usando index agora */
 
-                    let btn_copiloto = '';
+                    /* Botão de impressão individualizada exclusivo para versão web */
+                    let btn_imprimir_html = `
+                    <div style="margin-top: 18px; padding-top: 14px; border-top: 1px dashed ${border_color}; display: flex; justify-content: flex-end;">
+                        <button type="button" class="btn-imprimir-pdf hidden sm:flex" onclick="event.stopPropagation(); imprimirExtratoPDV(${index})" style="align-items: center; gap: 8px; background: rgba(59, 130, 246, 0.15); border: 1px solid rgba(59, 130, 246, 0.4); color: #60a5fa; padding: 8px 16px; border-radius: 8px; font-weight: 700; font-size: 0.85rem; cursor: pointer; transition: all 0.2s ease;">
+                            🖨️ Imprimir Extrato PDF
+                        </button>
+                    </div>`;
 
-                    inner_html = card_pts_pdv + box_score5_status + inner_html + fat_html + exec_html + btn_copiloto;
+                    inner_html = card_pts_pdv + box_score5_status + inner_html + fat_html + exec_html + btn_imprimir_html;
 
                     html_lista += `
                     <details class="pdv-row pdv-item" data-nome="${row['NOME PDV']?.toLowerCase() || ''}" data-chave="${row['CHAVE PDV'] || ''}" data-bateu="${bateu}" style="background: ${row_bg}; border: 1px solid ${border_color}; border-radius: 8px; margin-bottom: 8px; font-family: sans-serif;">
@@ -3836,6 +3842,283 @@ body[data-modulo="conversor"] #modulo-conversor-section {
             }
         }
 
+
+        window.imprimirExtratoPDV = function(index) {
+            const rows = window.appFilteredRows || [];
+            const row = rows[index];
+            if (!row) {
+                console.error('PDV não encontrado para impressão no índice', index);
+                return;
+            }
+
+            const printContainer = document.getElementById('extrato-pdv-print-area');
+            if (!printContainer) return;
+
+            const dataEmissao = new Date().toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' });
+            const nomePDV = row['NOME PDV'] || 'Não identificado';
+            const chavePDV = row['CHAVE PDV'] || '-';
+            const base = (row['BASE'] || 'CORE').trim().toUpperCase();
+            const vis_trim = (row['VISITA'] || 'Rota').trim();
+            const operacao = row['OPERAÇÃO'] || 'DMC Araguaina';
+            const gv = row['GV'] || '-';
+            const rn = row['RN'] || '-';
+
+            const status_pdv = typeof calcularStatusMetaPDV === 'function' ? calcularStatusMetaPDV(row) : { bateu: 0, status_txt: 'Pendente', pts: 0, faltas: [], pilares_concluidos: 0, status_cor: '#ef4444' };
+            const bateu = status_pdv.bateu === 1;
+
+            // Faturamento
+            const formatBRL = (v) => Number(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            const meta_task = typeof parseBRLHelper === 'function' ? parseBRLHelper(getFieldVal(row, ['META TASK', 'META'])) : 0;
+            const real_task = typeof parseBRLHelper === 'function' ? parseBRLHelper(getFieldVal(row, ['REAL TASK', 'REAL'])) : 0;
+            const falta_task = Math.max(0, meta_task - real_task);
+            const pct_task = meta_task > 0 ? (real_task / meta_task) * 100 : (real_task > 0 ? 100 : 0);
+
+            // Portfólio Resumo e Mix
+            let portfolioResumoHTML = '';
+            let mixTabelaRows = '';
+
+            if (base === 'HIGH END') {
+                const meta_600 = safeIntHelper(row['600']);
+                const real_600 = typeof calcRealHelper === 'function' ? calcRealHelper(row, HE_600) : 0;
+                const meta_ln = safeIntHelper(row['LN']);
+                const real_ln = typeof calcRealHelper === 'function' ? calcRealHelper(row, HE_LN) : 0;
+                const meta_ln_zero = safeIntHelper(row['LN ZERO']);
+                const real_ln_zero = typeof calcRealHelper === 'function' ? calcRealHelper(row, HE_LN_ZERO) : 0;
+
+                portfolioResumoHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px;">
+                        <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; text-align: center; background: #f8fafc;">
+                            <div style="font-size: 8pt; color: #64748b; font-weight: bold;">600ml (HE)</div>
+                            <div style="font-size: 11pt; font-weight: 800; color: #0f172a;">${real_600} / ${meta_600} cx</div>
+                            <div style="font-size: 7.5pt; color: ${real_600 >= meta_600 && meta_600 > 0 ? '#16a34a' : '#ea580c'}; font-weight: bold;">${real_600 >= meta_600 && meta_600 > 0 ? 'Batida' : (meta_600 > 0 ? 'Falta ' + (meta_600 - real_600) : '-')}</div>
+                        </div>
+                        <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; text-align: center; background: #f8fafc;">
+                            <div style="font-size: 8pt; color: #64748b; font-weight: bold;">Long Neck</div>
+                            <div style="font-size: 11pt; font-weight: 800; color: #0f172a;">${real_ln} / ${meta_ln} cx</div>
+                            <div style="font-size: 7.5pt; color: ${real_ln >= meta_ln && meta_ln > 0 ? '#16a34a' : '#ea580c'}; font-weight: bold;">${real_ln >= meta_ln && meta_ln > 0 ? 'Batida' : (meta_ln > 0 ? 'Falta ' + (meta_ln - real_ln) : '-')}</div>
+                        </div>
+                        <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 8px; text-align: center; background: #f8fafc;">
+                            <div style="font-size: 8pt; color: #64748b; font-weight: bold;">LN Zero</div>
+                            <div style="font-size: 11pt; font-weight: 800; color: #0f172a;">${real_ln_zero} / ${meta_ln_zero} cx</div>
+                            <div style="font-size: 7.5pt; color: ${real_ln_zero >= meta_ln_zero && meta_ln_zero > 0 ? '#16a34a' : '#ea580c'}; font-weight: bold;">${real_ln_zero >= meta_ln_zero && meta_ln_zero > 0 ? 'Batida' : (meta_ln_zero > 0 ? 'Falta ' + (meta_ln_zero - real_ln_zero) : '-')}</div>
+                        </div>
+                    </div>
+                `;
+
+                const renderMixGroup = (mapping, grupoNome) => {
+                    let res = '';
+                    for (const col in mapping) {
+                        const val = typeof getSkuVal === 'function' ? getSkuVal(row, col, mapping[col]) : 0;
+                        const positivado = val > 0;
+                        res += `
+                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                            <td style="padding: 4px 6px; text-align: center; font-size: 8pt;">${positivado ? '🟢 OK' : '🔴 Não'}</td>
+                            <td style="padding: 4px 6px; font-size: 8.5pt; font-weight: 600; color: #0f172a;">${mapping[col]} <span style="font-size: 7pt; color: #64748b;">(${grupoNome})</span></td>
+                            <td style="padding: 4px 6px; text-align: center; font-size: 8.5pt; font-weight: 800; color: #0f172a;">${val}</td>
+                        </tr>`;
+                    }
+                    return res;
+                };
+
+                mixTabelaRows += renderMixGroup(HE_600, '600ml');
+                mixTabelaRows += renderMixGroup(HE_LN, 'Long Neck');
+                mixTabelaRows += renderMixGroup(HE_LN_ZERO, 'LN Zero');
+            } else {
+                const meta_int = safeIntHelper(row['INTEIRA']);
+                const real_int = typeof calcRealHelper === 'function' ? calcRealHelper(row, CORE_600) : 0;
+                const meta_rgb = safeIntHelper(row['RGB']);
+                const meta_1000 = safeIntHelper(row['LITRO']) || safeIntHelper(row['LITRAO']) || safeIntHelper(row['1000']) || safeIntHelper(row['LITRÃO']);
+                const real_1000 = typeof calcRealHelper === 'function' ? calcRealHelper(row, CORE_1000) : 0;
+                const meta_300 = safeIntHelper(row['LITRINHO']) || safeIntHelper(row['300']) || safeIntHelper(row['LITRINHOS']);
+                const real_300 = typeof calcRealHelper === 'function' ? calcRealHelper(row, CORE_300) : 0;
+                const real_rgb = real_int + real_300 + real_1000;
+
+                portfolioResumoHTML = `
+                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 12px;">
+                        <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; text-align: center; background: #f8fafc;">
+                            <div style="font-size: 7.5pt; color: #64748b; font-weight: bold;">Inteira (600ml)</div>
+                            <div style="font-size: 10pt; font-weight: 800; color: #0f172a;">${real_int} / ${meta_int} cx</div>
+                            <div style="font-size: 7pt; color: ${real_int >= meta_int && meta_int > 0 ? '#16a34a' : '#ea580c'}; font-weight: bold;">${real_int >= meta_int && meta_int > 0 ? 'Batida' : (meta_int > 0 ? 'Falta ' + (meta_int - real_int) : '-')}</div>
+                        </div>
+                        <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; text-align: center; background: #f8fafc;">
+                            <div style="font-size: 7.5pt; color: #64748b; font-weight: bold;">RGB (Total)</div>
+                            <div style="font-size: 10pt; font-weight: 800; color: #0f172a;">${real_rgb} / ${meta_rgb} cx</div>
+                            <div style="font-size: 7pt; color: ${real_rgb >= meta_rgb && meta_rgb > 0 ? '#16a34a' : '#ea580c'}; font-weight: bold;">${real_rgb >= meta_rgb && meta_rgb > 0 ? 'Batida' : (meta_rgb > 0 ? 'Falta ' + (meta_rgb - real_rgb) : '-')}</div>
+                        </div>
+                        <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; text-align: center; background: #f8fafc;">
+                            <div style="font-size: 7.5pt; color: #64748b; font-weight: bold;">1000ml (Litrão)</div>
+                            <div style="font-size: 10pt; font-weight: 800; color: #0f172a;">${real_1000} / ${meta_1000} cx</div>
+                            <div style="font-size: 7pt; color: ${real_1000 >= meta_1000 && meta_1000 > 0 ? '#16a34a' : '#ea580c'}; font-weight: bold;">${real_1000 >= meta_1000 && meta_1000 > 0 ? 'Batida' : (meta_1000 > 0 ? 'Falta ' + (meta_1000 - real_1000) : '-')}</div>
+                        </div>
+                        <div style="border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px; text-align: center; background: #f8fafc;">
+                            <div style="font-size: 7.5pt; color: #64748b; font-weight: bold;">300ml (Pequena)</div>
+                            <div style="font-size: 10pt; font-weight: 800; color: #0f172a;">${real_300} / ${meta_300} cx</div>
+                            <div style="font-size: 7pt; color: ${real_300 >= meta_300 && meta_300 > 0 ? '#16a34a' : '#ea580c'}; font-weight: bold;">${real_300 >= meta_300 && meta_300 > 0 ? 'Batida' : (meta_300 > 0 ? 'Falta ' + (meta_300 - real_300) : '-')}</div>
+                        </div>
+                    </div>
+                `;
+
+                const renderMixGroup = (mapping, grupoNome) => {
+                    let res = '';
+                    for (const col in mapping) {
+                        const val = col === 'CORE_SPT 1000'
+                            ? ((typeof getSkuVal === 'function' ? getSkuVal(row, 'CORE_SPT 1000', mapping[col]) : 0) || (typeof getSkuVal === 'function' ? getSkuVal(row, 'CORE_BUD 1000', mapping[col]) : 0))
+                            : (typeof getSkuVal === 'function' ? getSkuVal(row, col, mapping[col]) : 0);
+                        const positivado = val > 0;
+                        res += `
+                        <tr style="border-bottom: 1px solid #e2e8f0;">
+                            <td style="padding: 4px 6px; text-align: center; font-size: 8pt;">${positivado ? '🟢 OK' : '🔴 Não'}</td>
+                            <td style="padding: 4px 6px; font-size: 8.5pt; font-weight: 600; color: #0f172a;">${mapping[col]} <span style="font-size: 7pt; color: #64748b;">(${grupoNome})</span></td>
+                            <td style="padding: 4px 6px; text-align: center; font-size: 8.5pt; font-weight: 800; color: #0f172a;">${val}</td>
+                        </tr>`;
+                    }
+                    return res;
+                };
+
+                mixTabelaRows += renderMixGroup(CORE_600, 'Inteira 600');
+                mixTabelaRows += renderMixGroup(CORE_1000, 'Litrão 1000');
+                mixTabelaRows += renderMixGroup(CORE_300, '300ml');
+            }
+
+            // Execução & Trade
+            const coolers = safeIntHelper(row['COOLERS']);
+            const visitacao_raw = row['VISITAÇÃO'] ? String(row['VISITAÇÃO']).trim() : '';
+            const qtde_visitas = safeIntHelper(row['QTDE VISITAS']);
+            const is_visitado = safeIntHelper(visitacao_raw) > 0 || qtde_visitas > 0 || ['OK', 'S', 'SIM'].includes(visitacao_raw.toUpperCase());
+            const menu_val = safeIntHelper(row['MENU & PTC'] || row['MENU']);
+            const trade_val = safeIntHelper(row['MAT TRADE']);
+            const cupom_val = safeIntHelper(row['DIG COUP']);
+
+            // Montagem completa do Extrato A4 Individualizado
+            printContainer.innerHTML = `
+                <div style="max-width: 100%; margin: 0 auto; padding: 4px; font-family: inherit; color: #0f172a;">
+                    <!-- CABEÇALHO DO EXTRATO -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 2px solid #0f172a; padding-bottom: 8px; margin-bottom: 12px;">
+                        <div>
+                            <div style="font-size: 7.5pt; font-weight: 800; color: #2563eb; letter-spacing: 1px; text-transform: uppercase;">DMC Copiloto de Vendas • Extrato de Performance Individual</div>
+                            <div style="font-size: 14pt; font-weight: 900; color: #0f172a; margin-top: 2px;">${nomePDV}</div>
+                            <div style="font-size: 8.5pt; color: #475569; margin-top: 2px;">
+                                <strong>Chave:</strong> ${chavePDV} &nbsp;|&nbsp; 
+                                <strong>Segmento:</strong> ${base} &nbsp;|&nbsp; 
+                                <strong>Dia de Visita:</strong> ${vis_trim} &nbsp;|&nbsp; 
+                                <strong>Op:</strong> ${operacao} (GV ${gv} / RN ${rn})
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 9pt; font-weight: 800; border: 1px solid ${bateu ? '#16a34a' : '#ea580c'}; background: ${bateu ? '#f0fdf4' : '#fff7ed'}; color: ${bateu ? '#15803d' : '#c2410c'};">
+                                ${bateu ? '🟢 META BATIDA' : '🔴 PENDENTE'}
+                            </div>
+                            <div style="font-size: 7.5pt; color: #64748b; margin-top: 4px;">Score 5: <strong>${status_pdv.pts} pts</strong> (${status_pdv.pilares_concluidos}/7)</div>
+                            <div style="font-size: 7pt; color: #94a3b8; margin-top: 2px;">Emissão: ${dataEmissao}</div>
+                        </div>
+                    </div>
+
+                    <!-- MISSÃO DO BALCÃO E STATUS -->
+                    ${status_pdv.faltas && status_pdv.faltas.length > 0 ? `
+                    <div style="border: 1px solid #f97316; border-left: 4px solid #ea580c; background: #fff7ed; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px;">
+                        <div style="font-size: 8.5pt; font-weight: 800; color: #9a3412;">🎯 Missão do Balcão & Pendências de Regularização</div>
+                        <div style="font-size: 8pt; color: #7c2d12; margin-top: 2px;">
+                            Para este PDV atingir 100% das metas, é necessário regularizar: <strong>${status_pdv.faltas.join(' • ')}</strong>
+                        </div>
+                    </div>` : `
+                    <div style="border: 1px solid #22c55e; border-left: 4px solid #16a34a; background: #f0fdf4; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px;">
+                        <div style="font-size: 8.5pt; font-weight: 800; color: #166534;">🎉 Cliente 100% Conforme no Score 5</div>
+                        <div style="font-size: 8pt; color: #14532d; margin-top: 2px;">Todos os 7 pilares oficiais foram concluídos com êxito neste PDV.</div>
+                    </div>`}
+
+                    <!-- FATURAMENTO BEES FORCE -->
+                    <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-bottom: 12px; background: #ffffff;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 8px;">
+                            <div style="font-size: 9pt; font-weight: 800; color: #0f172a;">💼 Faturamento BEES Force</div>
+                            <div style="font-size: 8pt; font-weight: 800; color: ${pct_task >= 100 ? '#16a34a' : '#ea580c'};">${pct_task.toFixed(1)}% Atingido</div>
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; text-align: center;">
+                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px;">
+                                <div style="font-size: 7.5pt; color: #64748b; font-weight: bold;">Realizado</div>
+                                <div style="font-size: 11pt; font-weight: 900; color: #0f172a;">R$ ${formatBRL(real_task)}</div>
+                            </div>
+                            <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px;">
+                                <div style="font-size: 7.5pt; color: #64748b; font-weight: bold;">Meta</div>
+                                <div style="font-size: 11pt; font-weight: 900; color: #0f172a;">R$ ${formatBRL(meta_task)}</div>
+                            </div>
+                            <div style="background: ${falta_task > 0 ? '#fff7ed' : '#f0fdf4'}; border: 1px solid ${falta_task > 0 ? '#fed7aa' : '#bbf7d0'}; border-radius: 6px; padding: 6px;">
+                                <div style="font-size: 7.5pt; color: ${falta_task > 0 ? '#c2410c' : '#15803d'}; font-weight: bold;">${falta_task > 0 ? 'Gap (Falta)' : 'Status'}</div>
+                                <div style="font-size: 11pt; font-weight: 900; color: ${falta_task > 0 ? '#ea580c' : '#16a34a'};">${falta_task > 0 ? 'R$ ' + formatBRL(falta_task) : 'Meta Concluída!'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PORTFÓLIO E MIX DE PRODUTOS -->
+                    <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-bottom: 12px; background: #ffffff;">
+                        <div style="font-size: 9pt; font-weight: 800; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 8px;">
+                            📦 Acompanhamento de Portfólio & Mix de Produtos (${base})
+                        </div>
+                        ${portfolioResumoHTML}
+                        <table style="width: 100%; border-collapse: collapse; margin-top: 6px;">
+                            <thead>
+                                <tr style="background: #f1f5f9; border-bottom: 2px solid #cbd5e1;">
+                                    <th style="padding: 4px 6px; text-align: center; width: 15%; font-size: 8pt; color: #475569;">Status</th>
+                                    <th style="padding: 4px 6px; text-align: left; width: 65%; font-size: 8pt; color: #475569;">Produto / SKU</th>
+                                    <th style="padding: 4px 6px; text-align: center; width: 20%; font-size: 8pt; color: #475569;">Vendida (cx)</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${mixTabelaRows}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- EXECUÇÃO NO PDV & TRADE -->
+                    <div style="border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; margin-bottom: 14px; background: #ffffff;">
+                        <div style="font-size: 9pt; font-weight: 800; color: #0f172a; border-bottom: 1px solid #e2e8f0; padding-bottom: 6px; margin-bottom: 8px;">
+                            🧊 Indicadores de Execução no PDV & Trade
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; text-align: center;">
+                            <div style="border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; background: #f8fafc;">
+                                <div style="font-size: 7pt; color: #64748b; font-weight: bold;">COMODATO</div>
+                                <div style="font-size: 8.5pt; font-weight: 800; color: #0f172a; margin-top: 2px;">${coolers > 0 ? coolers + ' Geladeira(s)' : 'Sem Ativos'}</div>
+                                <div style="font-size: 6.5pt; font-weight: bold; color: ${coolers > 0 ? '#16a34a' : '#ea580c'};">${coolers > 0 ? 'Ativo' : 'Oportunidade'}</div>
+                            </div>
+                            <div style="border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; background: #f8fafc;">
+                                <div style="font-size: 7pt; color: #64748b; font-weight: bold;">VISITAÇÃO</div>
+                                <div style="font-size: 8.5pt; font-weight: 800; color: #0f172a; margin-top: 2px;">${qtde_visitas > 0 ? qtde_visitas + ' Visita(s)' : (is_visitado ? 'Visitado' : '0 Visitas')}</div>
+                                <div style="font-size: 6.5pt; font-weight: bold; color: ${is_visitado ? '#16a34a' : '#dc2626'};">${is_visitado ? 'Realizada' : 'Pendente'}</div>
+                            </div>
+                            <div style="border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; background: #f8fafc;">
+                                <div style="font-size: 7pt; color: #64748b; font-weight: bold;">CARDÁPIO</div>
+                                <div style="font-size: 8.5pt; font-weight: 800; color: #0f172a; margin-top: 2px;">${menu_val > 0 ? 'Cardápio Ativo' : 'Sem Cardápio'}</div>
+                                <div style="font-size: 6.5pt; font-weight: bold; color: ${menu_val > 0 ? '#16a34a' : '#ea580c'};">${menu_val > 0 ? 'Positivado' : 'Oportunidade'}</div>
+                            </div>
+                            <div style="border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; background: #f8fafc;">
+                                <div style="font-size: 7pt; color: #64748b; font-weight: bold;">MAT. TRADE</div>
+                                <div style="font-size: 8.5pt; font-weight: 800; color: #0f172a; margin-top: 2px;">${trade_val > 0 ? 'Ativo (' + trade_val + ')' : 'Sem Material'}</div>
+                                <div style="font-size: 6.5pt; font-weight: bold; color: ${trade_val > 0 ? '#16a34a' : '#ea580c'};">${trade_val > 0 ? 'Positivado' : 'Oportunidade'}</div>
+                            </div>
+                            <div style="border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px; background: #f8fafc;">
+                                <div style="font-size: 7pt; color: #64748b; font-weight: bold;">BEES DIGITAL</div>
+                                <div style="font-size: 8.5pt; font-weight: 800; color: #0f172a; margin-top: 2px;">${cupom_val > 0 ? cupom_val + ' Cupom(ns)' : 'Sem Cupom'}</div>
+                                <div style="font-size: 6.5pt; font-weight: bold; color: ${cupom_val > 0 ? '#16a34a' : '#dc2626'};">${cupom_val > 0 ? 'Engajado' : 'Não Ativado'}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- RODAPÉ DE AUDITORIA E ASSINATURA -->
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; border-top: 1px solid #cbd5e1; padding-top: 10px; margin-top: 16px; font-size: 7.5pt; color: #64748b;">
+                        <div>
+                            <div>DMC Distribuidora de Bebidas • Sistema Copiloto de Vendas</div>
+                            <div>Relatório individualizado gerado diretamente do painel de operações.</div>
+                        </div>
+                        <div style="text-align: right; width: 220px; border-top: 1px solid #94a3b8; padding-top: 4px;">
+                            Assinatura do Vendedor / Supervisor
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            setTimeout(() => {
+                window.print();
+            }, 100);
+        };
 
         // Inicializa dados carregando do Drive
         carregarDadosDrive();
@@ -4224,7 +4507,7 @@ FORMATO OBRIGATÓRIO (Exatamente 3 seções, marcadas com **Título**):
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js?v=48').then(reg => {
+                navigator.serviceWorker.register('/sw.js?v=49').then(reg => {
                     reg.update();
                 }).catch(err => console.log('SW falhou: ', err));
             });
@@ -4988,6 +5271,65 @@ body.light-mode .score5-item-box {
 body.light-mode .score5-val-text {
     color: #0f172a !important;
 }
+
+/* 10. BOTÃO DE IMPRESSÃO INDIVIDUALIZADO (EXCLUSIVO WEB) */
+.btn-imprimir-pdf {
+    display: none;
+}
+@media (min-width: 640px) {
+    .btn-imprimir-pdf,
+    .sm\:flex {
+        display: inline-flex !important;
+    }
+}
+.hidden {
+    display: none;
+}
+.btn-imprimir-pdf:hover {
+    filter: brightness(1.2);
+    transform: translateY(-1px);
+}
+body.light-mode .btn-imprimir-pdf {
+    background: #eff6ff !important;
+    border: 1px solid #bfdbfe !important;
+    color: #1d4ed8 !important;
+}
+
+/* 11. FOLHA DE ESTILO EXECUTIVA A4 PARA IMPRESSÃO INDIVIDUALIZADA DO PDV */
+#extrato-pdv-print-area {
+    display: none;
+}
+
+@media print {
+    @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+    }
+    html, body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif !important;
+        font-size: 10pt;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+    /* Oculta rigorosamente menus globais, barras laterais, filtros e outros PDVs */
+    body > *:not(#extrato-pdv-print-area) {
+        display: none !important;
+    }
+    #extrato-pdv-print-area {
+        display: block !important;
+        width: 100% !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+    }
+    .print-avoid-break {
+        page-break-inside: avoid;
+        break-inside: avoid;
+    }
+}
 </style>
 
 <script>
@@ -5013,6 +5355,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 </script>
+
+<!-- CONTAINER EXCLUSIVO PARA IMPRESSÃO DE EXTRATO INDIVIDUALIZADO (A4) -->
+<div id="extrato-pdv-print-area" style="display: none;"></div>
 
 </body>
 
