@@ -22,9 +22,6 @@ export default async function handler(req, res) {
         let csvExec = await resExec.text();
         
         // --- 1. TRATAMENTO DE CABEÇALHOS DUPLICADOS DO PORTFÓLIO (csvPortf) ---
-        // A planilha de portfólio possui cabeçalhos com o mesmo nome para High End e Core:
-        // Índices 20 a 36 são High End (SPT 600 até OUTROS LN ZERO) -> prefixar com HE_
-        // Índices 37 a 57 são Core (AP 600 até OUTROS 1000) -> prefixar com CORE_
         let linesPortf = csvPortf.split(/\r?\n/);
         if (linesPortf.length > 0) {
             let headers = linesPortf[0].split(',');
@@ -43,10 +40,8 @@ export default async function handler(req, res) {
             linesPortf[0] = headers.join(',');
             csvPortf = linesPortf.join('\n');
         }
-        // --- FIM DO TRATAMENTO ---
         
         // --- 2. PARSE DAS PLANILHAS ---
-        // csvExec é a planilha de Execução e Faturamento (suas colunas originais são preservadas intactas!)
         const parsedPortf = Papa.parse(csvPortf, { header: true, skipEmptyLines: true });
         const parsedExec = Papa.parse(csvExec, { header: true, skipEmptyLines: true });
         
@@ -83,11 +78,9 @@ export default async function handler(req, res) {
             }
         }
         
-        // Colunas da Execução que serão adicionadas a cada PDV do Portfólio
         const execHeaders = parsedExec.meta.fields || [];
         const ignoreHeaders = ['CHAVE PDV', 'NOME PDV', 'GEO', 'RN', 'COMERCIAL', 'OPERAÇÃO', 'GV', 'VISITA', 'BASE', 'id_ano_mes'];
         
-        // Função para converter strings de valor para número com suporte a milhar
         const parseNum = (v) => {
             if (!v) return 0;
             let s = String(v).replace(/\s/g, '').replace(/^R\$/i, '').trim();
@@ -105,23 +98,30 @@ export default async function handler(req, res) {
             return isNaN(n) ? 0 : n;
         };
 
-        // Mesclar dados de Execução e Faturamento na base de Portfólio (que contém todos os PDVs cadastrados)
+        // Mesclar dados de Execução e Faturamento na base de Portfólio
         for (let row of parsedPortf.data) {
             const rawChave = row['CHAVE PDV'] || row['COD_PDV'] || row['COD PDV'];
             const chave = rawChave ? String(rawChave).trim() : null;
             const rawNome = row['NOME PDV'] || row['CLIENTE'];
             const nn = rawNome ? normNome(rawNome) : null;
 
-            // Busca na Execução por chave ou fallback por nome
             const execData = chave ? (dictExec[chave] || dictExec[normChave(chave)] || dictExec[chave.replace(/^["']|["']$/g, '')]) : (nn ? dictExecByNome[nn] : null);
             
-            if (execData) {
-                for (const h of execHeaders) {
-                    const cleanH = h.replace(/["']/g, '').trim();
-                    if (!ignoreHeaders.includes(cleanH) && !ignoreHeaders.includes(h)) {
-                        const val = execData[h] !== undefined ? execData[h] : execData[cleanH];
-                        row[cleanH] = val !== undefined && val !== null ? val : '';
-                    }
+            // Garantir que todos os campos de execução existam na row
+            for (const h of execHeaders) {
+                const cleanH = h.replace(/["']/g, '').trim();
+                if (!ignoreHeaders.includes(cleanH) && !ignoreHeaders.includes(h)) {
+                    const val = execData ? (execData[h] !== undefined ? execData[h] : execData[cleanH]) : '';
+                    row[cleanH] = val !== undefined && val !== null ? val : '';
+                }
+            }
+
+            // Normalização explícita dos campos vitais de execução e trade
+            const camposVitais = ['COOLERS', 'MAT TRADE', 'MENU & PTC', 'MENU', 'DIG COUP', 'VISITAÇÃO', 'QTDE VISITAS', 'PTs', 'COMPR', 'CERV (TEND)', 'HE (TEND)'];
+            for (const cv of camposVitais) {
+                if (row[cv] === undefined || row[cv] === null) {
+                    const val = execData ? execData[cv] : '';
+                    row[cv] = val !== undefined && val !== null ? val : '';
                 }
             }
 
@@ -155,9 +155,19 @@ export default async function handler(req, res) {
 
             row['POSSUI TASK'] = possuiVal;
         }
-        
-        // Reverter o JSON mesclado de volta para CSV (mantendo a mesma interface para o Front-end)
-        const finalCsv = Papa.unparse(parsedPortf.data);
+
+        // Montar a lista definitiva de todas as colunas unificadas para garantir a integridade do CSV
+        const allFieldsSet = new Set(parsedPortf.meta.fields || []);
+        ['COOLERS', 'MAT TRADE', 'MENU & PTC', 'MENU', 'DIG COUP', 'VISITAÇÃO', 'QTDE VISITAS', 'PTs', 'COMPR', 'CERV (TEND)', 'HE (TEND)', 'META TASK', 'META', 'REAL TASK', 'REAL', 'GAP TASK', 'GAP', 'POSSUI TASK'].forEach(f => allFieldsSet.add(f));
+        execHeaders.forEach(f => {
+            const clean = f.replace(/["']/g, '').trim();
+            if (!ignoreHeaders.includes(clean)) allFieldsSet.add(clean);
+        });
+
+        const finalCsv = Papa.unparse({
+            fields: Array.from(allFieldsSet),
+            data: parsedPortf.data
+        });
         
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
         res.setHeader('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0');
