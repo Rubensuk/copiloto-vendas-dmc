@@ -2,10 +2,10 @@ import Papa from 'papaparse';
 
 export default async function handler(req, res) {
     try {
-        // urlPortf (1IHbn...): Planilha de Portfólio / Mix de Produtos / Metas de Volume (600, Inteira, RGB, etc.)
+        // urlPortf (1IHbn...): Planilha de Portfólio / Metas de Volume / Mix de SKUs
         const urlPortf = 'https://docs.google.com/spreadsheets/d/1IHbnIjofO3ozVBrywfb4bzGUsktE3Fu0/export?format=csv&gid=378465162';
         
-        // urlExec (1xiDa...): Planilha de Execução Score 5, Trade, Comodatos (Coolers) e Faturamento (Meta, Real)
+        // urlExec (1xiDa...): Planilha Mestre de Clientes / Execução Score 5 / Comodato / Trade / Faturamento
         const urlExec = 'https://docs.google.com/spreadsheets/d/1xiDaCjqnlurP-YKXH3RYohyVL-bT1G3K/export?format=csv&gid=1748584987';
         
         // Faz o download das duas planilhas em paralelo
@@ -57,30 +57,6 @@ export default async function handler(req, res) {
             return String(val).trim().toUpperCase().replace(/["']/g, '').replace(/\s+/g, ' ');
         }
 
-        // Indexar a planilha de Execução por chave e por nome
-        const dictExec = {};
-        const dictExecByNome = {};
-
-        for (const row of parsedExec.data) {
-            const rawChave = row['CHAVE PDV'] || row['CHAVE'] || row['COD_PDV'] || row['COD PDV'];
-            if (rawChave !== undefined && rawChave !== null) {
-                const trimmed = String(rawChave).trim();
-                const cleanQuotes = trimmed.replace(/^["']|["']$/g, '');
-                const norm = normChave(trimmed);
-                if (trimmed) dictExec[trimmed] = row;
-                if (cleanQuotes) dictExec[cleanQuotes] = row;
-                if (norm) dictExec[norm] = row;
-            }
-            const rawNome = row['NOME PDV'] || row['NOME'] || row['CLIENTE'] || row['RAZAO SOCIAL'];
-            if (rawNome) {
-                const nn = normNome(rawNome);
-                if (nn) dictExecByNome[nn] = row;
-            }
-        }
-        
-        const execHeaders = parsedExec.meta.fields || [];
-        const ignoreHeaders = ['CHAVE PDV', 'NOME PDV', 'GEO', 'RN', 'COMERCIAL', 'OPERAÇÃO', 'GV', 'VISITA', 'BASE', 'id_ano_mes'];
-        
         const parseNum = (v) => {
             if (!v) return 0;
             let s = String(v).replace(/\s/g, '').replace(/^R\$/i, '').trim();
@@ -98,21 +74,54 @@ export default async function handler(req, res) {
             return isNaN(n) ? 0 : n;
         };
 
-        // Mesclar dados de Execução e Faturamento na base de Portfólio
-        for (let row of parsedPortf.data) {
+        // Indexar Portfólio por chave e por nome
+        const dictPortf = {};
+        const dictPortfByNome = {};
+
+        for (const row of parsedPortf.data) {
+            const rawChave = row['CHAVE PDV'] || row['CHAVE'] || row['COD_PDV'] || row['COD PDV'];
+            if (rawChave !== undefined && rawChave !== null) {
+                const trimmed = String(rawChave).trim();
+                const cleanQuotes = trimmed.replace(/^["']|["']$/g, '');
+                const norm = normChave(trimmed);
+                if (trimmed) dictPortf[trimmed] = row;
+                if (cleanQuotes) dictPortf[cleanQuotes] = row;
+                if (norm) dictPortf[norm] = row;
+            }
+            const rawNome = row['NOME PDV'] || row['NOME'] || row['CLIENTE'] || row['RAZAO SOCIAL'];
+            if (rawNome) {
+                const nn = normNome(rawNome);
+                if (nn) dictPortfByNome[nn] = row;
+            }
+        }
+        
+        const portfHeaders = parsedPortf.meta.fields || [];
+        const execHeaders = parsedExec.meta.fields || [];
+        const ignoreHeaders = ['CHAVE PDV', 'NOME PDV', 'GEO', 'RN', 'COMERCIAL', 'OPERAÇÃO', 'GV', 'VISITA', 'BASE', 'id_ano_mes'];
+        
+        const processedChaves = new Set();
+        const finalRows = [];
+
+        // --- 3. UNIFICAÇÃO COM BASE MESTRE DE EXECUÇÃO (202 CLIENTES OFICIAIS) ---
+        for (const row of parsedExec.data) {
             const rawChave = row['CHAVE PDV'] || row['COD_PDV'] || row['COD PDV'];
             const chave = rawChave ? String(rawChave).trim() : null;
+            const norm = chave ? normChave(chave) : null;
             const rawNome = row['NOME PDV'] || row['CLIENTE'];
             const nn = rawNome ? normNome(rawNome) : null;
 
-            const execData = chave ? (dictExec[chave] || dictExec[normChave(chave)] || dictExec[chave.replace(/^["']|["']$/g, '')]) : (nn ? dictExecByNome[nn] : null);
+            if (norm) processedChaves.add(norm);
+
+            // Busca os dados de Portfólio correspondentes por Chave ou Nome
+            const portfData = chave ? (dictPortf[chave] || dictPortf[norm] || dictPortf[chave.replace(/^["']|["']$/g, '')]) : (nn ? dictPortfByNome[nn] : null);
             
-            // Garantir que todos os campos de execução existam na row
-            for (const h of execHeaders) {
-                const cleanH = h.replace(/["']/g, '').trim();
-                if (!ignoreHeaders.includes(cleanH) && !ignoreHeaders.includes(h)) {
-                    const val = execData ? (execData[h] !== undefined ? execData[h] : execData[cleanH]) : '';
-                    row[cleanH] = val !== undefined && val !== null ? val : '';
+            if (portfData) {
+                for (const h of portfHeaders) {
+                    const cleanH = h.replace(/["']/g, '').trim();
+                    if (!ignoreHeaders.includes(cleanH) && !ignoreHeaders.includes(h)) {
+                        const val = portfData[h] !== undefined ? portfData[h] : portfData[cleanH];
+                        row[cleanH] = val !== undefined && val !== null ? val : '';
+                    }
                 }
             }
 
@@ -120,19 +129,18 @@ export default async function handler(req, res) {
             const camposVitais = ['COOLERS', 'MAT TRADE', 'MENU & PTC', 'MENU', 'DIG COUP', 'VISITAÇÃO', 'QTDE VISITAS', 'PTs', 'COMPR', 'CERV (TEND)', 'HE (TEND)'];
             for (const cv of camposVitais) {
                 if (row[cv] === undefined || row[cv] === null) {
-                    const val = execData ? execData[cv] : '';
-                    row[cv] = val !== undefined && val !== null ? val : '';
+                    row[cv] = '';
                 }
             }
 
             // Normalização de Faturamento (Meta, Real, Gap, Possui Task)
             const metaVal = (row['META TASK'] !== undefined && row['META TASK'] !== null && String(row['META TASK']).trim() !== '') 
                 ? String(row['META TASK']).trim() 
-                : (execData && (execData['META TASK'] || execData['META'] || execData['META FAT'] || execData['META FATURAMENTO'] || execData['OBJETIVO'])) || '';
+                : (row['META'] || (portfData && portfData['META TASK']) || '');
 
             const realVal = (row['REAL TASK'] !== undefined && row['REAL TASK'] !== null && String(row['REAL TASK']).trim() !== '') 
                 ? String(row['REAL TASK']).trim() 
-                : (execData && (execData['REAL TASK'] || execData['REAL'] || execData['REALIZADO'] || execData['REAL FAT'] || execData['FATURAMENTO'])) || '';
+                : (row['REAL'] || (portfData && portfData['REAL TASK']) || '');
 
             const metaNum = parseNum(metaVal);
             const realNum = parseNum(realVal);
@@ -140,7 +148,7 @@ export default async function handler(req, res) {
 
             const gapVal = (row['GAP TASK'] !== undefined && row['GAP TASK'] !== null && String(row['GAP TASK']).trim() !== '')
                 ? String(row['GAP TASK']).trim()
-                : (execData && (execData['GAP TASK'] || execData['GAP'] || execData['FALTA'])) || (metaNum > 0 ? String(gapCalc) : '0');
+                : (row['GAP'] || (metaNum > 0 ? String(gapCalc) : '0'));
 
             row['META TASK'] = metaVal;
             row['META'] = metaVal;
@@ -151,22 +159,34 @@ export default async function handler(req, res) {
 
             const possuiVal = (row['POSSUI TASK'] !== undefined && row['POSSUI TASK'] !== null && String(row['POSSUI TASK']).trim() !== '')
                 ? String(row['POSSUI TASK']).trim()
-                : (execData && execData['POSSUI TASK']) || ((metaNum > 0 || realNum > 0) ? 'S' : '');
+                : ((metaNum > 0 || realNum > 0) ? 'S' : '');
 
             row['POSSUI TASK'] = possuiVal;
+
+            finalRows.push(row);
         }
 
-        // Montar a lista definitiva de todas as colunas unificadas para garantir a integridade do CSV
-        const allFieldsSet = new Set(parsedPortf.meta.fields || []);
-        ['COOLERS', 'MAT TRADE', 'MENU & PTC', 'MENU', 'DIG COUP', 'VISITAÇÃO', 'QTDE VISITAS', 'PTs', 'COMPR', 'CERV (TEND)', 'HE (TEND)', 'META TASK', 'META', 'REAL TASK', 'REAL', 'GAP TASK', 'GAP', 'POSSUI TASK'].forEach(f => allFieldsSet.add(f));
-        execHeaders.forEach(f => {
+        // --- 4. OUTER JOIN: Inclui qualquer PDV que esteja no Portfólio caso não estivesse em Execução ---
+        for (const row of parsedPortf.data) {
+            const rawChave = row['CHAVE PDV'];
+            const norm = rawChave ? normChave(rawChave) : null;
+            if (norm && !processedChaves.has(norm)) {
+                processedChaves.add(norm);
+                finalRows.push(row);
+            }
+        }
+
+        // --- 5. MONTAGEM DO CABEÇALHO UNIFICADO COMPLETO ---
+        const allFieldsSet = new Set(parsedExec.meta.fields || []);
+        portfHeaders.forEach(f => {
             const clean = f.replace(/["']/g, '').trim();
             if (!ignoreHeaders.includes(clean)) allFieldsSet.add(clean);
         });
+        ['COOLERS', 'MAT TRADE', 'MENU & PTC', 'MENU', 'DIG COUP', 'VISITAÇÃO', 'QTDE VISITAS', 'PTs', 'COMPR', 'CERV (TEND)', 'HE (TEND)', 'META TASK', 'META', 'REAL TASK', 'REAL', 'GAP TASK', 'GAP', 'POSSUI TASK', 'INTEIRA', 'RGB', '600', 'LN', 'LN ZERO', 'LITRINHO', 'LITRO', 'BATEU META'].forEach(f => allFieldsSet.add(f));
 
         const finalCsv = Papa.unparse({
             fields: Array.from(allFieldsSet),
-            data: parsedPortf.data
+            data: finalRows
         });
         
         res.setHeader('Content-Type', 'text/csv; charset=utf-8');
